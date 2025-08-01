@@ -1,0 +1,229 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    line-height: 1.6;
+}
+
+@keyframes fade-in-up {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in-up {
+    animation: fade-in-up 0.8s ease-out;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(to bottom, #3b82f6, #f97316);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(to bottom, #2563eb, #ea580c);
+}
+
+/* Additional hover effects */
+.group:hover .group-hover\:scale-110 {
+    transform: scale(1.1);
+}
+
+
+#home {
+    background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), 
+                      url('assets/images/hero-bg.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+/* Enhanced hover effects */
+.hover-lift {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-lift:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+}
+
+/* Loading animations */
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-slide-in-up {
+    animation: slideInUp 0.6s ease-out;
+}
+
+/* Enhanced gradients */
+.gradient-text {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Pulse animation for CTA buttons */
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(59, 130, 246, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+    }
+}
+
+.pulse-button {
+    animation: pulse 2s infinite;
+}
+
+/* Mobile improvements */
+@media (max-width: 768px) {
+    .mobile-menu {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: rgba(31, 41, 55, 0.95);
+        backdrop-filter: blur(10px);
+        padding: 1rem;
+        border-radius: 0 0 1rem 1rem;
+    }
+    
+    .mobile-menu a {
+        display: block;
+        padding: 0.75rem 1rem;
+        border-radius: 0.5rem;
+        margin-bottom: 0.5rem;
+        transition: all 0.3s;
+    }
+    
+    .mobile-menu a:hover {
+        background: rgba(59, 130, 246, 0.2);
+    }
+}
+/* Enhanced social media animations */
+.social-pulse {
+    animation: socialPulse 2s infinite;
+}
+
+@keyframes socialPulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(59, 130, 246, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+    }
+}
+
+/* Social icon hover effects */
+.social-icon-hover {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.social-icon-hover:hover {
+    transform: translateY(-3px) scale(1.1);
+    filter: brightness(1.2);
+}
+
+/* Gradient social backgrounds */
+.social-gradient-twitter {
+    background: linear-gradient(135deg, #1DA1F2, #0d8bd9);
+}
+
+.social-gradient-instagram {
+    background: linear-gradient(135deg, #E4405F, #C13584, #833AB4);
+}
+
+.social-gradient-linkedin {
+    background: linear-gradient(135deg, #0077B5, #005885);
+}
+
+.social-gradient-whatsapp {
+    background: linear-gradient(135deg, #25D366, #128C7E);
+}
+
+/* Floating Contact Button - Precise Hover Control */
+.floating-contact-container {
+    width: fit-content;
+    height: fit-content;
+}
+
+.floating-contact-btn {
+    position: relative;
+    z-index: 10;
+    /* Remove global transition inheritance */
+    transition: transform 0.3s ease, box-shadow 0.3s ease, scale 0.3s ease !important;
+}
+
+.floating-contact-menu {
+    pointer-events: none;
+    transform: translateY(10px);
+    transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease !important;
+}
+
+/* Only show menu when hovering directly over button or menu */
+.floating-contact-container:hover .floating-contact-menu {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0);
+}
+
+/* Keep menu visible when hovering over menu itself */
+.floating-contact-menu:hover {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+/* Override global transitions for floating elements */
+.floating-contact-container,
+.floating-contact-container * {
+    transition-property: transform, opacity, visibility, box-shadow, scale;
+    transition-duration: 0.3s;
+    transition-timing-function: ease;
+}
+
+/* Prevent accidental triggers during scroll */
+.floating-contact-container {
+    isolation: isolate;
+}
+
