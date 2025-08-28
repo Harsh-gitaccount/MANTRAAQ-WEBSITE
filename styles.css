@@ -1,17 +1,254 @@
+/* ========================================
+   CLEAN RESET - NO SCROLLBARS ISSUES
+========================================= */
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-html {
+html, body {
+    overflow-x: hidden; /* PREVENTS LEFT/RIGHT SCROLLING */
     scroll-behavior: smooth;
+    width: 100%;
 }
 
 body {
     font-family: 'Inter', sans-serif;
     line-height: 1.6;
 }
+
+/* ========================================
+   HERO SECTION - BUTTONS AT BOTTOM
+========================================= */
+#home {
+    position: relative;
+    width: 100%;
+    
+    /* Background setup - STARTS BELOW NAVBAR */
+    background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), 
+                      url('assets/images/hero-bg.jpg');
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-attachment: scroll;
+    
+    /* IMPORTANT: Start background below navbar */
+    margin-top: 64px; /* Height of your navbar */
+}
+
+nav {
+    background-color: rgba(31, 41, 55, 0.95) !important; /* Keep dark navbar */
+    backdrop-filter: blur(10px);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    height: 64px;
+}
+
+/* Desktop - full screen cover */
+@media (min-width: 1025px) {
+    #home {
+        min-height: calc(100vh - 64px); /* Full height minus navbar */
+        background-size: cover;
+    }
+    
+    /* Desktop buttons - normal size */
+    #home button {
+        font-size: 1.125rem; /* 18px */
+        padding: 1rem 2rem; /* 16px 32px */
+        border-radius: 0.5rem;
+        min-height: 3rem; /* 48px */
+        width: auto; /* Let content determine width */
+        min-width: 200px; /* Minimum readable width */
+    }
+}
+
+/* Tablet - optimized */
+@media (max-width: 1024px) and (min-width: 769px) {
+    #home {
+        min-height: calc(100vh - 64px);
+        background-size: cover;
+        background-position: center center;
+    }
+    
+    /* Tablet buttons */
+    #home button {
+        font-size: 1rem; /* 16px */
+        padding: 0.875rem 1.75rem; /* 14px 28px */
+        border-radius: 0.5rem;
+        min-height: 2.75rem; /* 44px */
+        width: auto;
+        min-width: 180px;
+    }
+}
+
+/* Mobile - COMPACT BUTTONS + NAVBAR PROTECTION */
+@media (max-width: 768px) {
+    #home {
+        height: calc(66.67vw - 64px); /* 3:2 ratio minus navbar */
+        min-height: calc(50vh - 32px);
+        max-height: calc(90vh - 64px);
+        background-size: 100% 100%;
+        background-position: center center;
+        background-color: transparent;
+        margin-top: 64px; /* Keep navbar visible */
+    }
+    
+    /* COMPACT MOBILE BUTTONS - SAME AS DESKTOP STYLE */
+    #home button {
+        font-size: 0.875rem; /* 14px */
+        padding: 0.75rem 1.25rem; /* 12px 20px - compact but readable */
+        border-radius: 0.5rem;
+        min-height: 2.5rem; /* 40px */
+        width: auto !important; /* Don't stretch */
+        min-width: 140px; /* Compact minimum width */
+        max-width: 180px; /* Prevent stretching */
+        flex: none; /* Don't grow to fill space */
+    }
+    
+    /* Button container - prevent stretching */
+    #home .flex {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.75rem;
+        width: 100%;
+        max-width: 400px;
+        margin: 0 auto;
+    }
+}
+
+/* Small mobile - even more compact */
+@media (max-width: 480px) {
+    #home {
+        height: calc(66.67vw - 64px);
+        min-height: calc(45vh - 32px);
+        max-height: calc(85vh - 64px);
+    }
+    
+    /* Smaller buttons but still compact */
+    #home button {
+        font-size: 0.8rem; /* 12.8px */
+        padding: 0.625rem 1rem; /* 10px 16px */
+        min-height: 2.25rem; /* 36px */
+        min-width: 120px;
+        max-width: 160px;
+    }
+}
+
+/* Very small screens */
+@media (max-width: 375px) {
+    #home button {
+        font-size: 0.75rem; /* 12px */
+        padding: 0.5rem 0.875rem; /* 8px 14px */
+        min-height: 2rem; /* 32px */
+        min-width: 110px;
+        max-width: 140px;
+    }
+    
+    #home .flex {
+        gap: 0.5rem;
+        max-width: 320px;
+    }
+}
+
+/* Landscape orientation */
+@media (max-width: 768px) and (orientation: landscape) {
+    #home {
+        height: calc(100vh - 64px);
+        background-size: cover;
+        background-position: center center;
+    }
+    
+    /* Horizontal layout for landscape */
+    #home .flex {
+        flex-direction: row;
+        gap: 1rem;
+    }
+    
+    #home button {
+        min-width: 120px;
+        max-width: 160px;
+    }
+}
+/* ========================================
+   FLOATING BUTTON - WORKING VERSION
+========================================= */
+
+.floating-contact-container {
+    position: fixed !important;
+    bottom: 20px !important;
+    right: 20px !important;
+    z-index: 9999 !important;
+}
+
+.floating-contact-btn {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.floating-contact-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 25px rgba(0,0,0,0.4);
+}
+
+.floating-contact-menu {
+    position: absolute;
+    bottom: 65px;
+    right: 0;
+    min-width: 200px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+    border: 1px solid #e5e5e5;
+    padding: 8px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: all 0.3s ease;
+}
+
+/* Show menu on hover (desktop) */
+.floating-contact-container:hover .floating-contact-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+/* Mobile menu toggle */
+.floating-contact-menu.show-mobile {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: translateY(0) !important;
+}
+
+.floating-contact-menu a {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    color: #374151;
+    text-decoration: none;
+    border-radius: 8px;
+    margin: 2px 0;
+    transition: background-color 0.2s ease;
+}
+
+.floating-contact-menu a:hover {
+    background-color: #f3f4f6;
+}
+
+/* ========================================
+   ANIMATIONS - CLEAN
+========================================= */
 
 @keyframes fade-in-up {
     from {
@@ -28,7 +265,94 @@ body {
     animation: fade-in-up 0.8s ease-out;
 }
 
-/* Custom scrollbar */
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-slide-in-up {
+    animation: slideInUp 0.6s ease-out;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(59, 130, 246, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+    }
+}
+
+.pulse-button {
+    animation: pulse 2s infinite;
+}
+
+/* ========================================
+   HOVER EFFECTS - SIMPLE
+========================================= */
+
+.group:hover .group-hover\:scale-110 {
+    transform: scale(1.1);
+}
+
+.hover-lift {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-lift:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+}
+
+.social-icon-hover {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.social-icon-hover:hover {
+    transform: translateY(-3px) scale(1.1);
+    filter: brightness(1.2);
+}
+
+/* ========================================
+   GRADIENTS
+========================================= */
+
+.gradient-text {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.social-gradient-twitter {
+    background: linear-gradient(135deg, #1DA1F2, #0d8bd9);
+}
+
+.social-gradient-instagram {
+    background: linear-gradient(135deg, #E4405F, #C13584, #833AB4);
+}
+
+.social-gradient-linkedin {
+    background: linear-gradient(135deg, #0077B5, #005885);
+}
+
+.social-gradient-whatsapp {
+    background: linear-gradient(135deg, #25D366, #128C7E);
+}
+
+/* ========================================
+   CUSTOM SCROLLBAR - CLEAN
+========================================= */
+
 ::-webkit-scrollbar {
     width: 8px;
 }
@@ -46,72 +370,10 @@ body {
     background: linear-gradient(to bottom, #2563eb, #ea580c);
 }
 
-/* Additional hover effects */
-.group:hover .group-hover\:scale-110 {
-    transform: scale(1.1);
-}
+/* ========================================
+   MOBILE MENU
+========================================= */
 
-
-#home {
-    background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), 
-                      url('assets/images/hero-bg.png');
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
-}
-
-/* Enhanced hover effects */
-.hover-lift {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.hover-lift:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-}
-
-/* Loading animations */
-@keyframes slideInUp {
-    from {
-        opacity: 0;
-        transform: translateY(50px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.animate-slide-in-up {
-    animation: slideInUp 0.6s ease-out;
-}
-
-/* Enhanced gradients */
-.gradient-text {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-/* Pulse animation for CTA buttons */
-@keyframes pulse {
-    0% {
-        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
-    }
-    70% {
-        box-shadow: 0 0 0 10px rgba(59, 130, 246, 0);
-    }
-    100% {
-        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
-    }
-}
-
-.pulse-button {
-    animation: pulse 2s infinite;
-}
-
-/* Mobile improvements */
 @media (max-width: 768px) {
     .mobile-menu {
         position: absolute;
@@ -136,7 +398,11 @@ body {
         background: rgba(59, 130, 246, 0.2);
     }
 }
-/* Enhanced social media animations */
+
+/* ========================================
+   SOCIAL ANIMATIONS
+========================================= */
+
 .social-pulse {
     animation: socialPulse 2s infinite;
 }
@@ -152,78 +418,181 @@ body {
         box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
     }
 }
-
-/* Social icon hover effects */
-.social-icon-hover {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+@media (max-width: 640px) {
+    #newsletter-form {
+        max-width: 100% !important;
+        padding: 0 !important;
+    }
+    
+    #newsletter-form .flex {
+        flex-direction: column !important;
+        gap: 0.75rem !important;
+    }
+    
+    #newsletter-email {
+        width: 100% !important;
+        flex: none !important;
+    }
+    
+    #newsletter-btn {
+        width: 100% !important;
+        flex: none !important;
+        white-space: nowrap !important;
+        padding: 0.75rem 1rem !important;
+        font-size: 0.875rem !important;
+        min-height: 48px !important;
+    }
 }
 
-.social-icon-hover:hover {
-    transform: translateY(-3px) scale(1.1);
-    filter: brightness(1.2);
+/* Ensure newsletter container doesn't overflow */
+#newsletter-form .flex {
+    max-width: 100%;
+    overflow: visible;
 }
 
-/* Gradient social backgrounds */
-.social-gradient-twitter {
-    background: linear-gradient(135deg, #1DA1F2, #0d8bd9);
+/* Prevent button text from wrapping weirdly */
+#newsletter-btn {
+    white-space: nowrap;
+    overflow: visible;
 }
 
-.social-gradient-instagram {
-    background: linear-gradient(135deg, #E4405F, #C13584, #833AB4);
+/* ========================================
+   NAVBAR MOBILE SPACING FIX
+========================================= */
+
+/* Ensure logo and text don't overlap on small screens */
+.navbar-brand-container {
+    min-width: 0;
+    flex-shrink: 1;
 }
 
-.social-gradient-linkedin {
-    background: linear-gradient(135deg, #0077B5, #005885);
+/* Mobile navbar adjustments */
+@media (max-width: 640px) {
+    /* Smaller logo on very small screens */
+    .navbar-logo {
+        width: 2rem !important;
+        height: 2rem !important;
+    }
+    
+    /* Smaller text on tiny screens */
+    .navbar-text {
+        font-size: 1rem !important;
+    }
+    
+    /* Ensure proper spacing */
+    nav .flex.items-center {
+        min-width: 0;
+        overflow: hidden;
+    }
 }
 
-.social-gradient-whatsapp {
-    background: linear-gradient(135deg, #25D366, #128C7E);
+/* Prevent text from wrapping */
+.navbar-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+/* ========================================
+   HERO SECTION - PREVENT NAVBAR COLLISION
+========================================= */
+
+#home {
+    padding-top: 80px; /* Account for fixed navbar */
 }
 
-/* Floating Contact Button - Precise Hover Control */
-.floating-contact-container {
-    width: fit-content;
-    height: fit-content;
+/* Mobile specific spacing to prevent collision */
+@media (max-width: 640px) {
+    #home {
+        padding-top: 100px; /* Extra space on mobile */
+    }
+    
+    #home h1 {
+        font-size: 2.5rem !important; /* Smaller hero text on mobile */
+        line-height: 1.2;
+        margin-bottom: 1.5rem;
+    }
 }
 
-.floating-contact-btn {
-    position: relative;
-    z-index: 10;
-    /* Remove global transition inheritance */
-    transition: transform 0.3s ease, box-shadow 0.3s ease, scale 0.3s ease !important;
+/* Tablet adjustments */
+@media (min-width: 641px) and (max-width: 768px) {
+    #home {
+        padding-top: 90px;
+    }
+    
+    #home h1 {
+        font-size: 3.5rem !important;
+    }
 }
 
-.floating-contact-menu {
-    pointer-events: none;
-    transform: translateY(10px);
-    transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease !important;
+/* Desktop - normal spacing */
+@media (min-width: 769px) {
+    #home {
+        padding-top: 80px;
+    }
+}
+/* ========================================
+   FOOTER STYLES - SIMPLE & CLEAN
+========================================= */
+/* ========================================
+   SIMPLE FOOTER STYLES
+========================================= */
+
+.footer {
+    background-color: #f8f9fa;
+    border-top: 1px solid #e9ecef;
+    padding: 1rem 0;
+    font-size: 0.875rem;
+    color: #6c757d;
 }
 
-/* Only show menu when hovering directly over button or menu */
-.floating-contact-container:hover .floating-contact-menu {
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
-    transform: translateY(0);
+.footer .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
 }
 
-/* Keep menu visible when hovering over menu itself */
-.floating-contact-menu:hover {
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
+.footer-meta {
+    margin-bottom: 0.5rem;
 }
 
-/* Override global transitions for floating elements */
-.floating-contact-container,
-.floating-contact-container * {
-    transition-property: transform, opacity, visibility, box-shadow, scale;
-    transition-duration: 0.3s;
-    transition-timing-function: ease;
+.footer-powered {
+    margin-bottom: 0.25rem;
 }
 
-/* Prevent accidental triggers during scroll */
-.floating-contact-container {
-    isolation: isolate;
+.footer-links {
+    margin-bottom: 0;
 }
 
+.footer-link {
+    color: #007bff;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer-link:hover {
+    color: #0056b3;
+    text-decoration: underline;
+}
+
+.footer-sep {
+    margin: 0 0.5rem;
+    color: #6c757d;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .footer {
+        font-size: 0.8rem;
+        padding: 0.75rem 0;
+    }
+    
+    .footer-sep {
+        margin: 0 0.3rem;
+    }
+    
+    .footer-meta,
+    .footer-powered,
+    .footer-links {
+        margin-bottom: 0.5rem;
+    }
+}
