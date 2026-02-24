@@ -842,7 +842,7 @@ if (window.innerWidth > 768) {
 
   /* ── Auto year ── */
   const yearEl = document.getElementById('ftYear');
-  if (yearEl) yearEl.textContent = new Date().getFullYear();
+  if (yearEl) yearEl.textContent = '2025';
 
   /* ── Back to top visibility ── */
   const toTop = document.getElementById('ftToTop');
@@ -1131,12 +1131,9 @@ if (window.innerWidth > 768) {
     console.log('All event listeners attached successfully');
 });
 
-/* code for navbar in phone*/
-// Mobile menu functionality - WORKING VERSION
 
 /* ════════════════════════════════════════
    NAVBAR JS — MantraAQ FINAL
-   Fixed: inert instead of aria-hidden
 ════════════════════════════════════════ */
 (function initNav() {
 
@@ -1155,23 +1152,20 @@ if (window.innerWidth > 768) {
     }
   }
   window.addEventListener('scroll', onScroll, { passive: true });
-  onScroll(); // run immediately on load
+  onScroll();
 
   /* ── 2. HAMBURGER TOGGLE ── */
   if (hamburger && drawer) {
-
-    /* Start with drawer inert (closed) */
     drawer.setAttribute('inert', '');
 
     hamburger.addEventListener('click', () => {
       const isOpen = drawer.classList.toggle('nav-drawer-open');
       hamburger.classList.toggle('nav-open', isOpen);
       hamburger.setAttribute('aria-expanded', String(isOpen));
-
       if (isOpen) {
-        drawer.removeAttribute('inert');  // allow focus when open
+        drawer.removeAttribute('inert');
       } else {
-        drawer.setAttribute('inert', ''); // block focus when closed
+        drawer.setAttribute('inert', '');
       }
     });
   }
@@ -1210,20 +1204,28 @@ if (window.innerWidth > 768) {
     });
   });
 
-  /* ── 6. ACTIVE LINK highlight on scroll ── */
-  const sections   = ['home', 'about-us', 'products', 'contact'];
-  const allLinks   = document.querySelectorAll('[data-nav], [data-nav-mob]');
+  /* ── 6. ACTIVE LINK highlight on scroll — FIXED ── */
+  const sections = ['home', 'about-us', 'products', 'contact'];
+  const allLinks = document.querySelectorAll('[data-nav], [data-nav-mob]');
 
   const sectionObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
-      if (!entry.isIntersecting) return;
       const id = entry.target.getAttribute('id');
-      allLinks.forEach(link => {
-        const href = link.getAttribute('href');
-        link.classList.toggle('nav-active', href === `#${id}`);
-      });
+      const matchingLinks = [...allLinks].filter(
+        link => link.getAttribute('href') === `#${id}`
+      );
+
+      if (entry.isIntersecting) {
+        allLinks.forEach(link => link.classList.remove('nav-active'));
+        matchingLinks.forEach(link => link.classList.add('nav-active'));
+      } else {
+        matchingLinks.forEach(link => link.classList.remove('nav-active'));
+      }
     });
-  }, { threshold: 0.4, rootMargin: '-60px 0px -40% 0px' });
+  }, {
+    threshold: 0.3,
+    rootMargin: '-60px 0px -35% 0px'
+  });
 
   sections.forEach(id => {
     const el = document.getElementById(id);
@@ -1241,6 +1243,7 @@ if (window.innerWidth > 768) {
   }, { passive: true });
 
 })();
+
 
 
 // ========================================
