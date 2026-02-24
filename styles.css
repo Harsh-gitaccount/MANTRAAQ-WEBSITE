@@ -1689,6 +1689,7 @@ nav {
   opacity: 0;
   transform: translateY(10px);
   pointer-events: none;
+  z-index: 9999;
 }
 .ft-totop.ft-totop-vis {
   opacity: 1;
@@ -5405,7 +5406,7 @@ nav {
 .ct {
   position: relative;
   background: #030a06;
-  overflow: hidden;
+  overflow: clip;
   font-family: 'Inter', sans-serif;
 }
 
