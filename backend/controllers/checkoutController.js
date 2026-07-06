@@ -252,11 +252,10 @@ exports.createPaymentOrder = async (req, res) => {
 
     // Handle Cash on Delivery (COD) Checkout Completion
     if (paymentMethod === 'COD') {
-      // Mark COD order as PAID immediately (confirmed, pending delivery)
+      // Keep COD order as PENDING status (confirmed, pending delivery & payment)
       const confirmedOrder = await prisma.order.update({
         where: { id: txResult.dbOrder.id },
         data: {
-          status: 'PAID',
           paymentId: `cod_${txResult.dbOrder.id}`,
         },
         include: {
