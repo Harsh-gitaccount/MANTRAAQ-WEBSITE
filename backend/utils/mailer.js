@@ -163,7 +163,56 @@ const sendPasswordResetEmail = async (user, resetLink) => {
 
 // ─── Order Confirmation Email ───────────────────────────────
 
+const sendAdminOrderAlertEmail = async (order) => {
+  const adminEmail = process.env.ADMIN_EMAIL || 'hello@mantraaq.com';
+  
+  const itemsHtml = (order.orderLineItems || []).map(item => `
+    <tr>
+      <td style="padding:8px 0;border-bottom:1px solid #f3f4f6;color:#374151;">${item.productName || 'Product'} — ${item.variantTitle || ''}</td>
+      <td style="padding:8px 0;border-bottom:1px solid #f3f4f6;text-align:center;color:#374151;">${item.quantity}</td>
+      <td style="padding:8px 0;border-bottom:1px solid #f3f4f6;text-align:right;color:#374151;">₹${item.priceAtPurchase.toFixed(2)}</td>
+    </tr>
+  `).join('');
+
+  const isCod = (order.paymentId?.toLowerCase().startsWith('cod') || order.shippingAddress?.paymentMethod === 'COD');
+
+  const template = wrapTemplate('New Order Received! 🚨', `
+    <p style="color:#4b5563;line-height:1.6;">Hi Admin,</p>
+    <p style="color:#4b5563;line-height:1.6;">You have received a new order on MantraAQ! Here are the details:</p>
+    <p style="color:#6b7280;font-size:14px;">Order ID: <strong>${order.id.toUpperCase()}</strong></p>
+    <p style="color:#6b7280;font-size:14px;">Payment Method: <strong style="color: ${isCod ? '#d97706' : '#2563eb'};">${isCod ? 'Cash on Delivery (COD)' : 'Paid Online (PayU)'}</strong></p>
+    <table width="100%" cellpadding="0" cellspacing="0" style="margin:16px 0;">
+      <tr style="background:#f9fafb;">
+        <th style="padding:10px 0;text-align:left;color:#6b7280;font-size:13px;font-weight:600;">Item</th>
+        <th style="padding:10px 0;text-align:center;color:#6b7280;font-size:13px;font-weight:600;">Qty</th>
+        <th style="padding:10px 0;text-align:right;color:#6b7280;font-size:13px;font-weight:600;">Price</th>
+      </tr>
+      ${itemsHtml}
+      <tr><td colspan="2" style="text-align:right;padding:12px 0;font-weight:700;color:#1f2937;">Total Amount:</td>
+      <td style="text-align:right;padding:12px 0;font-weight:700;color:#10b981;font-size:18px;">₹${order.totalAmount.toFixed(2)}</td></tr>
+    </table>
+    <div style="background:#f8fafc;padding:16px;border-radius:8px;margin-top:16px;border:1px solid #e2e8f0;">
+      <p style="margin:0;color:#334155;font-size:14px;font-weight:600;">Shipping Address:</p>
+      <p style="margin:4px 0 0;color:#475569;font-size:14px;"><strong>Name:</strong> ${order.shippingAddress?.name}</p>
+      <p style="margin:2px 0 0;color:#475569;font-size:14px;"><strong>Phone:</strong> ${order.shippingAddress?.phone}</p>
+      <p style="margin:2px 0 0;color:#475569;font-size:14px;"><strong>Address:</strong> ${order.shippingAddress?.street}, ${order.shippingAddress?.city}, ${order.shippingAddress?.state} — ${order.shippingAddress?.postalCode}</p>
+    </div>
+    <div style="text-align:center;margin:24px 0;">
+      <a href="${process.env.ADMIN_URL || 'https://admin.mantraaq.com'}/orders" style="display:inline-block;background:#10b981;color:#fff;padding:12px 32px;border-radius:8px;text-decoration:none;font-weight:600;">Open Admin Dashboard →</a>
+    </div>
+  `);
+
+  return sendMail(adminEmail, `🚨 [MantraAQ] New Order Alert #${order.id.slice(0, 8).toUpperCase()} (${isCod ? 'COD' : 'ONLINE'})`, template.html,
+    `New order received! Order ID: ${order.id.slice(0, 8).toUpperCase()}. Total: ₹${order.totalAmount.toFixed(2)}. Method: ${isCod ? 'COD' : 'ONLINE'}.`
+  );
+};
+
 const sendOrderConfirmationEmail = async (order) => {
+  // Send admin alert notification email asynchronously
+  sendAdminOrderAlertEmail(order).catch(err => 
+    console.error('Admin order alert email error:', err)
+  );
+
   const email = order.shippingAddress?.email;
   if (!email) return null;
 
@@ -382,6 +431,7 @@ module.exports = {
   sendWelcomeEmail,
   sendPasswordResetEmail,
   sendOrderConfirmationEmail,
+  sendAdminOrderAlertEmail,
   sendOrderDispatchedEmail,
   sendDeliveryConfirmationEmail,
   sendOrderCancellationEmail,
