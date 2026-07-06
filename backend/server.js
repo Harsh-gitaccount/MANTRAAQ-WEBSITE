@@ -42,6 +42,11 @@ const allowedOrigins = [
   'http://127.0.0.1:5174',
   'http://localhost:3000',
   'http://127.0.0.1:3000',
+  // Production Whitelists (with/without www.)
+  'https://mantraaq.com',
+  'https://www.mantraaq.com',
+  'https://admin.mantraaq.com',
+  'https://www.admin.mantraaq.com'
 ];
 
 // Add NGROK URL if configured (for webhook testing)
