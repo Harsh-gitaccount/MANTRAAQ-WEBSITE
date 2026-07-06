@@ -15,12 +15,16 @@ const transporter = nodemailer.createTransport({
   socketTimeout: 60000,     // 60s for socket inactivity
 });
 
-// Verify SMTP connection on startup (non-blocking)
-transporter.verify().then(() => {
-  console.log('✅ SMTP connection verified — emails are ready.');
-}).catch(err => {
-  console.warn('⚠️  SMTP verification failed — emails may not work:', err.message);
-});
+// Verify SMTP connection on startup (non-blocking) if we are not using HTTP API
+if (!process.env.SMTP_PASS) {
+  transporter.verify().then(() => {
+    console.log('✅ SMTP connection verified — emails are ready.');
+  }).catch(err => {
+    console.warn('⚠️  SMTP verification failed — emails may not work:', err.message);
+  });
+} else {
+  console.log('✅ Brevo HTTP API selected for outbound emails (no SMTP verification needed).');
+}
 
 const FROM = process.env.FROM_EMAIL || 'MantraAQ <noreply@mantraaq.com>';
 
@@ -63,15 +67,52 @@ const wrapTemplate = (title, bodyContent) => {
 
 const sendMail = async (to, subject, html, text) => {
   try {
-    const info = await transporter.sendMail({
-      from: FROM,
-      to,
-      subject,
-      html,
-      text: text || subject,
-    });
-    console.log(`📧 Email sent: ${subject} → ${to} (${info.messageId})`);
-    return info;
+    // If SMTP_PASS is available, use Brevo HTTP API to bypass Render's outbound SMTP blocks
+    if (process.env.SMTP_PASS) {
+      let senderName = 'MantraAQ';
+      let senderEmail = 'hello@mantraaq.com';
+      const fromMatch = FROM.match(/^(.*?)\s*<(.*?)>$/);
+      if (fromMatch) {
+        senderName = fromMatch[1].trim();
+        senderEmail = fromMatch[2].trim();
+      }
+
+      const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+        method: 'POST',
+        headers: {
+          'accept': 'application/json',
+          'content-type': 'application/json',
+          'api-key': process.env.SMTP_PASS,
+        },
+        body: JSON.stringify({
+          sender: { name: senderName, email: senderEmail },
+          to: [{ email: to }],
+          subject,
+          htmlContent: html,
+          textContent: text || subject
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(`Brevo HTTP API error: ${JSON.stringify(errorData)}`);
+      }
+
+      const result = await response.json();
+      console.log(`📧 Email sent via Brevo HTTP API: ${subject} → ${to} (${result.messageId || 'No ID'})`);
+      return { messageId: result.messageId };
+    } else {
+      // Fallback to standard SMTP (e.g., local development without key)
+      const info = await transporter.sendMail({
+        from: FROM,
+        to,
+        subject,
+        html,
+        text: text || subject,
+      });
+      console.log(`📧 Email sent via SMTP: ${subject} → ${to} (${info.messageId})`);
+      return info;
+    }
   } catch (error) {
     console.error(`❌ Email failed: ${subject} → ${to}:`, error.message);
     return null;
