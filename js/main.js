@@ -4,13 +4,19 @@ document.addEventListener('DOMContentLoaded', function() {
     // ===== SMOOTH SCROLLING =====
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
+            const href = this.getAttribute('href');
+            if (href === '#') return;
             e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
-            if (target) {
-                target.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
+            try {
+                const target = document.querySelector(href);
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            } catch (err) {
+                console.warn('Smooth scroll invalid target:', href);
             }
         });
     });
@@ -747,10 +753,12 @@ if (window.innerWidth > 768) {
 
     /* Validation */
     let valid = true;
+    let errorMsg = '';
 
     if (!name) {
       markField('ct-name', false);
       valid = false;
+      errorMsg = 'Please enter your name.';
     } else {
       markField('ct-name', true);
     }
@@ -758,19 +766,25 @@ if (window.innerWidth > 768) {
     if (!email || !isValidEmail(email)) {
       markField('ct-email', false);
       valid = false;
+      errorMsg = errorMsg || 'Please enter a valid email address.';
     } else {
       markField('ct-email', true);
     }
 
-    if (!message || message.length < 10) {
+    if (!message) {
       markField('ct-message', false);
       valid = false;
+      errorMsg = errorMsg || 'Please enter your message.';
+    } else if (message.length < 10) {
+      markField('ct-message', false);
+      valid = false;
+      errorMsg = errorMsg || 'Message must be at least 10 characters long.';
     } else {
       markField('ct-message', true);
     }
 
     if (!valid) {
-      showStatus('⚠️ Please fill in all fields correctly.', 'err');
+      showStatus(`⚠️ ${errorMsg}`, 'err');
       return;
     }
 
@@ -780,22 +794,14 @@ if (window.innerWidth > 768) {
     ripple();
 
     try {
-      const response = await fetch('https://formspree.io/f/movlloyl', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify({
-          name:     name,
-          email:    email,
-          subject:  form.querySelector('#ct-subject')?.value || 'General Inquiry',
-          message:  message,
-          _subject: 'Contact Form - MantraAQ'
-        })
+      const result = await window.MantraaqAPI.submitContact({
+        name,
+        email,
+        subject: form.querySelector('#ct-subject')?.value || 'General Inquiry',
+        message
       });
 
-      if (response.ok) {
+      if (result && result.success) {
         showStatus('✅ Message sent! We\'ll get back to you within 24 hours.', 'ok');
         form.reset();
         if (charCount) charCount.textContent = '0 / 500';
@@ -806,15 +812,13 @@ if (window.innerWidth > 768) {
         }, 6000);
 
       } else {
-        const data = await response.json().catch(() => ({}));
-        const msg  = data?.errors?.[0]?.message || `Error ${response.status}`;
-        showStatus(`❌ ${msg}. Please try again.`, 'err');
+        showStatus(`❌ ${result.message || 'Failed to send message.'}`, 'err');
         setBtnText('Send Message');
       }
 
     } catch (err) {
       console.error('Contact fetch error:', err);
-      showStatus('❌ Network error. Please check your connection.', 'err');
+      showStatus(`❌ ${err.message || 'Network error. Please check your connection.'}`, 'err');
       setBtnText('Send Message');
     }
 
@@ -999,7 +1003,7 @@ if (window.innerWidth > 768) {
 
   function showStatus(msg, type) {
     // type: 'ok' | 'err'
-    status.textContent = msg;
+    status.innerHTML = msg;
     status.style.display     = 'block';
     status.style.opacity     = '1';
     status.style.transform   = 'none';
@@ -1022,7 +1026,7 @@ if (window.innerWidth > 768) {
   }
 
   function clearStatus() {
-    status.textContent   = '';
+    status.innerHTML     = '';
     status.style.display = 'none';
     status.style.padding = '0';
     status.style.border  = 'none';
@@ -1063,40 +1067,27 @@ if (window.innerWidth > 768) {
     setBtnText('Sending...');
 
     try {
-      const response = await fetch('https://formspree.io/f/mvgqbpro', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify({
-          email: email,
-          _subject: 'Newsletter Subscription - MantraAQ'
-        })
-      });
-
-      if (response.ok) {
-        showStatus('🎉 Subscribed! Welcome to the MantraAQ family.', 'ok');
-        form.reset();
-        setBtnText('✓ Done');
-        setTimeout(() => {
-          setBtnText('Subscribe');
-          clearStatus();
-        }, 1500);
-
-      } else {
-        const data = await response.json().catch(() => ({}));
-        const errMsg = (data.errors && data.errors[0] && data.errors[0].message)
-          ? data.errors[0].message
-          : `Error ${response.status}. Please try again.`;
-        showStatus('❌ ' + errMsg, 'err');
-        setBtnText('Subscribe');
+      if (!window.MantraaqAPI || !window.MantraaqAPI.subscribeNewsletter) {
+        throw new Error('Newsletter API helper is not initialized.');
       }
 
+      await window.MantraaqAPI.subscribeNewsletter(email);
+
+      showStatus('🎉 Thanks for subscribing!', 'ok');
+      form.reset();
+      setBtnText('✓ Done');
+      setTimeout(() => {
+        setBtnText('Subscribe');
+        clearStatus();
+      }, 2000);
+
     } catch (err) {
-      console.error('Newsletter fetch error:', err);
-      showStatus('❌ Network error. Check your connection.', 'err');
+      console.error('Newsletter subscribe error:', err);
+      showStatus('❌ ' + err.message, 'err');
       setBtnText('Subscribe');
+      setTimeout(() => {
+        clearStatus();
+      }, 5000);
     }
 
     setBtnState(false);
@@ -1390,4 +1381,426 @@ document.querySelectorAll('a[href^="https://"]').forEach(link => {
         // Optional: Add analytics tracking here
         console.log('Product link clicked:', this.href);
     });
+});
+
+// ===== PAYU CHECKOUT CALLBACK ROUTE HANDLE =====
+window.addEventListener('load', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const orderStatus = urlParams.get('order');
+    const orderId = urlParams.get('id');
+
+    if (orderStatus === 'success') {
+        // Clear local storage cart state
+        if (window.Cart) {
+            window.Cart.clear();
+            window.Cart.close();
+        }
+
+        // Create status overlay container
+        const overlay = document.createElement('div');
+        overlay.className = 'order-status-overlay';
+        
+        // Inject styles
+        if (!document.getElementById('order-status-styles')) {
+            const styles = `
+                .order-status-overlay {
+                    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                    background: rgba(10, 15, 12, 0.9); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+                    display: flex; align-items: center; justify-content: center; z-index: 100000;
+                    opacity: 0; transition: opacity 0.4s ease;
+                }
+                .order-status-overlay.active { opacity: 1; }
+                .order-status-card {
+                    background: #0e1612; border: 1px solid rgba(16, 185, 129, 0.15); border-radius: 24px;
+                    width: 92%; max-width: 500px; padding: 32px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+                    transform: scale(0.9); transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+                    color: #e2e8f0; font-family: 'Outfit', 'Inter', sans-serif; max-height: 90vh; overflow-y: auto;
+                    scrollbar-width: thin;
+                    scrollbar-color: #10b981 rgba(255, 255, 255, 0.02);
+                }
+                .order-status-card::-webkit-scrollbar {
+                    width: 8px;
+                    height: 8px;
+                }
+                .order-status-card::-webkit-scrollbar-track {
+                    background: rgba(255, 255, 255, 0.02);
+                    border-radius: 4px;
+                }
+                .order-status-card::-webkit-scrollbar-thumb {
+                    background: linear-gradient(to bottom, #10b981, #059669);
+                    border-radius: 4px;
+                    border: 1px solid rgba(255, 255, 255, 0.02);
+                }
+                .order-status-card::-webkit-scrollbar-thumb:hover {
+                    background: linear-gradient(to bottom, #4ade80, #10b981);
+                }
+                .order-status-overlay.active .order-status-card { transform: scale(1); }
+                .status-icon-wrapper { display: flex; justify-content: center; margin-bottom: 20px; }
+                .status-icon-circle {
+                    width: 72px; height: 72px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+                    animation: pulseSuccess 2s infinite;
+                }
+                .status-icon-success { background: rgba(16, 185, 129, 0.1); border: 2px solid #10b981; color: #10b981; }
+                .status-icon-failed { background: rgba(244, 63, 94, 0.1); border: 2px solid #f43f5e; color: #f43f5e; animation: none; }
+                .order-status-title { font-size: 24px; font-weight: 800; text-align: center; margin-bottom: 8px; color: #ffffff; letter-spacing: -0.5px; }
+                .order-status-desc { font-size: 14px; color: #94a3b8; text-align: center; margin-bottom: 24px; line-height: 1.5; }
+                .order-receipt-box { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 16px; padding: 20px; margin-bottom: 24px; font-size: 13px; }
+                .receipt-row { display: flex; justify-content: space-between; margin-bottom: 12px; color: #94a3b8; }
+                .receipt-row.total { border-top: 1px dashed rgba(255, 255, 255, 0.1); padding-top: 12px; margin-bottom: 0; color: #ffffff; font-weight: 700; font-size: 15px; }
+                .receipt-divider { height: 1px; background: rgba(255, 255, 255, 0.06); margin: 16px 0; }
+                .receipt-items-list { max-height: 140px; overflow-y: auto; margin-bottom: 8px; padding-right: 4px; scrollbar-width: thin; scrollbar-color: #10b981 rgba(255, 255, 255, 0.02); }
+                .receipt-items-list::-webkit-scrollbar { width: 8px; height: 8px; }
+                .receipt-items-list::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.02); border-radius: 4px; }
+                .receipt-items-list::-webkit-scrollbar-thumb { background: linear-gradient(to bottom, #10b981, #059669); border-radius: 4px; border: 1px solid rgba(255, 255, 255, 0.02); }
+                .receipt-items-list::-webkit-scrollbar-thumb:hover { background: linear-gradient(to bottom, #4ade80, #10b981); }
+                .receipt-item { display: flex; justify-content: space-between; margin-bottom: 8px; color: #e2e8f0; }
+                .status-buttons-group { display: flex; flex-direction: column; gap: 12px; }
+                .status-btn { width: 100%; padding: 14px; border-radius: 12px; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s ease; border: none; text-align: center; display: inline-block; text-decoration: none; }
+                .status-btn-primary { background: #10b981; color: #051a0e; }
+                .status-btn-primary:hover { background: #059669; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(16, 185, 129, 0.2); }
+                .status-btn-secondary { background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08); color: #ffffff; }
+                .status-btn-secondary:hover { background: rgba(255, 255, 255, 0.08); transform: translateY(-2px); }
+                .status-btn-danger { background: #f43f5e; color: #ffffff; }
+                .status-btn-danger:hover { background: #e11d48; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(244, 63, 94, 0.2); }
+                @keyframes pulseSuccess {
+                    0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+                    70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+                    100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+                }
+            `;
+            const styleEl = document.createElement('style');
+            styleEl.id = 'order-status-styles';
+            styleEl.innerHTML = styles;
+            document.head.appendChild(styleEl);
+        }
+
+        // Show generic loading state first
+        overlay.innerHTML = `
+            <div class="order-status-card">
+                <div class="status-icon-wrapper">
+                    <div class="status-icon-circle status-icon-success">
+                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+                    </div>
+                </div>
+                <h2 class="order-status-title">Order Confirmed!</h2>
+                <p class="order-status-desc">Thank you for your purchase. We are retrieving your order details...</p>
+                <div class="order-receipt-box" id="loadingReceiptBox" style="text-align: center; padding: 30px 0;">
+                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-500 mx-auto" style="animation: spin 1s linear infinite; border-top-color: transparent;"></div>
+                </div>
+                <div class="status-buttons-group">
+                    <button class="status-btn status-btn-primary" id="btnContinueShopping">Continue Shopping</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(overlay);
+        
+        // Trigger animation
+        setTimeout(() => overlay.classList.add('active'), 50);
+
+        // Fetch actual order details using window.MantraaqAPI.getOrderById
+        let orderFetched = null;
+        if (window.MantraaqAPI && typeof window.MantraaqAPI.getOrderById === 'function') {
+            window.MantraaqAPI.getOrderById(orderId)
+                .then((data) => {
+                    orderFetched = data;
+                    renderReceiptDetails(overlay, data);
+                })
+                .catch((err) => {
+                    console.error('Failed to fetch order details:', err);
+                    renderReceiptFallback(overlay, orderId);
+                });
+        } else {
+            renderReceiptFallback(overlay, orderId);
+        }
+
+        // Button events
+        overlay.addEventListener('click', function(e) {
+            if (e.target.id === 'btnContinueShopping') {
+                closeOverlay(overlay);
+            } else if (e.target.id === 'btnViewProfile' || e.target.id === 'btnProfileRedirect') {
+                closeOverlay(overlay);
+                if (window.CustomerAuth) {
+                    setTimeout(() => window.CustomerAuth.open(), 300);
+                }
+            }
+        });
+
+        // Clean up URL parameters
+        const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+        window.history.replaceState({ path: cleanUrl }, '', cleanUrl);
+
+    } else if (orderStatus === 'failed') {
+        // Create status overlay container for failure
+        const overlay = document.createElement('div');
+        overlay.className = 'order-status-overlay';
+        
+        // Inject styles
+        if (!document.getElementById('order-status-styles')) {
+            const styles = `
+                .order-status-overlay {
+                    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                    background: rgba(10, 15, 12, 0.9); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+                    display: flex; align-items: center; justify-content: center; z-index: 100000;
+                    opacity: 0; transition: opacity 0.4s ease;
+                }
+                .order-status-overlay.active { opacity: 1; }
+                .order-status-card {
+                    background: #0e1612; border: 1px solid rgba(16, 185, 129, 0.15); border-radius: 24px;
+                    width: 92%; max-width: 500px; padding: 32px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+                    transform: scale(0.9); transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+                    color: #e2e8f0; font-family: 'Outfit', 'Inter', sans-serif; max-height: 90vh; overflow-y: auto;
+                }
+                .order-status-overlay.active .order-status-card { transform: scale(1); }
+                .status-icon-wrapper { display: flex; justify-content: center; margin-bottom: 20px; }
+                .status-icon-circle {
+                    width: 72px; height: 72px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+                }
+                .status-icon-success { background: rgba(16, 185, 129, 0.1); border: 2px solid #10b981; color: #10b981; }
+                .status-icon-failed { background: rgba(244, 63, 94, 0.1); border: 2px solid #f43f5e; color: #f43f5e; animation: none; }
+                .order-status-title { font-size: 24px; font-weight: 800; text-align: center; margin-bottom: 8px; color: #ffffff; letter-spacing: -0.5px; }
+                .order-status-desc { font-size: 14px; color: #94a3b8; text-align: center; margin-bottom: 24px; line-height: 1.5; }
+                .order-receipt-box { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 16px; padding: 20px; margin-bottom: 24px; font-size: 13px; }
+                .receipt-row { display: flex; justify-content: space-between; margin-bottom: 12px; color: #94a3b8; }
+                .receipt-row.total { border-top: 1px dashed rgba(255, 255, 255, 0.1); padding-top: 12px; margin-bottom: 0; color: #ffffff; font-weight: 700; font-size: 15px; }
+                .receipt-divider { height: 1px; background: rgba(255, 255, 255, 0.06); margin: 16px 0; }
+                .status-buttons-group { display: flex; flex-direction: column; gap: 12px; }
+                .status-btn { width: 100%; padding: 14px; border-radius: 12px; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s ease; border: none; text-align: center; display: inline-block; text-decoration: none; }
+                .status-btn-primary { background: #10b981; color: #051a0e; }
+                .status-btn-primary:hover { background: #059669; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(16, 185, 129, 0.2); }
+                .status-btn-secondary { background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08); color: #ffffff; }
+                .status-btn-secondary:hover { background: rgba(255, 255, 255, 0.08); transform: translateY(-2px); }
+                .status-btn-danger { background: #f43f5e; color: #ffffff; }
+                .status-btn-danger:hover { background: #e11d48; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(244, 63, 94, 0.2); }
+            `;
+            const styleEl = document.createElement('style');
+            styleEl.id = 'order-status-styles';
+            styleEl.innerHTML = styles;
+            document.head.appendChild(styleEl);
+        }
+
+        overlay.innerHTML = `
+            <div class="order-status-card" style="border-color: rgba(244, 63, 94, 0.15)">
+                <div class="status-icon-wrapper">
+                    <div class="status-icon-circle status-icon-failed">
+                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </div>
+                </div>
+                <h2 class="order-status-title" style="color: #f43f5e">Payment Unsuccessful</h2>
+                <p class="order-status-desc">We couldn't process your payment. Don't worry, your order is pending and your items are still saved safely in your cart.</p>
+                
+                <div class="order-receipt-box">
+                    <div class="receipt-row" style="margin-bottom: 0; justify-content: center; font-weight: 500;">
+                        <span>Your items are reserved and waiting.</span>
+                    </div>
+                </div>
+
+                <div class="status-buttons-group">
+                    <button class="status-btn status-btn-danger" id="btnTryPaymentAgain">Try Payment Again</button>
+                    <button class="status-btn status-btn-secondary" id="btnSwitchToCod">Choose Cash on Delivery (COD)</button>
+                    <button class="status-btn status-btn-secondary" id="btnCancelStatus">Cancel</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(overlay);
+        
+        // Trigger animation
+        setTimeout(() => overlay.classList.add('active'), 50);
+
+        overlay.addEventListener('click', function(e) {
+            if (e.target.id === 'btnTryPaymentAgain') {
+                closeOverlay(overlay);
+                if (window.Cart) {
+                    setTimeout(() => window.Cart.open(), 300);
+                }
+            } else if (e.target.id === 'btnSwitchToCod') {
+                closeOverlay(overlay);
+                if (window.Cart) {
+                    setTimeout(() => {
+                        window.Cart.open();
+                        // Automatically select COD in cart checkout
+                        const codRadio = document.getElementById('payCod');
+                        if (codRadio) {
+                            codRadio.checked = true;
+                            // Trigger payment method change listener
+                            const event = new Event('change');
+                            codRadio.dispatchEvent(event);
+                        }
+                    }, 300);
+                }
+            } else if (e.target.id === 'btnCancelStatus') {
+                closeOverlay(overlay);
+            }
+        });
+
+        // Clean up URL parameters
+        const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+        window.history.replaceState({ path: cleanUrl }, '', cleanUrl);
+    }
+});
+
+function renderReceiptDetails(overlay, order) {
+    const loader = document.getElementById('loadingReceiptBox');
+    if (loader) loader.remove();
+
+    const card = overlay.querySelector('.order-status-card');
+    const buttonsGroup = overlay.querySelector('.status-buttons-group');
+
+    // Build items list HTML
+    let itemsHtml = '';
+    if (order.orderLineItems && order.orderLineItems.length > 0) {
+        itemsHtml = `
+            <div class="receipt-items-list">
+                ${order.orderLineItems.map(item => `
+                    <div class="receipt-item">
+                        <span>${item.productName || item.variant?.product?.name || 'MantraAQ Item'} x ${item.quantity}</span>
+                        <span>₹${(item.priceAtPurchase * item.quantity).toFixed(0)}</span>
+                    </div>
+                `).join('')}
+            </div>
+            <div class="receipt-divider"></div>
+        `;
+    }
+
+    // Determine shipping address name
+    let name = order.shippingAddress?.name || 'Customer';
+    let payMethodText = (order.paymentId?.toLowerCase().startsWith('cod') || order.shippingAddress?.paymentMethod === 'COD') ? 'Cash on Delivery (COD)' : 'Paid Online (PayU)';
+
+    const receiptBox = document.createElement('div');
+    receiptBox.className = 'order-receipt-box';
+    receiptBox.innerHTML = `
+        <div class="receipt-row">
+            <span>Order Reference</span>
+            <span style="color: #ffffff; font-family: monospace; font-weight: bold;">#${order.id.slice(0, 8).toUpperCase()}</span>
+        </div>
+        <div class="receipt-row">
+            <span>Payment Method</span>
+            <span style="color: #ffffff; font-weight: 500;">${payMethodText}</span>
+        </div>
+        <div class="receipt-row">
+            <span>Deliver To</span>
+            <span style="color: #ffffff; font-weight: 500;">${name}</span>
+        </div>
+        <div class="receipt-divider"></div>
+        ${itemsHtml}
+        <div class="receipt-row total">
+            <span>Paid Amount</span>
+            <span style="color: #10b981;">₹${order.totalAmount.toFixed(0)}</span>
+        </div>
+    `;
+
+    // Insert receipt before buttons group
+    card.insertBefore(receiptBox, buttonsGroup);
+
+    // Update title/desc to feel personal
+    const title = card.querySelector('.order-status-title');
+    const desc = card.querySelector('.order-status-desc');
+    title.textContent = "Payment Successful!";
+    desc.innerHTML = `Thank you for your order, <strong>${name}</strong>!<br>A confirmation email has been dispatched to <strong>${order.shippingAddress?.email || order.user?.email || 'your email'}</strong>.`;
+
+    // Update buttons to show view profile
+    buttonsGroup.innerHTML = `
+        <button class="status-btn status-btn-primary" id="btnViewProfile">View Order History</button>
+        <button class="status-btn status-btn-secondary" id="btnContinueShopping">Continue Shopping</button>
+    `;
+}
+
+function renderReceiptFallback(overlay, orderId) {
+    const loader = document.getElementById('loadingReceiptBox');
+    if (loader) loader.remove();
+
+    const card = overlay.querySelector('.order-status-card');
+    const buttonsGroup = overlay.querySelector('.status-buttons-group');
+
+    const receiptBox = document.createElement('div');
+    receiptBox.className = 'order-receipt-box';
+    receiptBox.innerHTML = `
+        <div class="receipt-row">
+            <span>Order Reference</span>
+            <span style="color: #ffffff; font-family: monospace; font-weight: bold;">#${orderId.slice(0, 8).toUpperCase()}</span>
+        </div>
+        <div class="receipt-divider"></div>
+        <div class="receipt-row" style="margin-bottom: 0; justify-content: center; text-align: center;">
+            <span>Please log in to your account to view your order details, download invoices, and track shipment progress.</span>
+        </div>
+    `;
+
+    card.insertBefore(receiptBox, buttonsGroup);
+
+    // Update buttons group to show profile redirection (which will open login panel if not logged in)
+    buttonsGroup.innerHTML = `
+        <button class="status-btn status-btn-primary" id="btnProfileRedirect">Log In to Track Order</button>
+        <button class="status-btn status-btn-secondary" id="btnContinueShopping">Continue Shopping</button>
+    `;
+}
+
+function closeOverlay(overlay) {
+    overlay.classList.remove('active');
+    setTimeout(() => overlay.remove(), 400);
+}
+
+// ========================================
+// KEYBOARD ARROW SCROLLING FOR OVERLAYS
+// ========================================
+window.addEventListener('keydown', function(e) {
+    // Skip if user is typing/interacting with an input field
+    const activeEl = document.activeElement;
+    const isInput = activeEl && (
+        ['INPUT', 'TEXTAREA', 'SELECT'].includes(activeEl.tagName) ||
+        activeEl.isContentEditable
+    );
+    if (isInput) return;
+
+    const isUp = e.key === 'ArrowUp';
+    const isDown = e.key === 'ArrowDown';
+    if (!isUp && !isDown) return;
+
+    let scrollTarget = null;
+
+    // 1. Order Status Success/Failure Overlay
+    const statusOverlay = document.querySelector('.order-status-overlay.active');
+    if (statusOverlay) {
+        scrollTarget = statusOverlay.querySelector('.receipt-items-list') || statusOverlay.querySelector('.order-status-card');
+    }
+
+    // 2. Auth/Profile Overlay
+    if (!scrollTarget) {
+        const authOverlay = document.querySelector('.auth-overlay.active');
+        if (authOverlay) {
+            scrollTarget = authOverlay.querySelector('.auth-body');
+        }
+    }
+
+    // 3. Cart Overlay
+    if (!scrollTarget) {
+        const cartOverlay = document.querySelector('.cart-overlay.active');
+        if (cartOverlay) {
+            scrollTarget = cartOverlay.querySelector('.cart-body-scrollable');
+        }
+    }
+
+    // 4. Wishlist Overlay
+    if (!scrollTarget) {
+        const wlOverlay = document.querySelector('.wl-overlay.active');
+        if (wlOverlay) {
+            scrollTarget = wlOverlay.querySelector('.wl-items-list');
+        }
+    }
+
+    // 5. Search Results visible
+    if (!scrollTarget) {
+        const searchResults = document.querySelector('.search-results.visible');
+        if (searchResults) {
+            scrollTarget = searchResults;
+        }
+    }
+
+    // If an active scrollable overlay was found, scroll it and prevent default page behavior
+    if (scrollTarget) {
+        e.preventDefault();
+        const scrollAmount = 80; // Elegant scroll step
+        scrollTarget.scrollBy({
+            top: isUp ? -scrollAmount : scrollAmount,
+            behavior: 'smooth'
+        });
+    }
 });
