@@ -460,6 +460,45 @@ async function syncProductCards() {
     }
   });
 
+  // Inject Product Schema Markup dynamically for Search Engine Crawlers
+  try {
+    const existingSchema = document.getElementById('dynamic-product-schema');
+    if (existingSchema) existingSchema.remove();
+
+    const schemas = activeProducts.map(product => {
+      const defaultVariant = product.variants[0];
+      const imageFallback = LOCAL_IMAGE_FALLBACK[product.handle] || ['assets/images/placeholder.png'];
+      const galleryImages = product.images && product.images.length > 0 ? product.images : imageFallback;
+      const imagesResolved = galleryImages.map(imgUrl => window.MantraaqAPI.resolveImageUrl(imgUrl));
+      const inStock = product.variants.some(v => v.stockQuantity > 0);
+
+      return {
+        "@context": "https://schema.org",
+        "@type": "Product",
+        "name": product.name,
+        "description": product.description || `Premium quality ${product.name} from MantraAQ.`,
+        "image": imagesResolved,
+        "sku": defaultVariant.sku || product.handle,
+        "offers": {
+          "@type": "Offer",
+          "url": window.location.href,
+          "priceCurrency": "INR",
+          "price": defaultVariant.price,
+          "availability": inStock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+          "priceValidUntil": "2030-12-31"
+        }
+      };
+    });
+
+    const script = document.createElement('script');
+    script.id = 'dynamic-product-schema';
+    script.type = 'application/ld+json';
+    script.text = JSON.stringify(schemas);
+    document.head.appendChild(script);
+  } catch (schemaErr) {
+    console.warn('Failed to inject product schemas:', schemaErr);
+  }
+
   // Dispatch global event for other modules (wishlist, search) to notice load
   window.dispatchEvent(new CustomEvent('storefront:synced'));
 
