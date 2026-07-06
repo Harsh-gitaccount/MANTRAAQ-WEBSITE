@@ -18,6 +18,9 @@ const wishlistRoutes = require('./routes/wishlistRoutes');
 
 const app = express();
 
+// Trust proxy for rate-limiting behind Render/Cloudflare proxy
+app.set('trust proxy', 1);
+
 // Serve uploads folder statically
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
