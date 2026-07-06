@@ -9,10 +9,11 @@ import {
   Users,
   LogOut, 
   User,
-  Mail
+  Mail,
+  X
 } from 'lucide-react';
 
-export default function Sidebar() {
+export default function Sidebar({ isOpen, onClose }) {
   const { user, logout } = useAuth();
   const location = useLocation();
 
@@ -26,12 +27,21 @@ export default function Sidebar() {
   ];
 
   return (
-    <aside className="w-64 bg-slate-900 text-slate-100 flex flex-col h-screen sticky top-0 border-r border-slate-800">
+    <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-slate-900 text-slate-100 flex flex-col h-screen border-r border-slate-800 transition-transform duration-200 ease-in-out transform md:sticky md:top-0 md:translate-x-0 ${
+      isOpen ? 'translate-x-0' : '-translate-x-full'
+    }`}>
       {/* Brand Header */}
-      <div className="p-6 border-b border-slate-800 flex items-center gap-3">
+      <div className="p-6 border-b border-slate-800 flex items-center justify-between gap-3">
         <span className="text-2xl font-bold bg-gradient-to-r from-emerald-400 to-green-500 bg-clip-text text-transparent">
           MantraAQ Admin
         </span>
+        <button
+          onClick={onClose}
+          className="p-1 text-slate-400 hover:text-slate-200 md:hidden rounded-lg hover:bg-slate-800"
+          aria-label="Close sidebar"
+        >
+          <X className="w-5 h-5" />
+        </button>
       </div>
 
       {/* Navigation Menu */}

@@ -206,7 +206,7 @@ export default function Orders() {
   };
 
   return (
-    <div className="flex-1 bg-slate-50 min-h-screen p-8 text-slate-800">
+    <div className="flex-1 bg-slate-50 min-h-screen p-4 md:p-8 text-slate-800">
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-slate-900 m-0">Orders Fulfillments</h1>

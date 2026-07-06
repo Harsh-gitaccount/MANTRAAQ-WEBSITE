@@ -60,7 +60,7 @@ export default function Dashboard() {
 
   if (error) {
     return (
-      <div className="flex-1 p-8 bg-slate-50 min-h-screen">
+      <div className="flex-1 p-4 md:p-8 bg-slate-50 min-h-screen">
         <div className="max-w-4xl mx-auto bg-rose-50 border border-rose-200 text-rose-700 p-6 rounded-xl">
           <h2 className="text-xl font-bold flex items-center gap-2 mb-2">
             <AlertTriangle className="w-6 h-6" /> System Error
@@ -104,7 +104,7 @@ export default function Dashboard() {
   }));
 
   return (
-    <div className="flex-1 bg-slate-50 min-h-screen p-8 text-slate-800">
+    <div className="flex-1 bg-slate-50 min-h-screen p-4 md:p-8 text-slate-800">
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>

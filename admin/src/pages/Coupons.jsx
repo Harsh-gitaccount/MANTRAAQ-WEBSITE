@@ -167,7 +167,7 @@ export default function Coupons() {
   };
 
   return (
-    <div className="flex-1 bg-slate-50 min-h-screen p-8 text-slate-800">
+    <div className="flex-1 bg-slate-50 min-h-screen p-4 md:p-8 text-slate-800">
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
@@ -194,7 +194,7 @@ export default function Coupons() {
           <p className="text-sm mt-1">Get started by clicking the "Create Coupon" button.</p>
         </div>
       ) : (
-        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="border-b border-slate-100 text-slate-400 text-xs uppercase font-semibold tracking-wider bg-slate-50/50">

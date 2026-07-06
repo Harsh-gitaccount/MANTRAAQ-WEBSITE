@@ -81,7 +81,7 @@ export default function Customers() {
   };
 
   return (
-    <div className="flex-1 bg-slate-50 min-h-screen p-8 text-slate-800">
+    <div className="flex-1 bg-slate-50 min-h-screen p-4 md:p-8 text-slate-800">
       {/* Header */}
       <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
@@ -117,7 +117,7 @@ export default function Customers() {
         </div>
       ) : (
         <div className="space-y-4">
-          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="border-b border-slate-100 text-slate-400 text-xs uppercase font-semibold tracking-wider bg-slate-50/50">
