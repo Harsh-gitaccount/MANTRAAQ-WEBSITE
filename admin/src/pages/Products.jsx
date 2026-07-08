@@ -112,10 +112,9 @@ export default function Products() {
   };
 
   const handleToggleTag = (tagKey) => {
+    // Restrict to maximum 1 badge to prevent overlapping UI bugs on the storefront
     setSelectedTags(prev =>
-      prev.includes(tagKey)
-        ? prev.filter(t => t !== tagKey)
-        : [...prev, tagKey]
+      prev.includes(tagKey) ? [] : [tagKey]
     );
   };
 

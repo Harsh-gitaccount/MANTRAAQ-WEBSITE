@@ -82,15 +82,15 @@ function buildFeatureTags(product) {
  */
 function buildBadgeHTML(product) {
   const tags = product.tags || [];
-  let html = '';
-  tags.forEach(tag => {
-    const tagKey = tag.toLowerCase().replace(/\s+/g, '-');
+  for (let i = 0; i < tags.length; i++) {
+    const tagKey = tags[i].toLowerCase().replace(/\s+/g, '-');
     const mapped = TAG_BADGE_MAP[tagKey];
     if (mapped) {
-      html += `<div class="product-badge ${mapped.cls}">${mapped.label}</div>`;
+      // Return only the first matched badge to completely prevent stacking bugs
+      return `<div class="product-badge ${mapped.cls}">${mapped.label}</div>`;
     }
-  });
-  return html;
+  }
+  return '';
 }
 
 /**
