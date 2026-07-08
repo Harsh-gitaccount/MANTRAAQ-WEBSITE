@@ -113,6 +113,12 @@ exports.createPaymentOrder = async (req, res) => {
           throw new Error(`Product "${product.name}" is currently unavailable/hidden and cannot be purchased.`);
         }
 
+        // Block checkout for "Coming Soon" products (server-side enforcement)
+        const productTags = (product.tags || []).map(t => t.toLowerCase().replace(/\s+/g, '-'));
+        if (productTags.includes('coming-soon')) {
+          throw new Error(`Product "${product.name}" is coming soon and cannot be purchased yet.`);
+        }
+
         if (variant.stockQuantity < item.quantity) {
           throw new Error(
             `Out of stock: Only ${variant.stockQuantity} remaining for ${product.name} (${variant.title}).`,
@@ -802,9 +808,18 @@ exports.getActiveCoupons = async (req, res) => {
       });
     }
 
+    // Only return customer-facing fields — strip internal metadata
+    const safeCoupons = activeCoupons.map(c => ({
+      code: c.code,
+      discountType: c.discountType,
+      discountValue: c.discountValue,
+      minOrderAmount: c.minOrderAmount,
+      expiresAt: c.expiresAt,
+    }));
+
     res.status(200).json({
       success: true,
-      coupons: activeCoupons
+      coupons: safeCoupons
     });
   } catch (error) {
     console.error('Get Active Coupons Error:', error);

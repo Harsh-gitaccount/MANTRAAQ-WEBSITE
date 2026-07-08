@@ -322,7 +322,7 @@ async function syncProductCards() {
           <!-- Product Image Gallery -->
           <div class="product-gallery">
             ${galleryImages.map((imgUrl, idx) => `
-              <img src="${window.MantraaqAPI.resolveImageUrl(imgUrl)}" alt="${product.name}" class="product-img ${idx === 0 ? 'active' : ''}" data-index="${idx}">
+              <img src="${MantraAQSanitizeURL(window.MantraaqAPI.resolveImageUrl(imgUrl))}" alt="${MantraAQSanitize(product.name)}" class="product-img ${idx === 0 ? 'active' : ''}" data-index="${idx}">
             `).join('')}
           </div>
 
@@ -348,10 +348,10 @@ async function syncProductCards() {
 
         <div class="product-content">
           <div class="product-header">
-              <h3 class="product-title">${product.name}</h3>
+              <h3 class="product-title">${MantraAQSanitize(product.name)}</h3>
           </div>
 
-          <p class="product-description">${product.description || ''}</p>
+          <p class="product-description">${MantraAQSanitize(product.description || '')}</p>
 
           <!-- Dynamic feature badges -->
           <div class="product-features">

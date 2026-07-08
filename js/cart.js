@@ -1654,11 +1654,11 @@ const Cart = {
 
       return `
       <div class="cart-item">
-        <img src="${finalSrc}" alt="${item.name}" class="cart-item-img" onerror="this.src='https://placehold.co/100?text=MantraAQ'" />
+        <img src="${MantraAQSanitizeURL(finalSrc)}" alt="${MantraAQSanitize(item.name)}" class="cart-item-img" onerror="this.src='https://placehold.co/100?text=MantraAQ'" />
         <div class="cart-item-details">
           <div>
-            <h4 class="cart-item-title">${item.name}</h4>
-            <p class="cart-item-variant">Pack: ${item.title}</p>
+            <h4 class="cart-item-title">${MantraAQSanitize(item.name)}</h4>
+            <p class="cart-item-variant">Pack: ${MantraAQSanitize(item.title)}</p>
           </div>
           <div class="cart-item-row">
             <div class="qty-selectors">
@@ -1882,7 +1882,7 @@ const Cart = {
       return `
         <div class="${cardClass}" style="${disabledStyle}" onclick="${satisfiesMin ? `Cart.selectCoupon('${c.code}')` : ''}">
           <div class="coupon-card-header">
-            <span class="coupon-code-badge">${c.code}</span>
+            <span class="coupon-code-badge">${MantraAQSanitize(c.code)}</span>
             <span class="coupon-apply-action">${actionText}</span>
           </div>
           <div class="coupon-card-desc">${desc}</div>
@@ -1921,7 +1921,7 @@ const Cart = {
     listEl.innerHTML = this.items.map(item => {
       return `
         <div class="checkout-summary-item">
-          <span class="checkout-summary-item-name">${item.name}</span>
+          <span class="checkout-summary-item-name">${MantraAQSanitize(item.name)}</span>
           <span class="checkout-summary-item-qty">x${item.quantity}</span>
           <span class="checkout-summary-item-price">₹${(item.price * item.quantity).toFixed(0)}</span>
         </div>

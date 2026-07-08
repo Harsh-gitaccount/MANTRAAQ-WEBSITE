@@ -842,7 +842,7 @@
             <select class="wl-item-variant-select" data-wl-variant-select="${item.productId}">
               ${product.variants.map((v, idx) => `
                 <option value="${v.id}" data-price="${v.price}" data-compare="${v.compareAtPrice || ''}" ${idx === 0 ? 'selected' : ''}>
-                  ${v.title} - ₹${parseFloat(v.price).toFixed(0)}
+                  ${MantraAQSanitize(v.title)} - ₹${parseFloat(v.price).toFixed(0)}
                 </option>
               `).join('')}
             </select>
@@ -876,11 +876,11 @@
 
       return `
         <div class="wl-item" data-product-id="${item.productId}">
-          <img src="${imgSrc}" alt="${item.name}" class="wl-item-img"
+          <img src="${MantraAQSanitizeURL(imgSrc)}" alt="${MantraAQSanitize(item.name)}" class="wl-item-img"
                onerror="this.src='https://placehold.co/100x100/07170c/4ade80?text=MantraAQ'" />
           <div class="wl-item-details">
             <div>
-              <h4 class="wl-item-name">${item.name}</h4>
+              <h4 class="wl-item-name">${MantraAQSanitize(item.name)}</h4>
               ${variantSelectHtml}
               <div class="wl-item-price-row">
                 <span class="wl-item-price">${priceStr}</span>

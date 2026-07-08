@@ -1306,7 +1306,7 @@ const CustomerAuth = {
         // Details Inner items
         const itemsHtml = order.orderLineItems.map(item => `
           <div class="order-item-detail-row">
-            <span>${item.productName || 'Product'}${item.variantTitle ? ` <span class="order-item-qty">(${item.variantTitle})</span>` : ''} <span class="order-item-qty">x${item.quantity}</span></span>
+            <span>${MantraAQSanitize(item.productName || 'Product')}${item.variantTitle ? ` <span class="order-item-qty">(${MantraAQSanitize(item.variantTitle)})</span>` : ''} <span class="order-item-qty">x${item.quantity}</span></span>
             <span class="order-item-price">₹${(item.priceAtPurchase * item.quantity).toFixed(0)}</span>
           </div>
         `).join('');
@@ -1314,10 +1314,10 @@ const CustomerAuth = {
         // Parse Address
         const address = order.shippingAddress || {};
         const addressStr = `
-          <strong>${address.name || 'Recipient'}</strong><br>
-          ${address.street || ''}<br>
-          ${address.city || ''}, ${address.state || ''} - ${address.postalCode || ''}<br>
-          Phone: ${address.phone || ''}
+          <strong>${MantraAQSanitize(address.name || 'Recipient')}</strong><br>
+          ${MantraAQSanitize(address.street || '')}<br>
+          ${MantraAQSanitize(address.city || '')}, ${MantraAQSanitize(address.state || '')} - ${MantraAQSanitize(address.postalCode || '')}<br>
+          Phone: ${MantraAQSanitize(address.phone || '')}
         `;
 
         // Payment Method Text

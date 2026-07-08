@@ -23,7 +23,7 @@
       "logo": "https://www.mantraaq.com/images/logo.png",
       "contactPoint": {
         "@type": "ContactPoint",
-        "email": "support@mantraaq.com",
+        "email": "hello@mantraaq.com",
         "contactType": "customer service",
         "areaServed": "IN",
         "availableLanguage": "en"
@@ -70,11 +70,11 @@
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://www.mantraaq.com/">
+    <meta property="og:url" content="https://mantraaq.com/">
     <meta property="og:title" content="MantraAQ - Premium Singhara Snacks & Flour | Healthy Gluten-Free Superfood">
     <meta property="og:description"
         content="Cold-processed singhara snacks & flour from Bihar. Diabetic-friendly, gluten-free superfoods with QR traceability. Empowering farmers while delivering nutrition.">
-    <meta property="og:image" content="https://www.mantraaq.com/assets/images/og-image.jpg">
+    <meta property="og:image" content="https://mantraaq.com/assets/images/og-image.jpg">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta property="og:site_name" content="MantraAQ">
@@ -108,7 +108,7 @@
 
 
     <!-- Canonical URL -->
-    <link rel="canonical" href="https://www.mantraaq.com/">
+    <link rel="canonical" href="https://mantraaq.com/">
 
     <!-- Language and Alternate Languages -->
     <link rel="alternate" href="https://www.mantraaq.com/" hreflang="en-in">
@@ -1251,7 +1251,7 @@
           </div>
           <!-- Floating stat on photo -->
           <div class="ev-float-stat">
-            <span class="ev-float-num" data-target="200" data-suffix="+">0+</span>
+            <span class="ev-float-num" data-target="200" data-suffix="+">200+</span>
             <span class="ev-float-label">Conversations</span>
           </div>
         </div>
@@ -1284,7 +1284,7 @@
         <!-- Mini stats row -->
         <div class="ev-mini-stats" data-ev-rev data-ev-delay="240">
           <div class="ev-ms">
-            <span class="ev-ms-num" data-target="50" data-suffix="+">0+</span>
+            <span class="ev-ms-num" data-target="50" data-suffix="+">50+</span>
             <span class="ev-ms-label">Samples Tested</span>
           </div>
           <div class="ev-ms-sep"></div>
@@ -2043,7 +2043,7 @@
               </a>
             </li>
             <li>
-              <a href="https://www.mantraaq.in/"
+              <a href="https://mantraaq.com/"
                  target="_blank" rel="noopener">
                 <span class="ft-contact-icon">
                   <svg viewBox="0 0 24 24" fill="none"
@@ -2146,6 +2146,7 @@
 
 
 
+    <script src="js/sanitize.js"></script>
     <script src="js/toast.js"></script>
     <script src="js/api.js"></script>
     <script src="js/cart.js"></script>
@@ -2154,6 +2155,18 @@
     <script src="js/search.js"></script>
     <script src="js/wishlist.js"></script>
     <script src="js/main.js"></script>
+
+    <!-- Cookie Consent Banner -->
+    <div id="maq-cookie-banner" style="display:none; position:fixed; bottom:0; left:0; right:0; z-index:99999; background:rgba(15,23,42,0.97); backdrop-filter:blur(12px); padding:14px 20px; border-top:1px solid rgba(255,255,255,0.08); font-family:'Inter',system-ui,sans-serif;">
+      <div style="max-width:1200px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;">
+        <p style="color:#cbd5e1; font-size:13px; margin:0; line-height:1.5; flex:1; min-width:240px;">We use cookies and analytics to improve your experience. By continuing to browse, you agree to our <a href="/privacy-policy.html" style="color:#60a5fa; text-decoration:underline;">Privacy Policy</a>.</p>
+        <div style="display:flex; gap:10px; flex-shrink:0;">
+          <button onclick="document.getElementById('maq-cookie-banner').style.display='none'; localStorage.setItem('maq_cookie_ok','1');" style="background:linear-gradient(135deg,#3b82f6,#2563eb); color:#fff; border:none; padding:8px 20px; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer; transition:transform 0.15s;">Accept</button>
+          <button onclick="document.getElementById('maq-cookie-banner').style.display='none'; localStorage.setItem('maq_cookie_ok','1');" style="background:transparent; color:#94a3b8; border:1px solid rgba(148,163,184,0.3); padding:8px 16px; border-radius:8px; font-size:12px; cursor:pointer;">Dismiss</button>
+        </div>
+      </div>
+    </div>
+    <script>if(!localStorage.getItem('maq_cookie_ok')){document.getElementById('maq-cookie-banner').style.display='block';}</script>
 </body>
 
 </html>

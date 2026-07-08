@@ -1695,7 +1695,7 @@ function renderReceiptDetails(overlay, order) {
     const title = card.querySelector('.order-status-title');
     const desc = card.querySelector('.order-status-desc');
     title.textContent = "Payment Successful!";
-    desc.innerHTML = `Thank you for your order, <strong>${name}</strong>!<br>A confirmation email has been dispatched to <strong>${order.shippingAddress?.email || order.user?.email || 'your email'}</strong>.`;
+    desc.innerHTML = `Thank you for your order, <strong>${MantraAQSanitize(name)}</strong>!<br>A confirmation email has been dispatched to <strong>${MantraAQSanitize(order.shippingAddress?.email || order.user?.email || 'your email')}</strong>.`;
 
     // Update buttons to show view profile
     buttonsGroup.innerHTML = `
