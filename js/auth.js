@@ -1289,11 +1289,11 @@ const CustomerAuth = {
           cancelBtn = `<button class="order-cancel-btn" onclick="event.stopPropagation(); CustomerAuth.cancelCustomerOrder('${order.id}')">Cancel Order</button>`;
         } else if (order.status === 'DISPATCHED' || order.status === 'DELIVERED') {
           cancelBtn = `<div style="text-align: center; margin-top: 16px; font-size: 11.5px; color: #64748b; font-style: italic; border-top: 1px dashed rgba(255,255,255,0.06); padding-top: 12px; width: 100%;">
-             Need to cancel or return? Contact support at <a href="mailto:support@mantraaq.com" style="color: #4ade80; text-decoration: none; font-weight: 500;">support@mantraaq.com</a>
+             Need to cancel or return? Contact support at <a href="mailto:hello@mantraaq.com" style="color: #4ade80; text-decoration: none; font-weight: 500;">hello@mantraaq.com</a>
            </div>`;
         } else if ((order.status === 'CANCELLED' || order.status === 'REFUNDED') && !isCod) {
           cancelBtn = `<div style="text-align: center; margin-top: 16px; font-size: 11.5px; color: #64748b; font-style: italic; border-top: 1px dashed rgba(255,255,255,0.06); padding-top: 12px; width: 100%;">
-             Online refund initiated. For support, email <a href="mailto:support@mantraaq.com" style="color: #4ade80; text-decoration: none; font-weight: 500;">support@mantraaq.com</a>
+             Online refund initiated. For support, email <a href="mailto:hello@mantraaq.com" style="color: #4ade80; text-decoration: none; font-weight: 500;">hello@mantraaq.com</a>
            </div>`;
         }
 

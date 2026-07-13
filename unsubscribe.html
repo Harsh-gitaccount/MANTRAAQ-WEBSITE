@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unsubscribe | MantraAQ</title>
+    <meta name="description" content="Manage your email preferences and unsubscribe from the MantraAQ newsletter.">
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ── Reset & Base ── */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a;
+            color: #e2e8f0;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        /* ── Main Card ── */
+        .unsubscribe-card {
+            width: 100%;
+            max-width: 480px;
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 40px 32px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+            backdrop-filter: blur(16px);
+            text-align: center;
+        }
+
+        .logo {
+            margin-bottom: 24px;
+        }
+
+        .logo img {
+            height: 38px;
+        }
+
+        h1 {
+            font-size: 1.75rem;
+            color: #ffffff;
+            font-weight: 700;
+            margin-bottom: 12px;
+            letter-spacing: -0.02em;
+        }
+
+        .subtitle {
+            font-size: 0.95rem;
+            color: #94a3b8;
+            margin-bottom: 30px;
+        }
+
+        /* ── Loading Spinner ── */
+        .spinner {
+            display: inline-block;
+            width: 32px;
+            height: 32px;
+            border: 3px solid rgba(16, 185, 129, 0.25);
+            border-radius: 50%;
+            border-top-color: #10b981;
+            animation: spin 1s linear infinite;
+            margin-bottom: 16px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ── Status Messages ── */
+        .status-container {
+            display: none;
+            margin-bottom: 24px;
+        }
+
+        .status-icon {
+            font-size: 40px;
+            margin-bottom: 16px;
+        }
+
+        .status-text {
+            font-size: 1rem;
+            font-weight: 500;
+            line-height: 1.5;
+        }
+
+        .status-success {
+            color: #34d399;
+        }
+
+        .status-error {
+            color: #f87171;
+        }
+
+        /* ── Form Controls ── */
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 24px;
+            text-align: left;
+        }
+
+        .form-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #cbd5e1;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .form-input {
+            width: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #ffffff;
+            font-family: inherit;
+            font-size: 0.95rem;
+            padding: 12px 16px;
+            border-radius: 8px;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-input:focus {
+            border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+        }
+
+        .btn {
+            display: inline-block;
+            width: 100%;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: #ffffff;
+            font-size: 0.95rem;
+            font-weight: 600;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: opacity 0.2s, transform 0.1s;
+        }
+
+        .btn:hover {
+            opacity: 0.95;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #94a3b8;
+            margin-top: 12px;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.03);
+            color: #ffffff;
+        }
+
+        /* ── Footer ── */
+        .footer-link {
+            display: inline-block;
+            margin-top: 30px;
+            color: #10b981;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .footer-link:hover {
+            color: #34d399;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="unsubscribe-card">
+        <!-- Logo -->
+        <div class="logo">
+            <a href="index.html">
+                <img src="assets/images/logo.png" alt="MantraAQ logo">
+            </a>
+        </div>
+
+        <!-- Initial Screen / Loading -->
+        <div id="loading-view" style="display: none;">
+            <div class="spinner"></div>
+            <h1>Unsubscribing...</h1>
+            <p class="subtitle" id="loading-email-text">Processing email subscription updates</p>
+        </div>
+
+        <!-- Manual Input Form -->
+        <div id="form-view">
+            <h1>Unsubscribe</h1>
+            <p class="subtitle">Enter your email below to opt-out of our newsletter</p>
+            
+            <form id="unsubscribe-form">
+                <div class="form-group">
+                    <label class="form-label" for="email">Email Address</label>
+                    <input class="form-input" type="email" id="email" required placeholder="name@example.com">
+                </div>
+                <button type="submit" class="btn" id="submit-btn">Unsubscribe</button>
+            </form>
+        </div>
+
+        <!-- Result View -->
+        <div id="result-view" style="display: none;">
+            <div class="status-container" id="status-success">
+                <div class="status-icon">👋</div>
+                <h1 class="status-success">Unsubscribed</h1>
+                <p class="status-text" style="color: #cbd5e1; margin-bottom: 20px;">
+                    You have been successfully unsubscribed. We're sorry to see you go!
+                </p>
+            </div>
+            
+            <div class="status-container" id="status-error">
+                <div class="status-icon">⚠️</div>
+                <h1 class="status-error">Unsubscribe Failed</h1>
+                <p class="status-text" id="error-message-text" style="color: #cbd5e1; margin-bottom: 20px;">
+                    We couldn't process your request. Please try again.
+                </p>
+                <button class="btn btn-secondary" onclick="resetForm()">Try Again</button>
+            </div>
+
+            <a href="index.html" class="btn">Return to Homepage</a>
+        </div>
+
+        <!-- Back to site -->
+        <a href="index.html" class="footer-link">← Back to MantraAQ</a>
+    </div>
+
+    <script>
+        const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname.startsWith('192.168.'))
+            ? 'http://localhost:5000/api'
+            : 'https://mantraaq-backend.onrender.com/api';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const emailParam = params.get('email');
+
+            if (emailParam) {
+                // Auto trigger unsubscribe
+                triggerUnsubscribe(emailParam);
+            }
+        });
+
+        // Trigger automatic unsubscribe if query param exists
+        async function triggerUnsubscribe(email) {
+            document.getElementById('form-view').style.display = 'none';
+            document.getElementById('loading-view').style.display = 'block';
+            document.getElementById('loading-email-text').textContent = 'Unsubscribing: ' + email;
+
+            const result = await makeApiCall(email);
+            showResult(result);
+        }
+
+        // Handle manual form submission
+        document.getElementById('unsubscribe-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value.trim();
+            if (!email) return;
+
+            const submitBtn = document.getElementById('submit-btn');
+            submitBtn.textContent = 'Processing...';
+            submitBtn.disabled = true;
+
+            const result = await makeApiCall(email);
+            showResult(result);
+        });
+
+        // Make Backend POST API request
+        async function makeApiCall(email) {
+            try {
+                const response = await fetch(`${API_BASE}/storefront/newsletter/unsubscribe`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email })
+                });
+
+                const data = await response.json();
+                return {
+                    success: response.ok && data.success,
+                    message: data.message || 'Failed to unsubscribe.'
+                };
+            } catch (err) {
+                console.error('API Error:', err);
+                return {
+                    success: false,
+                    message: 'Network error. Please check your internet connection and try again.'
+                };
+            }
+        }
+
+        // Show successful/failed unsubscribe states
+        function showResult(result) {
+            document.getElementById('loading-view').style.display = 'none';
+            document.getElementById('form-view').style.display = 'none';
+            document.getElementById('result-view').style.display = 'block';
+
+            if (result.success) {
+                document.getElementById('status-success').style.display = 'block';
+                document.getElementById('status-error').style.display = 'none';
+            } else {
+                document.getElementById('status-success').style.display = 'none';
+                document.getElementById('status-error').style.display = 'block';
+                document.getElementById('error-message-text').textContent = result.message;
+            }
+        }
+
+        // Reset manual form back
+        function resetForm() {
+            document.getElementById('result-view').style.display = 'none';
+            document.getElementById('form-view').style.display = 'block';
+            document.getElementById('email').value = '';
+            
+            const submitBtn = document.getElementById('submit-btn');
+            submitBtn.textContent = 'Unsubscribe';
+            submitBtn.disabled = false;
+        }
+    </script>
+</body>
+</html>

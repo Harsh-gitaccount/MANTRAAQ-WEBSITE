@@ -26,7 +26,7 @@ if (!process.env.SMTP_PASS) {
   console.log('✅ Brevo HTTP API selected for outbound emails (no SMTP verification needed).');
 }
 
-const FROM = process.env.FROM_EMAIL || 'MantraAQ <noreply@mantraaq.com>';
+const FROM = process.env.FROM_EMAIL || 'MantraAQ <hello@mantraaq.com>';
 
 // ─── Shared Template Wrapper ────────────────────────────────
 
@@ -52,7 +52,7 @@ const wrapTemplate = (title, bodyContent) => {
         <!-- Footer -->
         <tr><td style="background:#f9fafb;padding:20px 32px;text-align:center;border-top:1px solid #e5e7eb;">
           <p style="margin:0;color:#9ca3af;font-size:13px;">MantraAQ — Premium Singhara Products</p>
-          <p style="margin:4px 0 0;color:#9ca3af;font-size:12px;">Need help? Email us at ${process.env.ADMIN_EMAIL || 'support@mantraaq.com'}</p>
+          <p style="margin:4px 0 0;color:#9ca3af;font-size:12px;">Need help? Email us at ${process.env.ADMIN_EMAIL || 'hello@mantraaq.com'}</p>
         </td></tr>
       </table>
     </td></tr>
@@ -416,6 +416,15 @@ const sendNewsletterWelcomeEmail = async (email) => {
     <!-- CTA Button -->
     <div style="text-align:center;margin:28px 0;">
       <a href="${process.env.CLIENT_URL || 'http://localhost:5500'}" style="display:inline-block;background:#10b981;color:#fff;padding:12px 36px;border-radius:8px;text-decoration:none;font-weight:600;font-size:15px;box-shadow:0 4px 12px rgba(16,185,129,0.25);">Explore Singhara Superfoods →</a>
+    </div>
+
+    <!-- Unsubscribe footer -->
+    <div style="text-align:center;margin-top:32px;padding-top:16px;border-top:1px solid #e5e7eb;">
+      <p style="margin:0;color:#9ca3af;font-size:12px;line-height:1.5;">
+        You received this email because you subscribed to our newsletter.<br>
+        No longer want to receive these emails? 
+        <a href="${process.env.CLIENT_URL || 'https://mantraaq.com'}/unsubscribe.html?email=${encodeURIComponent(email)}" style="color:#10b981;text-decoration:underline;">Unsubscribe here</a>.
+      </p>
     </div>
   `);
 
