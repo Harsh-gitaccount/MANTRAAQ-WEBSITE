@@ -1804,3 +1804,29 @@ window.addEventListener('keydown', function(e) {
         });
     }
 });
+
+// ===== ROUTE-AWARE MODAL OPENING FOR REDIRECTED PATHS =====
+window.addEventListener('load', function() {
+    const path = window.location.pathname.toLowerCase();
+    
+    if (path.includes('/cart')) {
+        if (window.Cart && typeof window.Cart.open === 'function') {
+            window.Cart.open();
+        }
+    } else if (path.includes('/wishlist')) {
+        if (window.Wishlist && typeof window.Wishlist.open === 'function') {
+            window.Wishlist.open();
+        }
+    } else if (path.includes('/account')) {
+        if (window.CustomerAuth && typeof window.CustomerAuth.open === 'function') {
+            window.CustomerAuth.open();
+        }
+    } else if (path.includes('/products')) {
+        const target = document.getElementById('products');
+        if (target) {
+            setTimeout(() => {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 300);
+        }
+    }
+});

@@ -21,6 +21,11 @@
   function sanitize(str) {
     if (typeof str !== 'string') return str;
 
+    // Use DOMPurify if it has successfully loaded from the CDN
+    if (window.DOMPurify && typeof window.DOMPurify.sanitize === 'function') {
+      return window.DOMPurify.sanitize(str);
+    }
+
     // Decode HTML entities first so encoded attacks are caught
     _decodeEl.innerHTML = str;
     let decoded = _decodeEl.value;

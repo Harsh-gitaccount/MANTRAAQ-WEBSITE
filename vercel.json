@@ -10,5 +10,11 @@
         { "key": "X-XSS-Protection", "value": "1; mode=block" }
       ]
     }
+  ],
+  "rewrites": [
+    { "source": "/products", "destination": "/index.html" },
+    { "source": "/cart", "destination": "/index.html" },
+    { "source": "/account", "destination": "/index.html" },
+    { "source": "/wishlist", "destination": "/index.html" }
   ]
 }
