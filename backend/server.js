@@ -21,19 +21,26 @@ const app = express();
 // Trust proxy for rate-limiting behind Render/Cloudflare proxy
 app.set('trust proxy', 1);
 
-// Serve uploads folder statically
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
 // ─── 1. Request Logging ──────────────────────────────────────
 if (process.env.NODE_ENV !== 'test') {
   app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
 }
 
 // ─── 2. Security Headers ────────────────────────────────────
-app.use(helmet());
+// Disable crossOriginResourcePolicy so uploaded images can be loaded cross-origin
+app.use(helmet({
+  crossOriginResourcePolicy: false,
+}));
 
 // ─── 3. Response Compression ────────────────────────────────
 app.use(compression());
+
+// ─── 3.5. Serve uploads folder statically (with cross-origin headers) ───
+app.use('/uploads', (req, res, next) => {
+  res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  next();
+}, express.static(path.join(__dirname, 'uploads')));
 
 // ─── 4. Cross-Origin Resource Sharing ───────────────────────
 const allowedOrigins = [
