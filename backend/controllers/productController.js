@@ -1,5 +1,7 @@
 const { validationResult } = require('express-validator');
 const prisma = require('../config/db');
+const cloudinary = require('../config/cloudinary');
+const fs = require('fs');
 
 // ─── Storefront (Public) ────────────────────────────────────
 
@@ -378,10 +380,39 @@ exports.uploadProductImages = async (req, res) => {
     if (!req.files || req.files.length === 0) {
       return res.status(400).json({ success: false, message: 'No files uploaded.' });
     }
-    const urls = req.files.map(file => `uploads/products/${file.filename}`);
+
+    const uploadPromises = req.files.map(async (file) => {
+      // Upload to Cloudinary under folder 'mantraaq/products'
+      const result = await cloudinary.uploader.upload(file.path, {
+        folder: 'mantraaq/products',
+      });
+      // Delete the file from the local temp disk storage
+      try {
+        if (fs.existsSync(file.path)) {
+          fs.unlinkSync(file.path);
+        }
+      } catch (err) {
+        console.error('Failed to delete temp file:', file.path, err);
+      }
+      return result.secure_url;
+    });
+
+    const urls = await Promise.all(uploadPromises);
     res.status(200).json({ success: true, urls });
   } catch (error) {
     console.error('Upload product images error:', error);
-    res.status(500).json({ success: false, message: 'Failed to upload images.' });
+    // Cleanup any uploaded files from disk in case of error
+    if (req.files) {
+      req.files.forEach(file => {
+        try {
+          if (fs.existsSync(file.path)) {
+            fs.unlinkSync(file.path);
+          }
+        } catch (err) {
+          console.error('Cleanup temp file error:', err);
+        }
+      });
+    }
+    res.status(500).json({ success: false, message: 'Failed to upload images to Cloudinary.' });
   }
 };
