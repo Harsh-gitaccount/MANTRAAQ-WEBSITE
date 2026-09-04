@@ -274,12 +274,19 @@ async function syncProductCards() {
   try {
     products = await window.MantraaqAPI.fetchProducts();
   } catch (e) {
-    console.warn('Storefront: Could not fetch products', e);
+    console.warn('Storefront: Could not fetch products, preserving pre-rendered cards', e);
+    // If cards are already pre-rendered, DO NOT replace them with an error message
+    if (gridContainer.querySelector('.product-card')) {
+      return;
+    }
     gridContainer.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding: 40px; color: #94a3b8;">Unable to load products. Please check connection.</div>`;
     return;
   }
 
   if (!products || products.length === 0) {
+    if (gridContainer.querySelector('.product-card')) {
+      return;
+    }
     gridContainer.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding: 40px; color: #94a3b8;">No products found in the database.</div>`;
     return;
   }
@@ -348,7 +355,7 @@ async function syncProductCards() {
 
         <div class="product-content">
           <div class="product-header">
-              <h3 class="product-title">${MantraAQSanitize(product.name)}</h3>
+              <h3 class="product-title"><a href="/products/${product.handle}">${MantraAQSanitize(product.name)}</a></h3>
           </div>
 
           <p class="product-description">${MantraAQSanitize(product.description || '')}</p>

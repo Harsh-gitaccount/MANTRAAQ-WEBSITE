@@ -544,7 +544,196 @@ async function main() {
   fs.writeFileSync(sitemapPath, sitemapXml, 'utf-8');
   console.log(`\n✅ Updated sitemap.xml with ${activeProducts.length} product URLs`);
 
-  console.log(`\n🎉 Done! Generated ${activeProducts.length} static product pages.\n`);
+  // 5. Inject pre-rendered product cards and JSON-LD schema into index.html
+  updateIndexHtml(activeProducts);
+
+  console.log(`\n🎉 Done! Generated ${activeProducts.length} static product pages and updated index.html & sitemap.xml.\n`);
+}
+
+/**
+ * Build homepage catalog JSON-LD ItemList schema
+ */
+function buildCatalogSchema(products) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": "MantraAQ Premium Singhara Collection",
+    "description": "Cold-processed singhara snacks, flour & gluten-free superfoods sourced directly from Bihar farmers.",
+    "numberOfItems": products.length,
+    "itemListElement": products.map((product, index) => {
+      const productUrl = `${SITE_URL}/products/${product.handle}`;
+      const productSchema = buildProductSchema(product, productUrl);
+      return {
+        "@type": "ListItem",
+        "position": index + 1,
+        "name": product.name,
+        "url": productUrl,
+        "item": productSchema
+      };
+    })
+  };
+}
+
+/**
+ * Build feature tags for a card
+ */
+function buildCardFeatureTags(product) {
+  const badgeTags = ['bestseller', 'new-launch', 'seasonal', 'coming-soon'];
+  const features = (product.tags || []).filter(t => !badgeTags.includes(t.toLowerCase().replace(/\s+/g, '-')));
+  if (features.length === 0) return '';
+  const emojiMap = {
+    'gluten-free': '🌾',
+    'cold-processed': '❄️',
+    'qr-traced': '📱',
+    '100%-natural': '🌿',
+    'high-protein': '💪',
+    'premium-quality': '⭐',
+    'stone-ground': '🪨',
+    'multi-purpose': '📦',
+    'high-fiber': '🌾',
+    'farm-direct': '🚜',
+    '48hr-delivery': '⚡',
+    'fresh-&-juicy': '🍉',
+    'sun-dried': '☀️',
+    'long-shelf-life': '🥫',
+    'versatile': '🥣',
+    'diabetic-friendly': '🥗',
+    'clean-ingredients': '🍃'
+  };
+  return features.slice(0, 3).map(f => {
+    const key = f.toLowerCase().replace(/\s+/g, '-');
+    const emoji = emojiMap[key] || '🏷️';
+    return `<span class="feature-tag">${emoji} ${escapeHtml(f)}</span>`;
+  }).join('');
+}
+
+/**
+ * Build badge HTML
+ */
+function buildCardBadge(product) {
+  const badgeMap = {
+    'bestseller': { cls: 'bestseller', label: 'Bestseller' },
+    'new-launch': { cls: 'new', label: 'New Launch' },
+    'seasonal': { cls: 'seasonal', label: 'Seasonal' },
+    'coming-soon': { cls: 'coming-soon', label: 'Coming Soon' },
+  };
+  const tags = product.tags || [];
+  for (let i = 0; i < tags.length; i++) {
+    const tagKey = tags[i].toLowerCase().replace(/\s+/g, '-');
+    if (badgeMap[tagKey]) {
+      return `<div class="product-badge ${badgeMap[tagKey].cls}">${badgeMap[tagKey].label}</div>`;
+    }
+  }
+  return '';
+}
+
+/**
+ * Build cards HTML to pre-render inside index.html
+ */
+function generateStorefrontCardsHTML(products) {
+  return products.map(product => {
+    const defaultVariant = product.variants.find(v => v.stockQuantity > 0) || product.variants[0];
+    const fallback = LOCAL_IMAGE_FALLBACK[product.handle] || ['assets/images/placeholder.png'];
+    const images = product.images && product.images.length > 0 ? product.images : fallback;
+    const resolvedImages = images.map(img => resolveImageUrl(img));
+    const badge = buildCardBadge(product);
+    const featureTags = buildCardFeatureTags(product);
+    const productUrl = `/products/${product.handle}`;
+
+    const discountHtml = defaultVariant.compareAtPrice && defaultVariant.compareAtPrice > defaultVariant.price
+      ? `<span class="price-original">₹${defaultVariant.compareAtPrice}</span>
+         <span class="price-discount">${Math.round(((defaultVariant.compareAtPrice - defaultVariant.price) / defaultVariant.compareAtPrice) * 100)}% OFF</span>`
+      : '';
+
+    return `
+      <div class="product-card" data-product="${product.handle}">
+        <div class="product-image-wrapper">
+          ${badge}
+          <div class="product-gallery">
+            ${resolvedImages.map((imgUrl, idx) => `
+              <img src="${escapeHtml(imgUrl)}" alt="${escapeHtml(product.name)}" class="product-img ${idx === 0 ? 'active' : ''}" data-index="${idx}">
+            `).join('')}
+          </div>
+          ${resolvedImages.length > 1 ? `
+            <button type="button" class="gallery-nav prev" aria-label="Previous image">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </button>
+            <button type="button" class="gallery-nav next" aria-label="Next image">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </button>
+            <div class="gallery-indicators">
+              ${resolvedImages.map((_, idx) => `<span class="indicator ${idx === 0 ? 'active' : ''}" data-index="${idx}"></span>`).join('')}
+            </div>
+          ` : ''}
+        </div>
+
+        <div class="product-content">
+          <div class="product-header">
+              <h3 class="product-title"><a href="${productUrl}">${escapeHtml(product.name)}</a></h3>
+          </div>
+
+          <p class="product-description">${escapeHtml(product.description || '')}</p>
+
+          <div class="product-features">
+            ${featureTags}
+          </div>
+
+          <div class="variant-selector-container">
+            <div class="variant-selector flex gap-2 flex-wrap">
+              ${product.variants.map((v, i) => `
+                <button type="button" class="variant-btn border rounded-lg px-3 py-1 text-xs font-semibold transition-all ${i === 0 ? 'active font-bold' : 'border-slate-200 text-slate-500'}" data-variant-id="${v.id}" data-price="${v.price}">
+                  ${escapeHtml(v.title)}
+                </button>
+              `).join('')}
+            </div>
+          </div>
+
+          <div class="product-footer">
+              <div class="price-wrapper">
+                  <span class="price-current">₹${defaultVariant.price}</span>
+                  ${discountHtml}
+              </div>
+              <div class="tax-label">Inclusive of all taxes</div>
+          </div>
+
+          <a href="${productUrl}" class="btn-primary" style="text-decoration:none; display:flex; align-items:center; justify-content:center; gap:8px;">
+              <span>View Product</span>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M5 12h14M12 5l7 7-7 7"></path>
+              </svg>
+          </a>
+        </div>
+      </div>`;
+  }).join('\n');
+}
+
+/**
+ * Update index.html with pre-rendered product cards and JSON-LD schema
+ */
+function updateIndexHtml(products) {
+  const indexPath = path.join(__dirname, '..', 'index.html');
+  if (!fs.existsSync(indexPath)) return;
+
+  let indexHtml = fs.readFileSync(indexPath, 'utf-8');
+
+  // 1. Inject cards into #storefront-products-grid
+  const cardsHtml = generateStorefrontCardsHTML(products);
+  const productsRegex = /<!-- PRODUCTS_START -->[\s\S]*?<!-- PRODUCTS_END -->/;
+  if (productsRegex.test(indexHtml)) {
+    indexHtml = indexHtml.replace(productsRegex, `<!-- PRODUCTS_START -->\n${cardsHtml}\n                <!-- PRODUCTS_END -->`);
+    console.log(`  ✅ Injected ${products.length} pre-rendered product cards into index.html`);
+  }
+
+  // 2. Inject schema into <head>
+  const schemaObj = buildCatalogSchema(products);
+  const schemaScript = `<script id="static-product-schema" type="application/ld+json">\n${JSON.stringify(schemaObj, null, 2)}\n    </script>`;
+  const schemaRegex = /<!-- SCHEMA_PRODUCTS_START -->[\s\S]*?<!-- SCHEMA_PRODUCTS_END -->/;
+  if (schemaRegex.test(indexHtml)) {
+    indexHtml = indexHtml.replace(schemaRegex, `<!-- SCHEMA_PRODUCTS_START -->\n    ${schemaScript}\n    <!-- SCHEMA_PRODUCTS_END -->`);
+    console.log(`  ✅ Injected ItemList + Product JSON-LD schema into index.html`);
+  }
+
+  fs.writeFileSync(indexPath, indexHtml, 'utf-8');
 }
 
 main().catch(err => {
