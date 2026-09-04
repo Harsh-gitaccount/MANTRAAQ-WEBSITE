@@ -1,4 +1,14 @@
 {
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": "www.mantraaq.com" }],
+      "destination": "https://mantraaq.com/$1",
+      "statusCode": 301
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",
@@ -12,7 +22,6 @@
     }
   ],
   "rewrites": [
-    { "source": "/products", "destination": "/index.html" },
     { "source": "/cart", "destination": "/index.html" },
     { "source": "/account", "destination": "/index.html" },
     { "source": "/wishlist", "destination": "/index.html" }

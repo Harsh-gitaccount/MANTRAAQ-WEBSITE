@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /reset-password.html
 
-Sitemap: https://www.mantraaq.com/sitemap.xml
+Sitemap: https://mantraaq.com/sitemap.xml
