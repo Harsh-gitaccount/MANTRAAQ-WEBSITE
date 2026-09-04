@@ -1,5 +1,63 @@
+# ═══════════════════════════════════════
+# MantraAQ — robots.txt
+# Allow all search engines and AI tools
+# ═══════════════════════════════════════
+
+# Default: allow everything
 User-agent: *
 Allow: /
+Disallow: /reset-password.html
+
+# ── Google ──
+User-agent: Googlebot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+# ── OpenAI / ChatGPT ──
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+# ── Anthropic / Claude ──
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+# ── Meta ──
+User-agent: FacebookBot
+Allow: /
+
+User-agent: meta-externalagent
+Allow: /
+
+# ── Microsoft / Bing / Copilot ──
+User-agent: Bingbot
+Allow: /
+
+# ── Perplexity ──
+User-agent: PerplexityBot
+Allow: /
+
+# ── CommonCrawl ──
+User-agent: CCBot
+Allow: /
+
+# ── Apple ──
+User-agent: Applebot
+Allow: /
+
+# ── Cohere ──
+User-agent: cohere-ai
+Allow: /
+
+# ── Sensitive pages ──
+User-agent: *
 Disallow: /reset-password.html
 
 Sitemap: https://mantraaq.com/sitemap.xml
