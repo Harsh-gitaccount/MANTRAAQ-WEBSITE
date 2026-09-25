@@ -309,7 +309,7 @@
             <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
           </svg>
           <input id="searchInput" class="search-input" type="text"
-                 placeholder="Search products…" autocomplete="off" spellcheck="false" />
+                 placeholder="Search products..." autocomplete="off" spellcheck="false" />
           <span class="search-hint">Close</span>
         </div>
         <div id="searchResults" class="search-results"></div>
@@ -320,6 +320,74 @@
   /* ──────────────────────── SEARCH MODULE ──────────────────────── */
   let debounceTimer = null;
   let focusedIndex = -1;
+
+  
+  /* ── Universal Product Catalog (shared across all pages) ── */
+  const CATALOG = [
+    {
+      key: 'singhara-atta',
+      title: 'Singhara Atta (Water Chestnut Flour)',
+      description: '100% stone-ground gluten-free flour from Bihar wetlands. Fasting and vrat friendly.',
+      category: 'Flour & Atta',
+      price: 'From ₹239',
+      url: '/products/singhara-atta',
+      tags: 'singhara atta flour gluten-free stone ground vrat fasting roti puri halwa superfood'
+    },
+    {
+      key: 'singhara-snacks',
+      title: 'Singhara Snacks (Clean-Label Chips)',
+      description: 'Crunchy water chestnut chips made with zero palm oil and zero maida. Clean-label snacking.',
+      category: 'Healthy Snacks',
+      price: 'From ₹55',
+      url: '/products/singhara-snacks',
+      tags: 'singhara snacks chips crunchy healthy clean-label fasting tea-time travel zero palm oil'
+    },
+    {
+      key: 'singhara-pasta',
+      title: 'Singhara Pasta',
+      description: 'Gluten-free water chestnut pasta that holds an al dente shape. Light and nutritious.',
+      category: 'Superfood Pasta',
+      price: 'From ₹149',
+      url: '/products/singhara-pasta',
+      tags: 'singhara pasta gluten-free water chestnut al dente healthy vegan'
+    },
+    {
+      key: 'singhara-vermicell',
+      title: 'Singhara Vermicelli',
+      description: 'Delicate gluten-free water chestnut vermicelli for upma, kheer, and traditional meals.',
+      category: 'Superfood Vermicelli',
+      price: 'From ₹129',
+      url: '/products/singhara-vermicell',
+      tags: 'singhara vermicelli seviyan gluten-free kheer upma vrat traditional'
+    },
+    {
+      key: 'dry-singhara',
+      title: 'Dry Singhara (Sun-Dried Whole)',
+      description: 'Sun-dried raw water chestnuts with long shelf life. Snack, grind into flour, or cook.',
+      category: 'Dry Superfoods',
+      price: 'From ₹149',
+      url: '/products/dry-singhara',
+      tags: 'dry singhara whole sabut raw sun-dried water chestnut bihar'
+    },
+    {
+      key: 'fresh-singhara',
+      title: 'Fresh Singhara',
+      description: 'Freshly harvested crisp water chestnuts directly sourced from Bihar wetlands.',
+      category: 'Fresh Produce',
+      price: 'From ₹179',
+      url: '/products/fresh-singhara',
+      tags: 'fresh raw singhara water chestnut bihar wetlands seasonal crisp'
+    },
+    {
+      key: 'glowaq-wellness-drink',
+      title: 'GlowAQ™ Wellness Drink',
+      description: 'Singhara-based superfood wellness beverage concept from MantraAQ Innovation Lab.',
+      category: 'Wellness Drinks',
+      price: 'From ₹299',
+      url: '/products/glowaq-wellness-drink',
+      tags: 'glowaq wellness drink beverage singhara superfood water chestnut innovation lab'
+    }
+  ];
 
   const Search = {
     init() {
@@ -446,26 +514,38 @@
         return;
       }
 
-      const cards = document.querySelectorAll('.product-card[data-product]');
       const matches = [];
 
-      cards.forEach((card) => {
-        if (card.style.display === 'none') return;
-        const productKey = (card.getAttribute('data-product') || '').toLowerCase();
-        const title = (card.querySelector('.product-title')?.textContent || '').toLowerCase();
-        const description = (card.querySelector('.product-description')?.textContent || '').toLowerCase();
-        const featureTags = Array.from(card.querySelectorAll('.feature-tag'))
-          .map((t) => t.textContent.toLowerCase())
-          .join(' ');
+      CATALOG.forEach((item) => {
+        // Check if there is an on-page product card for live DOM details
+        const domCard = document.querySelector(`.product-card[data-product="${item.key}"]`);
 
-        const searchable = `${productKey} ${title} ${description} ${featureTags}`;
+        let title = item.title;
+        let description = item.description;
+        let price = item.price;
+        let searchable = `${item.key} ${item.title} ${item.description} ${item.category} ${item.tags}`.toLowerCase();
+
+        if (domCard) {
+          const domTitle = domCard.querySelector('.product-title')?.textContent?.trim();
+          const domDesc = domCard.querySelector('.product-description')?.textContent?.trim();
+          const domPrice = domCard.querySelector('.price-current')?.textContent?.trim();
+          if (domTitle) title = domTitle;
+          if (domDesc) description = domDesc.substring(0, 85);
+          if (domPrice) price = domPrice;
+          const featureTags = Array.from(domCard.querySelectorAll('.feature-tag'))
+            .map((t) => t.textContent.toLowerCase())
+            .join(' ');
+          searchable += ` ${featureTags}`;
+        }
 
         if (searchable.includes(trimmed)) {
           matches.push({
-            card,
-            title: card.querySelector('.product-title')?.textContent || productKey,
-            description: card.querySelector('.product-description')?.textContent?.trim().substring(0, 80) || '',
-            key: productKey,
+            key: item.key,
+            title: title,
+            description: description,
+            price: price,
+            url: item.url,
+            card: domCard
           });
         }
       });
@@ -486,7 +566,7 @@
       results.innerHTML = matches
         .map(
           (m, i) => `
-          <div class="search-result-item" data-search-index="${i}" data-product-key="${m.key}">
+          <div class="search-result-item" data-search-index="${i}" data-product-key="${m.key}" data-product-url="${m.url}">
             <div class="search-result-icon">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -495,8 +575,11 @@
               </svg>
             </div>
             <div class="search-result-info">
-              <p class="search-result-title">${Search._highlightMatch(m.title, query.trim())}</p>
-              <p class="search-result-desc">${m.description ? Search._escapeHTML(m.description) + '…' : ''}</p>
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+                <p class="search-result-title">${Search._highlightMatch(m.title, query.trim())}</p>
+                ${m.price ? `<span style="font-size:12px;font-weight:600;color:#4ade80;">${m.price}</span>` : ''}
+              </div>
+              <p class="search-result-desc">${m.description ? Search._escapeHTML(m.description) + '...' : ''}</p>
             </div>
             <svg class="search-result-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none"
                  stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -513,31 +596,35 @@
       results.querySelectorAll('.search-result-item').forEach((item) => {
         item.addEventListener('click', () => {
           const key = item.getAttribute('data-product-key');
-          Search._navigateToProduct(key);
+          const url = item.getAttribute('data-product-url');
+          Search._navigateToProduct(key, url);
         });
       });
     },
 
-    _navigateToProduct(productKey) {
+    _navigateToProduct(productKey, url) {
       Search.close();
 
       const card = document.querySelector(`.product-card[data-product="${productKey}"]`);
-      if (!card) return;
-
-      // Scroll to the card
-      setTimeout(() => {
-        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-
-        // Add highlight after scroll completes
+      if (card) {
+        // We are on the homepage: scroll to the card
         setTimeout(() => {
-          card.classList.add('search-highlight');
-          // Remove highlight after animation
+          card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+          // Add highlight after scroll completes
           setTimeout(() => {
-            card.classList.remove('search-highlight');
-            card.style.outlineColor = 'transparent';
-          }, 2200);
-        }, 450);
-      }, 150);
+            card.classList.add('search-highlight');
+            // Remove highlight after animation
+            setTimeout(() => {
+              card.classList.remove('search-highlight');
+              card.style.outlineColor = 'transparent';
+            }, 2200);
+          }, 450);
+        }, 150);
+      } else {
+        // On a product page, FAQ, or policy page: navigate directly to the product
+        window.location.href = url || `/products/${productKey}`;
+      }
     },
 
     _updateFocus(items) {
