@@ -296,20 +296,86 @@
                 font-size: 0.9rem;
             }
         }
+    
+        /* ── Standardized Top Navigation Bar ── */
+        .top-bar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 24px;
+            background: rgba(15, 23, 42, 0.88);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .top-nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: #ffffff;
+        }
+
+        .top-nav-logo {
+            height: 32px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .top-nav-name {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-weight: 700;
+            font-size: 1.25rem;
+            letter-spacing: -0.01em;
+            color: #10b981;
+        }
+
+        .top-nav-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.84rem;
+            font-weight: 600;
+            text-decoration: none;
+            color: #e2e8f0;
+            padding: 7px 16px;
+            border-radius: 99px;
+            background: rgba(16, 185, 129, 0.08);
+            border: 1px solid rgba(16, 185, 129, 0.25);
+            transition: all 0.25s ease;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        @media (hover: hover) and (pointer: fine) {
+            .top-nav-back:hover {
+                color: #34d399;
+                background: rgba(16, 185, 129, 0.16);
+                border-color: #10b981;
+                transform: translateX(-2px);
+            }
+        }
+
     </style>
 </head>
 <body>
 
     <!-- Top Bar -->
-    <nav class="top-bar">
-        <a href="index.html" class="back-link" aria-label="Back to home">
-                <svg class="back-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14">
-                    <path d="M19 12H5M12 19l-7-7 7-7"/>
-                </svg>
-                <span>Back to Home</span>
-            </a>
-        <a href="index.html" class="logo" aria-label="MantraAQ Home">
-            <img src="assets/images/logo.png" alt="MantraAQ Logo" height="36">
+    <nav class="top-bar" aria-label="Main Navigation">
+        <a href="/" class="top-nav-brand" aria-label="MantraAQ Home">
+            <img src="/assets/images/logo.png" alt="MantraAQ Logo" class="top-nav-logo">
+            <span class="top-nav-name">MantraAQ</span>
+        </a>
+        <a href="/" class="top-nav-back" aria-label="Back to store">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            Back to Store
         </a>
     </nav>
 

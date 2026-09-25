@@ -1468,8 +1468,11 @@ nav {
   flex-direction: column;
   gap: 10px;
 }
-.ft-nav-list li a,
 .ft-nav-list li {
+  font-size: 0.85rem;
+  color: #4b5563;
+}
+.ft-nav-list li a {
   font-size: 0.85rem;
   color: #4b5563;
   text-decoration: none;
@@ -1480,6 +1483,8 @@ nav {
   align-items: flex-start;
   gap: 0;
   position: relative;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 .ft-nav-list li a::after {
   content: '';
@@ -1489,8 +1494,10 @@ nav {
   background: #10b981;
   transition: width 0.3s ease;
 }
-.ft-nav-list li a:hover { color: #e2e8f0; }
-.ft-nav-list li a:hover::after { width: 100%; }
+@media (hover: hover) and (pointer: fine) {
+  .ft-nav-list li a:hover { color: #e2e8f0; }
+  .ft-nav-list li a:hover::after { width: 100%; }
+}
 
 /* Contact list */
 .ft-contact-list li,
