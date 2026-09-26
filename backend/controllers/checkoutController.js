@@ -882,3 +882,35 @@ exports.resendOrderConfirmation = async (req, res) => {
   }
 };
 
+/**
+ * Diagnostic endpoint to test admin order alert delivery
+ */
+exports.testAdminAlert = async (req, res) => {
+  try {
+    const adminKey = req.headers['x-admin-key'];
+    if (!adminKey || adminKey !== process.env.JWT_SECRET) {
+      return res.status(403).json({ success: false, message: 'Unauthorized.' });
+    }
+
+    const { sendAdminOrderAlertEmail } = require('../utils/mailer');
+    const order = await prisma.order.findFirst({
+      orderBy: { createdAt: 'desc' },
+      include: { orderLineItems: true }
+    });
+
+    if (!order) {
+      return res.status(404).json({ success: false, message: 'No orders found to test.' });
+    }
+
+    const result = await sendAdminOrderAlertEmail(order);
+    return res.status(200).json({
+      success: true,
+      message: 'Admin alert test completed',
+      result,
+      targetAdminEmail: process.env.ADMIN_EMAIL || 'hello@mantraaq.com'
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, error: error.message });
+  }
+};
+

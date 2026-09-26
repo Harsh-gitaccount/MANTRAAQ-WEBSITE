@@ -13,5 +13,6 @@ router.get('/active-coupons', checkoutController.getActiveCoupons);
 router.post('/payu-success', checkoutController.payuSuccess);
 router.post('/payu-failure', checkoutController.payuFailure);
 router.post('/resend-confirmation/:id', checkoutController.resendOrderConfirmation);
+router.post('/test-admin-email', checkoutController.testAdminAlert);
 
 module.exports = router;
