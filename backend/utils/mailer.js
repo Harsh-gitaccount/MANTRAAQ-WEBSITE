@@ -126,7 +126,7 @@ const sendWelcomeEmail = async (user) => {
   const template = wrapTemplate('Welcome to MantraAQ! 🎉', `
     <p style="color:#4b5563;line-height:1.6;">Hi ${user.name || 'there'},</p>
     <p style="color:#4b5563;line-height:1.6;">Welcome to <strong>MantraAQ</strong>! We're thrilled to have you join our community of health-conscious food lovers.</p>
-    <p style="color:#4b5563;line-height:1.6;">Explore our premium singhara (water chestnut) products — gluten-free, diabetic-friendly, and sourced directly from Bihar farmers.</p>
+    <p style="color:#4b5563;line-height:1.6;">Explore our premium singhara (water chestnut) products - gluten-free, diabetic-friendly, and sourced directly from Bihar farmers.</p>
     <div style="text-align:center;margin:24px 0;">
       <a href="${process.env.CLIENT_URL || 'http://localhost:5500'}" style="display:inline-block;background:#10b981;color:#fff;padding:12px 32px;border-radius:8px;text-decoration:none;font-weight:600;">Start Shopping →</a>
     </div>
@@ -135,7 +135,7 @@ const sendWelcomeEmail = async (user) => {
 
   return sendMail(
     user.email,
-    'Welcome to MantraAQ — Your Healthy Journey Starts Here! 🌿',
+    'Welcome to MantraAQ - Your Healthy Journey Starts Here! 🌿',
     template.html,
     `Welcome to MantraAQ, ${user.name || 'there'}! Start shopping at ${process.env.CLIENT_URL || 'http://localhost:5500'}. Use code WELCOME75 for flat ₹75 off on orders of ₹599 or above (valid on first order only).`
   );
@@ -156,7 +156,7 @@ const sendPasswordResetEmail = async (user, resetLink) => {
 
   return sendMail(
     user.email,
-    'MantraAQ — Password Reset Request',
+    'MantraAQ - Password Reset Request',
     template.html,
     `Reset your password: ${resetLink}. This link expires in 1 hour. If you didn't request this, ignore this email.`
   );
@@ -169,7 +169,7 @@ const sendAdminOrderAlertEmail = async (order) => {
   
   const itemsHtml = (order.orderLineItems || []).map(item => `
     <tr>
-      <td style="padding:8px 0;border-bottom:1px solid #f3f4f6;color:#374151;">${item.productName || 'Product'} — ${item.variantTitle || ''}</td>
+      <td style="padding:8px 0;border-bottom:1px solid #f3f4f6;color:#374151;">${item.productName || 'Product'} - ${item.variantTitle || ''}</td>
       <td style="padding:8px 0;border-bottom:1px solid #f3f4f6;text-align:center;color:#374151;">${item.quantity}</td>
       <td style="padding:8px 0;border-bottom:1px solid #f3f4f6;text-align:right;color:#374151;">₹${item.priceAtPurchase.toFixed(2)}</td>
     </tr>
@@ -196,7 +196,7 @@ const sendAdminOrderAlertEmail = async (order) => {
       <p style="margin:0;color:#334155;font-size:14px;font-weight:600;">Shipping Address:</p>
       <p style="margin:4px 0 0;color:#475569;font-size:14px;"><strong>Name:</strong> ${order.shippingAddress?.name}</p>
       <p style="margin:2px 0 0;color:#475569;font-size:14px;"><strong>Phone:</strong> ${order.shippingAddress?.phone}</p>
-      <p style="margin:2px 0 0;color:#475569;font-size:14px;"><strong>Address:</strong> ${order.shippingAddress?.street}, ${order.shippingAddress?.city}, ${order.shippingAddress?.state} — ${order.shippingAddress?.postalCode}</p>
+      <p style="margin:2px 0 0;color:#475569;font-size:14px;"><strong>Address:</strong> ${order.shippingAddress?.street}, ${order.shippingAddress?.city}, ${order.shippingAddress?.state} - ${order.shippingAddress?.postalCode}</p>
     </div>
     <div style="text-align:center;margin:24px 0;">
       <a href="${process.env.ADMIN_URL || 'https://admin.mantraaq.com'}/orders" style="display:inline-block;background:#10b981;color:#fff;padding:12px 32px;border-radius:8px;text-decoration:none;font-weight:600;">Open Admin Dashboard →</a>
@@ -219,7 +219,7 @@ const sendOrderConfirmationEmail = async (order) => {
 
   const itemsHtml = (order.orderLineItems || []).map(item => `
     <tr>
-      <td style="padding:8px 0;border-bottom:1px solid #f3f4f6;color:#374151;">${item.productName || 'Product'} — ${item.variantTitle || ''}</td>
+      <td style="padding:8px 0;border-bottom:1px solid #f3f4f6;color:#374151;">${item.productName || 'Product'} - ${item.variantTitle || ''}</td>
       <td style="padding:8px 0;border-bottom:1px solid #f3f4f6;text-align:center;color:#374151;">${item.quantity}</td>
       <td style="padding:8px 0;border-bottom:1px solid #f3f4f6;text-align:right;color:#374151;">₹${item.priceAtPurchase.toFixed(2)}</td>
     </tr>
@@ -247,11 +247,11 @@ const sendOrderConfirmationEmail = async (order) => {
     </table>
     <div style="background:#f0fdf4;padding:16px;border-radius:8px;margin-top:16px;">
       <p style="margin:0;color:#166534;font-size:14px;font-weight:600;">Shipping to:</p>
-      <p style="margin:4px 0 0;color:#4b5563;font-size:14px;">${order.shippingAddress?.name}, ${order.shippingAddress?.street}, ${order.shippingAddress?.city}, ${order.shippingAddress?.state} — ${order.shippingAddress?.postalCode}</p>
+      <p style="margin:4px 0 0;color:#4b5563;font-size:14px;">${order.shippingAddress?.name}, ${order.shippingAddress?.street}, ${order.shippingAddress?.city}, ${order.shippingAddress?.state} - ${order.shippingAddress?.postalCode}</p>
     </div>
   `);
 
-  return sendMail(email, `MantraAQ — Order Confirmed #${order.id.slice(0, 8).toUpperCase()}`, template.html,
+  return sendMail(email, `MantraAQ - Order Confirmed #${order.id.slice(0, 8).toUpperCase()}`, template.html,
     `Order confirmed! Order ID: ${order.id.slice(0, 8).toUpperCase()}. Total: ₹${(order.totalAmount - (order.discountAmount || 0)).toFixed(2)}.`
   );
 };
@@ -274,7 +274,7 @@ const sendOrderDispatchedEmail = async (order) => {
     <p style="color:#6b7280;font-size:14px;">Estimated delivery: 3-5 business days.</p>
   `);
 
-  return sendMail(email, `MantraAQ — Order Shipped #${order.id.slice(0, 8).toUpperCase()}`, template.html,
+  return sendMail(email, `MantraAQ - Order Shipped #${order.id.slice(0, 8).toUpperCase()}`, template.html,
     `Your order #${order.id.slice(0, 8).toUpperCase()} has been shipped!${order.trackingNumber ? ` Tracking: ${order.trackingNumber}` : ''}`
   );
 };
@@ -294,7 +294,7 @@ const sendDeliveryConfirmationEmail = async (order) => {
     </div>
   `);
 
-  return sendMail(email, `MantraAQ — Order Delivered #${order.id.slice(0, 8).toUpperCase()}`, template.html,
+  return sendMail(email, `MantraAQ - Order Delivered #${order.id.slice(0, 8).toUpperCase()}`, template.html,
     `Your order #${order.id.slice(0, 8).toUpperCase()} has been delivered! Thank you for choosing MantraAQ.`
   );
 };
@@ -318,7 +318,7 @@ const sendOrderCancellationEmail = async (order) => {
     <p style="color:#6b7280;font-size:14px;">If you have questions, please contact our support team.</p>
   `);
 
-  return sendMail(email, `MantraAQ — Order Cancelled #${order.id.slice(0, 8).toUpperCase()}`, template.html,
+  return sendMail(email, `MantraAQ - Order Cancelled #${order.id.slice(0, 8).toUpperCase()}`, template.html,
     `Your order #${order.id.slice(0, 8).toUpperCase()} has been cancelled.${order.refundId ? ` Refund ID: ${order.refundId}` : ''}`
   );
 };
@@ -359,7 +359,7 @@ const sendContactEmail = async (contactDetails) => {
 
   return sendMail(
     email,
-    'MantraAQ Support — We have received your message',
+    'MantraAQ Support - We have received your message',
     customerTemplate.html,
     `Hi ${name}, we have received your inquiry: "${subject}". We will get back to you within 24 hours.`
   );
@@ -431,7 +431,7 @@ const sendNewsletterWelcomeEmail = async (email) => {
 
   return sendMail(
     email,
-    'Welcome to MantraAQ — Thank you for subscribing! 🌿',
+    'Welcome to MantraAQ - Thank you for subscribing! 🌿',
     template.html,
     `Thank you for subscribing to MantraAQ! Use coupon code WELCOME75 for flat ₹75 off on orders of ₹299 or above. Discover the benefits of Singhara: naturally gluten-free, diabetic-friendly, and cold-processed. Shop now at ${process.env.CLIENT_URL || 'http://localhost:5500'}`
   );
