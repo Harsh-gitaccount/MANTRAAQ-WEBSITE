@@ -83,6 +83,16 @@ const sendMail = async (to, subject, html, text) => {
         senderEmail = fromMatch[2].trim();
       }
 
+      // Format recipients array for Brevo API
+      let recipients = [];
+      if (Array.isArray(to)) {
+        recipients = to.map(email => ({ email: email.trim() }));
+      } else if (typeof to === 'string' && to.includes(',')) {
+        recipients = to.split(',').map(email => ({ email: email.trim() })).filter(r => r.email);
+      } else {
+        recipients = [{ email: (typeof to === 'string' ? to.trim() : to) }];
+      }
+
       const response = await fetch('https://api.brevo.com/v3/smtp/email', {
         method: 'POST',
         headers: {
@@ -92,7 +102,7 @@ const sendMail = async (to, subject, html, text) => {
         },
         body: JSON.stringify({
           sender: { name: senderName, email: senderEmail },
-          to: [{ email: to }],
+          to: recipients,
           subject,
           htmlContent: html,
           textContent: text || subject
@@ -170,7 +180,7 @@ const sendPasswordResetEmail = async (user, resetLink) => {
 // ─── Order Confirmation Email ───────────────────────────────
 
 const sendAdminOrderAlertEmail = async (order) => {
-  const adminEmail = process.env.ADMIN_EMAIL || 'hello@mantraaq.com';
+  const adminEmail = process.env.ADMIN_EMAIL || 'hello@mantraaq.com,harshchaudharytech@gmail.com';
   
   const itemsHtml = (order.orderLineItems || []).map(item => `
     <tr>
