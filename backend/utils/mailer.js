@@ -233,15 +233,13 @@ const sendOrderConfirmationEmail = async (order) => {
 
   const itemsRows = (order.orderLineItems || []).map(item => `
     <tr>
-      <td style="padding:14px 12px;border-bottom:1px solid #f1f5f9;color:#1e293b;font-size:14px;font-weight:500;">
+      <td style="padding:12px 0;border-bottom:1px solid #f1f5f3;color:#1a2e22;font-size:14px;font-weight:600;">
         ${item.productName || 'Singhara Superfood'}
-        <br>
-        <span style="color:#64748b;font-size:12px;font-weight:400;">Variant: ${item.variantTitle || 'Standard Pack'}</span>
+        <span style="display:block;font-size:12px;font-weight:400;color:#6b7c72;margin-top:2px;">
+          ${item.variantTitle ? item.variantTitle + ' &bull; ' : ''}Qty: ${item.quantity}
+        </span>
       </td>
-      <td style="padding:14px 12px;border-bottom:1px solid #f1f5f9;text-align:center;color:#475569;font-size:14px;">
-        ${item.quantity}
-      </td>
-      <td style="padding:14px 12px;border-bottom:1px solid #f1f5f9;text-align:right;color:#0f172a;font-size:14px;font-weight:600;">
+      <td style="padding:12px 0;border-bottom:1px solid #f1f5f3;text-align:right;color:#1a2e22;font-size:14px;font-weight:600;vertical-align:top;">
         ₹${item.priceAtPurchase.toFixed(2)}
       </td>
     </tr>
@@ -249,10 +247,10 @@ const sendOrderConfirmationEmail = async (order) => {
 
   const discountRow = order.discountAmount > 0 ? `
     <tr>
-      <td colspan="2" style="padding:8px 12px;text-align:right;color:#10b981;font-size:14px;font-weight:500;">
-        Discount (${order.couponCode || 'PROMO'}):
+      <td style="padding:6px 0;color:#059669;font-size:13px;font-weight:500;">
+        Discount (${order.couponCode || 'PROMO'})
       </td>
-      <td style="padding:8px 12px;text-align:right;color:#10b981;font-size:14px;font-weight:600;">
+      <td style="padding:6px 0;text-align:right;color:#059669;font-size:13px;font-weight:600;">
         -₹${order.discountAmount.toFixed(2)}
       </td>
     </tr>
@@ -265,156 +263,136 @@ const sendOrderConfirmationEmail = async (order) => {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Order Confirmed - MantraAQ</title>
+  <title>Order Confirmed #${orderNumber}</title>
 </head>
-<body style="margin:0;padding:0;background-color:#f1f5f9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f1f5f9;padding:32px 12px;">
+<body style="margin:0;padding:0;background-color:#f6f8f6;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',Roboto,Helvetica,sans-serif;-webkit-font-smoothing:antialiased;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f6f8f6;padding:36px 12px;">
     <tr>
       <td align="center">
-        <!-- Main Card Container -->
-        <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background-color:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.06);border:1px solid #e2e8f0;">
+        <!-- Main Card -->
+        <table width="560" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%;background-color:#ffffff;border-radius:14px;overflow:hidden;box-shadow:0 8px 30px rgba(10,30,20,0.06);border:1px solid #e7ede9;">
           
-          <!-- Brand Header -->
+          <!-- Sleek Brand Topbar -->
           <tr>
-            <td style="background:linear-gradient(135deg, #064e3b 0%, #065f46 50%, #047857 100%);padding:36px 32px;text-align:center;">
-              <h1 style="margin:0;color:#ffffff;font-size:28px;font-weight:800;letter-spacing:2px;text-transform:uppercase;">MantraAQ</h1>
-              <p style="margin:6px 0 0;color:#a7f3d0;font-size:13px;letter-spacing:1px;font-weight:500;">NATURE'S PUREST SINGHARA REIMAGINED</p>
-            </td>
-          </tr>
-
-          <!-- Confirmation Hero -->
-          <tr>
-            <td style="padding:32px 32px 16px;">
-              <div style="display:inline-block;background-color:#ecfdf5;border:1px solid #a7f3d0;border-radius:20px;padding:6px 14px;color:#065f46;font-size:12px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:12px;">
-                ✓ Order Confirmed
+            <td style="background-color:#0b1e14;padding:26px 32px;text-align:center;">
+              <div style="font-size:20px;font-weight:800;letter-spacing:4px;color:#ffffff;text-transform:uppercase;">
+                MANTRAAQ
               </div>
-              <h2 style="margin:0 0 8px;color:#0f172a;font-size:22px;font-weight:700;line-height:1.3;">
-                Thank you for your order, ${customerName}!
-              </h2>
-              <p style="margin:0;color:#475569;font-size:15px;line-height:1.6;">
-                We have received your order and our facility is preparing your fresh, natural water chestnut superfoods. Here is your official order receipt and delivery timeline.
-              </p>
-            </td>
-          </tr>
-
-          <!-- What Happens Next (Tracking & Delivery Roadmap) -->
-          <tr>
-            <td style="padding:0 32px 24px;">
-              <div style="background-color:#f8fafc;border:1px solid #e2e8f0;border-left:4px solid #10b981;border-radius:8px;padding:20px;">
-                <table width="100%" cellpadding="0" cellspacing="0">
-                  <tr>
-                    <td style="vertical-align:top;width:32px;font-size:22px;">📦</td>
-                    <td style="vertical-align:top;padding-left:10px;">
-                      <h4 style="margin:0 0 6px;color:#0f172a;font-size:15px;font-weight:700;">
-                        What happens next?
-                      </h4>
-                      <p style="margin:0 0 12px;color:#334155;font-size:14px;line-height:1.5;">
-                        Your order is being carefully packed at our facility. As soon as your package is dispatched, <strong>you will automatically receive an email and SMS with your courier Tracking ID and live tracking link</strong> so you can follow its delivery to your door.
-                      </p>
-                      <table cellpadding="0" cellspacing="0" style="font-size:12px;color:#64748b;">
-                        <tr>
-                          <td style="padding-right:16px;"><strong>⏱ Processing:</strong> 1 to 2 business days</td>
-                          <td><strong>🚚 Delivery:</strong> 3 to 7 business days</td>
-                        </tr>
-                      </table>
-                    </td>
-                  </tr>
-                </table>
+              <div style="font-size:10px;font-weight:600;letter-spacing:2px;color:#10b981;text-transform:uppercase;margin-top:4px;">
+                Wetland Superfoods
               </div>
             </td>
           </tr>
 
-          <!-- Order Summary Meta Strip -->
+          <!-- Confirmation Banner -->
           <tr>
-            <td style="padding:0 32px 16px;">
-              <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f1f5f9;border-radius:8px;padding:14px 18px;">
+            <td style="padding:32px 32px 20px;">
+              <table width="100%" cellpadding="0" cellspacing="0">
                 <tr>
-                  <td style="font-size:13px;color:#475569;">
-                    Order Number: <strong style="color:#0f172a;">#${orderNumber}</strong>
-                  </td>
-                  <td style="font-size:13px;color:#475569;text-align:center;">
-                    Date: <strong style="color:#0f172a;">${orderDate}</strong>
-                  </td>
-                  <td style="font-size:13px;text-align:right;">
-                    Payment: <strong style="color:${isCod ? '#d97706' : '#2563eb'};">${isCod ? 'Cash on Delivery (COD)' : 'Paid Online (PayU)'}</strong>
+                  <td>
+                    <span style="display:inline-block;background-color:#f0fdf4;border:1px solid #bbf7d0;color:#15803d;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:4px 10px;border-radius:20px;">
+                      Order Confirmed
+                    </span>
+                    <h2 style="margin:12px 0 6px;color:#0b1e14;font-size:22px;font-weight:700;letter-spacing:-0.3px;">
+                      Thank you, ${customerName}
+                    </h2>
+                    <p style="margin:0;color:#52665a;font-size:14px;line-height:1.5;">
+                      Your order <strong>#${orderNumber}</strong> is confirmed. We are carefully preparing your fresh water chestnut superfoods.
+                    </p>
                   </td>
                 </tr>
               </table>
             </td>
           </tr>
 
-          <!-- Items Table -->
+          <!-- Compact Tracking Notice -->
           <tr>
-            <td style="padding:8px 32px 16px;">
-              <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
-                <thead>
-                  <tr style="border-bottom:2px solid #e2e8f0;">
-                    <th style="padding:10px 12px;text-align:left;color:#475569;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">Item</th>
-                    <th style="padding:10px 12px;text-align:center;color:#475569;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">Qty</th>
-                    <th style="padding:10px 12px;text-align:right;color:#475569;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">Price</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  ${itemsRows}
-                  <!-- Pricing Breakdown -->
-                  <tr>
-                    <td colspan="2" style="padding:12px 12px 4px;text-align:right;color:#64748b;font-size:13px;">Subtotal:</td>
-                    <td style="padding:12px 12px 4px;text-align:right;color:#334155;font-size:13px;font-weight:600;">₹${order.totalAmount.toFixed(2)}</td>
-                  </tr>
-                  ${discountRow}
-                  <tr>
-                    <td colspan="2" style="padding:4px 12px;text-align:right;color:#64748b;font-size:13px;">Shipping:</td>
-                    <td style="padding:4px 12px;text-align:right;color:#10b981;font-size:13px;font-weight:600;">FREE</td>
-                  </tr>
-                  <tr>
-                    <td colspan="2" style="padding:14px 12px;text-align:right;color:#0f172a;font-size:16px;font-weight:700;border-top:2px solid #e2e8f0;">Total Amount:</td>
-                    <td style="padding:14px 12px;text-align:right;color:#059669;font-size:20px;font-weight:800;border-top:2px solid #e2e8f0;">₹${finalTotal}</td>
-                  </tr>
-                </tbody>
+            <td style="padding:0 32px 24px;">
+              <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f8faf9;border:1px solid #e2ece6;border-radius:10px;padding:14px 16px;">
+                <tr>
+                  <td style="vertical-align:middle;width:24px;font-size:18px;">🚚</td>
+                  <td style="vertical-align:middle;padding-left:12px;">
+                    <div style="font-size:13px;color:#1a2e22;font-weight:600;line-height:1.4;">
+                      Tracking ID will be shared via Email & SMS once dispatched
+                    </div>
+                    <div style="font-size:12px;color:#6b7c72;margin-top:2px;">
+                      Estimated dispatch: 24 to 48 hrs &bull; Metro delivery: 3 to 7 business days
+                    </div>
+                  </td>
+                </tr>
               </table>
             </td>
           </tr>
 
-          <!-- Delivery Address Card -->
+          <!-- Order Items Table -->
           <tr>
-            <td style="padding:0 32px 28px;">
-              <div style="background-color:#ffffff;border:1px solid #e2e8f0;border-radius:10px;padding:18px;">
-                <p style="margin:0 0 8px;color:#0f172a;font-size:14px;font-weight:700;">
-                  📍 Delivery Address
-                </p>
-                <p style="margin:0;color:#334155;font-size:14px;line-height:1.6;">
-                  <strong>${order.shippingAddress?.name}</strong><br>
-                  ${order.shippingAddress?.street}<br>
-                  ${order.shippingAddress?.city}, ${order.shippingAddress?.state} - ${order.shippingAddress?.postalCode}<br>
-                  Phone: ${order.shippingAddress?.phone}
-                </p>
+            <td style="padding:0 32px 16px;">
+              <div style="border-top:1px solid #e7ede9;padding-top:16px;">
+                <table width="100%" cellpadding="0" cellspacing="0">
+                  ${itemsRows}
+                </table>
+
+                <!-- Pricing Summary -->
+                <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:12px;">
+                  <tr>
+                    <td style="padding:4px 0;color:#6b7c72;font-size:13px;">Subtotal</td>
+                    <td style="padding:4px 0;text-align:right;color:#1a2e22;font-size:13px;font-weight:600;">₹${order.totalAmount.toFixed(2)}</td>
+                  </tr>
+                  ${discountRow}
+                  <tr>
+                    <td style="padding:4px 0;color:#6b7c72;font-size:13px;">Delivery</td>
+                    <td style="padding:4px 0;text-align:right;color:#059669;font-size:13px;font-weight:600;">FREE</td>
+                  </tr>
+                  <tr>
+                    <td style="padding:12px 0 0;color:#0b1e14;font-size:16px;font-weight:700;border-top:1px solid #e7ede9;">Total</td>
+                    <td style="padding:12px 0 0;text-align:right;color:#065f46;font-size:20px;font-weight:800;border-top:1px solid #e7ede9;">₹${finalTotal}</td>
+                  </tr>
+                </table>
               </div>
             </td>
           </tr>
 
-          <!-- Customer Support Section -->
+          <!-- Compact Details Grid (2 Columns: Delivery & Payment) -->
           <tr>
-            <td style="background-color:#f8fafc;padding:24px 32px;border-top:1px solid #e2e8f0;text-align:center;">
-              <h4 style="margin:0 0 6px;color:#0f172a;font-size:14px;font-weight:700;">Have questions or need assistance?</h4>
-              <p style="margin:0 0 16px;color:#64748b;font-size:13px;">Our customer support team is always happy to help you.</p>
-              <div>
-                <a href="https://mantraaq.com/faq.html" style="display:inline-block;background-color:#ffffff;border:1px solid #cbd5e1;color:#0f172a;padding:8px 18px;border-radius:6px;text-decoration:none;font-size:13px;font-weight:600;margin:0 4px;">Visit FAQ & Help Center</a>
-                <a href="mailto:hello@mantraaq.com" style="display:inline-block;background-color:#059669;color:#ffffff;padding:8px 18px;border-radius:6px;text-decoration:none;font-size:13px;font-weight:600;margin:0 4px;">Email Support</a>
-              </div>
-              <p style="margin:16px 0 0;color:#94a3b8;font-size:12px;">
-                Support Helpline: +91 82838 16755 | Begusarai, Bihar, India
-              </p>
+            <td style="padding:12px 32px 28px;">
+              <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#fbfcfb;border:1px solid #e7ede9;border-radius:10px;padding:16px;">
+                <tr>
+                  <td style="vertical-align:top;width:60%;padding-right:12px;">
+                    <div style="font-size:11px;font-weight:700;color:#6b7c72;text-transform:uppercase;letter-spacing:0.5px;">Shipping To</div>
+                    <div style="font-size:13px;font-weight:600;color:#1a2e22;margin-top:4px;">${order.shippingAddress?.name}</div>
+                    <div style="font-size:12px;color:#52665a;line-height:1.4;margin-top:2px;">
+                      ${order.shippingAddress?.street}, ${order.shippingAddress?.city}, ${order.shippingAddress?.state} - ${order.shippingAddress?.postalCode}
+                    </div>
+                    <div style="font-size:12px;color:#52665a;margin-top:2px;">Phone: ${order.shippingAddress?.phone}</div>
+                  </td>
+                  <td style="vertical-align:top;width:40%;border-left:1px solid #e7ede9;padding-left:16px;">
+                    <div style="font-size:11px;font-weight:700;color:#6b7c72;text-transform:uppercase;letter-spacing:0.5px;">Payment</div>
+                    <div style="font-size:13px;font-weight:600;color:${isCod ? '#b45309' : '#047857'};margin-top:4px;">
+                      ${isCod ? 'Cash on Delivery' : 'Paid Online'}
+                    </div>
+                    <div style="font-size:11px;font-weight:700;color:#6b7c72;text-transform:uppercase;letter-spacing:0.5px;margin-top:10px;">Date</div>
+                    <div style="font-size:12px;color:#52665a;margin-top:2px;">${orderDate}</div>
+                  </td>
+                </tr>
+              </table>
             </td>
           </tr>
 
-          <!-- Footer Legal -->
+          <!-- Elegant Minimal Footer -->
           <tr>
-            <td style="background-color:#0f172a;padding:18px 32px;text-align:center;">
-              <p style="margin:0;color:#94a3b8;font-size:12px;">
-                MantraAQ Superfoods. 100% Gluten-Free, Wetland-Harvested Water Chestnut Nutrition.
+            <td style="background-color:#0b1e14;padding:24px 32px;text-align:center;">
+              <p style="margin:0;color:#d1fae5;font-size:13px;font-weight:500;">
+                Questions? We are here to help.
               </p>
-              <p style="margin:4px 0 0;color:#64748b;font-size:11px;">
-                This is an automated order confirmation. Please save this email for your records.
+              <p style="margin:6px 0 0;font-size:12px;">
+                <a href="mailto:hello@mantraaq.com" style="color:#10b981;text-decoration:none;font-weight:600;">hello@mantraaq.com</a>
+                <span style="color:#335342;margin:0 8px;">|</span>
+                <a href="tel:+918283816755" style="color:#10b981;text-decoration:none;font-weight:600;">+91 82838 16755</a>
+                <span style="color:#335342;margin:0 8px;">|</span>
+                <a href="https://mantraaq.com/faq.html" style="color:#10b981;text-decoration:none;font-weight:600;">FAQ Center</a>
+              </p>
+              <p style="margin:16px 0 0;color:#6b7c72;font-size:11px;letter-spacing:0.5px;">
+                MantraAQ &bull; Begusarai, Bihar &bull; All rights reserved
               </p>
             </td>
           </tr>
