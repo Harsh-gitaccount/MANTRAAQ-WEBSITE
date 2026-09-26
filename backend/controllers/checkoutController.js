@@ -9,10 +9,10 @@ const PAYU_MERCHANT_SALT = process.env.PAYU_MERCHANT_SALT;
 const PAYU_SANDBOX = process.env.PAYU_SANDBOX === 'true';
 
 if (!PAYU_MERCHANT_KEY || PAYU_MERCHANT_KEY === 'YOUR_LIVE_MERCHANT_KEY') {
-  console.error('⛔ FATAL: PAYU_MERCHANT_KEY is not set in .env — online payments will fail.');
+  console.error('⛔ FATAL: PAYU_MERCHANT_KEY is not set in .env - online payments will fail.');
 }
 if (!PAYU_MERCHANT_SALT || PAYU_MERCHANT_SALT === 'YOUR_LIVE_MERCHANT_SALT_V1') {
-  console.error('⛔ FATAL: PAYU_MERCHANT_SALT is not set in .env — online payments will fail.');
+  console.error('⛔ FATAL: PAYU_MERCHANT_SALT is not set in .env - online payments will fail.');
 }
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -808,7 +808,7 @@ exports.getActiveCoupons = async (req, res) => {
       });
     }
 
-    // Only return customer-facing fields — strip internal metadata
+    // Only return customer-facing fields - strip internal metadata
     const safeCoupons = activeCoupons.map(c => ({
       code: c.code,
       discountType: c.discountType,
@@ -829,3 +829,55 @@ exports.getActiveCoupons = async (req, res) => {
     });
   }
 };
+
+/**
+ * Resend order confirmation email for an existing order
+ */
+exports.resendOrderConfirmation = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const adminKey = req.headers['x-admin-key'];
+
+    // Authorized if valid admin secret header provided or authenticated ADMIN
+    const isAuthorized = (adminKey && adminKey === process.env.JWT_SECRET) || 
+                         (req.user && req.user.role === 'ADMIN');
+
+    if (!isAuthorized) {
+      return res.status(403).json({ success: false, message: 'Unauthorized.' });
+    }
+
+    const order = await prisma.order.findUnique({
+      where: { id },
+      include: { orderLineItems: true },
+    });
+
+    if (!order) {
+      return res.status(404).json({ success: false, message: 'Order not found.' });
+    }
+
+    const email = order.shippingAddress?.email;
+    if (!email) {
+      return res.status(400).json({ success: false, message: 'No email found on this order.' });
+    }
+
+    const result = await sendOrderConfirmationEmail(order);
+    if (!result) {
+      return res.status(500).json({ 
+        success: false, 
+        message: 'Failed to send confirmation email. Check Brevo API key configuration.' 
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: `Confirmation email successfully sent to ${email}`,
+      orderId: order.id,
+      recipient: email,
+      messageId: result.messageId || 'OK'
+    });
+  } catch (error) {
+    console.error('Resend confirmation error:', error);
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+

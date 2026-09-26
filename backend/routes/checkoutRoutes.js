@@ -5,12 +5,13 @@ const { checkoutRules } = require('../middleware/validate');
 
 const router = express.Router();
 
-// Checkout REQUIRES authentication — no guest orders allowed
+// Checkout REQUIRES authentication - no guest orders allowed
 router.post('/create-payment-order', protect, checkoutRules, checkoutController.createPaymentOrder);
 router.post('/verify-payment', checkoutController.verifyPayment);
 router.post('/validate-coupon', optionalProtect, checkoutController.validateCoupon);
 router.get('/active-coupons', checkoutController.getActiveCoupons);
 router.post('/payu-success', checkoutController.payuSuccess);
 router.post('/payu-failure', checkoutController.payuFailure);
+router.post('/resend-confirmation/:id', checkoutController.resendOrderConfirmation);
 
 module.exports = router;
