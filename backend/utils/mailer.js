@@ -180,7 +180,7 @@ const sendPasswordResetEmail = async (user, resetLink) => {
 // ─── Order Confirmation Email ───────────────────────────────
 
 const sendAdminOrderAlertEmail = async (order) => {
-  const adminEmail = process.env.ADMIN_EMAIL || 'hello@mantraaq.com,harshchaudharytech@gmail.com';
+  const adminEmail = process.env.ADMIN_EMAIL || 'hello@mantraaq.com,mantraaqsuperfoods@gmail.com';
   
   const itemsHtml = (order.orderLineItems || []).map(item => `
     <tr>
@@ -506,7 +506,7 @@ const sendContactEmail = async (contactDetails) => {
   `);
 
   await sendMail(
-    process.env.ADMIN_EMAIL || 'hello@mantraaq.com',
+    process.env.ADMIN_EMAIL || 'hello@mantraaq.com,mantraaqsuperfoods@gmail.com',
     `MantraAQ Contact Form: ${subject}`,
     adminTemplate.html,
     `New message from ${name} (${email}) - Subject: ${subject}. Message: ${message}`
