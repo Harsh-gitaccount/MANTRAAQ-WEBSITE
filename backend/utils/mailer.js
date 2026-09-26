@@ -71,8 +71,10 @@ const wrapTemplate = (title, bodyContent) => {
 
 const sendMail = async (to, subject, html, text) => {
   try {
+    const activeBrevoKey = process.env.BREVO_API_KEY || process.env.mantraaq || process.env.BREVO_KEY;
+
     // Primary: Use Brevo HTTP API (required on Render which blocks outbound SMTP)
-    if (BREVO_KEY) {
+    if (activeBrevoKey) {
       let senderName = 'MantraAQ';
       let senderEmail = 'hello@mantraaq.com';
       const fromMatch = FROM.match(/^(.*?)\s*<(.*?)>$/);
@@ -86,7 +88,7 @@ const sendMail = async (to, subject, html, text) => {
         headers: {
           'accept': 'application/json',
           'content-type': 'application/json',
-          'api-key': BREVO_KEY,
+          'api-key': activeBrevoKey,
         },
         body: JSON.stringify({
           sender: { name: senderName, email: senderEmail },
@@ -119,7 +121,7 @@ const sendMail = async (to, subject, html, text) => {
     return info;
   } catch (error) {
     console.error(`❌ Email failed: ${subject} -> ${to}:`, error.message);
-    return null;
+    return { error: error.message };
   }
 };
 

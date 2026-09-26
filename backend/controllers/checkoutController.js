@@ -861,10 +861,11 @@ exports.resendOrderConfirmation = async (req, res) => {
     }
 
     const result = await sendOrderConfirmationEmail(order);
-    if (!result) {
+    if (!result || result.error) {
       return res.status(500).json({ 
         success: false, 
-        message: 'Failed to send confirmation email. Check Brevo API key configuration.' 
+        message: 'Failed to send confirmation email.',
+        details: result ? result.error : 'Null result from mailer'
       });
     }
 
