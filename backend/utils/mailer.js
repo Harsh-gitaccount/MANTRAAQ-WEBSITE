@@ -1,6 +1,6 @@
 const nodemailer = require('nodemailer');
 
-// ─── SMTP Transport ─────────────────────────────────────────
+// ─── SMTP Transport (fallback for local development) ────────
 
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST || 'smtp.gmail.com',
@@ -15,15 +15,16 @@ const transporter = nodemailer.createTransport({
   socketTimeout: 60000,     // 60s for socket inactivity
 });
 
-// Verify SMTP connection on startup (non-blocking) if we are not using HTTP API
-if (!process.env.SMTP_PASS) {
-  transporter.verify().then(() => {
-    console.log('✅ SMTP connection verified — emails are ready.');
-  }).catch(err => {
-    console.warn('⚠️  SMTP verification failed — emails may not work:', err.message);
-  });
+// Verify connection on startup (non-blocking)
+if (process.env.BREVO_API_KEY) {
+  console.log('✅ Brevo HTTP API key found - emails will be sent via Brevo REST API.');
 } else {
-  console.log('✅ Brevo HTTP API selected for outbound emails (no SMTP verification needed).');
+  console.log('⚠️  No BREVO_API_KEY found - falling back to SMTP transport.');
+  transporter.verify().then(() => {
+    console.log('✅ SMTP connection verified - emails are ready.');
+  }).catch(err => {
+    console.warn('⚠️  SMTP verification failed - emails may not work:', err.message);
+  });
 }
 
 const FROM = process.env.FROM_EMAIL || 'MantraAQ <hello@mantraaq.com>';
@@ -51,7 +52,7 @@ const wrapTemplate = (title, bodyContent) => {
         </td></tr>
         <!-- Footer -->
         <tr><td style="background:#f9fafb;padding:20px 32px;text-align:center;border-top:1px solid #e5e7eb;">
-          <p style="margin:0;color:#9ca3af;font-size:13px;">MantraAQ — Premium Singhara Products</p>
+          <p style="margin:0;color:#9ca3af;font-size:13px;">MantraAQ - Premium Singhara Products</p>
           <p style="margin:4px 0 0;color:#9ca3af;font-size:12px;">Need help? Email us at ${process.env.ADMIN_EMAIL || 'hello@mantraaq.com'}</p>
         </td></tr>
       </table>
@@ -67,8 +68,8 @@ const wrapTemplate = (title, bodyContent) => {
 
 const sendMail = async (to, subject, html, text) => {
   try {
-    // If SMTP_PASS is available, use Brevo HTTP API to bypass Render's outbound SMTP blocks
-    if (process.env.SMTP_PASS) {
+    // Primary: Use Brevo HTTP API (required on Render which blocks outbound SMTP)
+    if (process.env.BREVO_API_KEY) {
       let senderName = 'MantraAQ';
       let senderEmail = 'hello@mantraaq.com';
       const fromMatch = FROM.match(/^(.*?)\s*<(.*?)>$/);
@@ -82,7 +83,7 @@ const sendMail = async (to, subject, html, text) => {
         headers: {
           'accept': 'application/json',
           'content-type': 'application/json',
-          'api-key': process.env.SMTP_PASS,
+          'api-key': process.env.BREVO_API_KEY,
         },
         body: JSON.stringify({
           sender: { name: senderName, email: senderEmail },
@@ -94,27 +95,27 @@ const sendMail = async (to, subject, html, text) => {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(`Brevo HTTP API error: ${JSON.stringify(errorData)}`);
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(`Brevo API ${response.status}: ${JSON.stringify(errorData)}`);
       }
 
       const result = await response.json();
-      console.log(`📧 Email sent via Brevo HTTP API: ${subject} → ${to} (${result.messageId || 'No ID'})`);
+      console.log(`📧 Email sent via Brevo API: ${subject} -> ${to} (messageId: ${result.messageId || 'N/A'})`);
       return { messageId: result.messageId };
-    } else {
-      // Fallback to standard SMTP (e.g., local development without key)
-      const info = await transporter.sendMail({
-        from: FROM,
-        to,
-        subject,
-        html,
-        text: text || subject,
-      });
-      console.log(`📧 Email sent via SMTP: ${subject} → ${to} (${info.messageId})`);
-      return info;
     }
+
+    // Fallback: Standard SMTP (for local development)
+    const info = await transporter.sendMail({
+      from: FROM,
+      to,
+      subject,
+      html,
+      text: text || subject,
+    });
+    console.log(`📧 Email sent via SMTP: ${subject} -> ${to} (${info.messageId})`);
+    return info;
   } catch (error) {
-    console.error(`❌ Email failed: ${subject} → ${to}:`, error.message);
+    console.error(`❌ Email failed: ${subject} -> ${to}:`, error.message);
     return null;
   }
 };
