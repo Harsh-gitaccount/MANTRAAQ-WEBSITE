@@ -15,11 +15,14 @@ const transporter = nodemailer.createTransport({
   socketTimeout: 60000,     // 60s for socket inactivity
 });
 
+// Brevo API Key detection (checks BREVO_API_KEY, or 'mantraaq' if named after the key)
+const BREVO_KEY = process.env.BREVO_API_KEY || process.env.mantraaq || process.env.BREVO_KEY;
+
 // Verify connection on startup (non-blocking)
-if (process.env.BREVO_API_KEY) {
+if (BREVO_KEY) {
   console.log('✅ Brevo HTTP API key found - emails will be sent via Brevo REST API.');
 } else {
-  console.log('⚠️  No BREVO_API_KEY found - falling back to SMTP transport.');
+  console.log('⚠️  No Brevo API key found - falling back to SMTP transport.');
   transporter.verify().then(() => {
     console.log('✅ SMTP connection verified - emails are ready.');
   }).catch(err => {
@@ -69,7 +72,7 @@ const wrapTemplate = (title, bodyContent) => {
 const sendMail = async (to, subject, html, text) => {
   try {
     // Primary: Use Brevo HTTP API (required on Render which blocks outbound SMTP)
-    if (process.env.BREVO_API_KEY) {
+    if (BREVO_KEY) {
       let senderName = 'MantraAQ';
       let senderEmail = 'hello@mantraaq.com';
       const fromMatch = FROM.match(/^(.*?)\s*<(.*?)>$/);
@@ -83,7 +86,7 @@ const sendMail = async (to, subject, html, text) => {
         headers: {
           'accept': 'application/json',
           'content-type': 'application/json',
-          'api-key': process.env.BREVO_API_KEY,
+          'api-key': BREVO_KEY,
         },
         body: JSON.stringify({
           sender: { name: senderName, email: senderEmail },
