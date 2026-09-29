@@ -180,7 +180,13 @@ const sendPasswordResetEmail = async (user, resetLink) => {
 // ─── Order Confirmation Email ───────────────────────────────
 
 const sendAdminOrderAlertEmail = async (order) => {
-  const adminEmail = process.env.ADMIN_EMAIL || 'hello@mantraaq.com,mantraaqsuperfoods@gmail.com';
+  const adminRecipients = ['hello@mantraaq.com', 'mantraaqsuperfoods@gmail.com'];
+  if (process.env.ADMIN_EMAIL) {
+    process.env.ADMIN_EMAIL.split(',').forEach(e => {
+      const trimmed = e.trim();
+      if (trimmed && !adminRecipients.includes(trimmed)) adminRecipients.push(trimmed);
+    });
+  }
   
   const itemsHtml = (order.orderLineItems || []).map(item => `
     <tr>
@@ -218,7 +224,7 @@ const sendAdminOrderAlertEmail = async (order) => {
     </div>
   `);
 
-  return sendMail(adminEmail, `🚨 [MantraAQ] New Order Alert #${order.id.slice(0, 8).toUpperCase()} (${isCod ? 'COD' : 'ONLINE'})`, template.html,
+  return sendMail(adminRecipients, `🚨 [MantraAQ] New Order Alert #${order.id.slice(0, 8).toUpperCase()} (${isCod ? 'COD' : 'ONLINE'})`, template.html,
     `New order received! Order ID: ${order.id.slice(0, 8).toUpperCase()}. Total: ₹${order.totalAmount.toFixed(2)}. Method: ${isCod ? 'COD' : 'ONLINE'}.`
   );
 };

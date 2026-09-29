@@ -882,4 +882,38 @@ exports.resendOrderConfirmation = async (req, res) => {
   }
 };
 
+/**
+ * Trigger admin order alert for an existing order
+ */
+exports.sendAdminAlertForOrder = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const adminKey = req.headers['x-admin-key'];
+    if (!adminKey || adminKey !== process.env.JWT_SECRET) {
+      return res.status(403).json({ success: false, message: 'Unauthorized.' });
+    }
+
+    const { sendAdminOrderAlertEmail } = require('../utils/mailer');
+    const order = await prisma.order.findUnique({
+      where: { id },
+      include: { orderLineItems: true }
+    });
+
+    if (!order) {
+      return res.status(404).json({ success: false, message: 'Order not found.' });
+    }
+
+    const result = await sendAdminOrderAlertEmail(order);
+    return res.status(200).json({
+      success: true,
+      message: 'Admin alert sent to hello@mantraaq.com and mantraaqsuperfoods@gmail.com',
+      orderId: order.id,
+      result
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+
 
