@@ -171,7 +171,10 @@ export default function Orders() {
     const trackingCarrier = selectedCarrier === 'Other' 
       ? (customCarrierInputs[id]?.trim() || 'Courier Delivery')
       : selectedCarrier;
-    const customTrackingUrl = (customUrlInputs[id] || '').trim();
+    let customTrackingUrl = (customUrlInputs[id] || '').trim();
+    if (customTrackingUrl && !customTrackingUrl.startsWith('http://') && !customTrackingUrl.startsWith('https://')) {
+      customTrackingUrl = 'https://' + customTrackingUrl;
+    }
 
     setActionLoading({ ...actionLoading, [id]: true });
     try {
@@ -491,10 +494,10 @@ export default function Orders() {
                                 Custom Tracking Link <span className="text-slate-400 normal-case font-normal">(Optional)</span>
                               </label>
                               <input
-                                type="url"
+                                type="text"
                                 value={customUrlInputs[order.id] || ''}
                                 onChange={(e) => setCustomUrlInputs({ ...customUrlInputs, [order.id]: e.target.value })}
-                                placeholder="Auto-generated if left empty"
+                                placeholder="Auto-generated if empty, or e.g. bluedart.com"
                                 className="w-full bg-slate-50 border border-slate-200 rounded-lg py-1.5 px-3 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500 text-xs"
                               />
                             </div>

@@ -431,8 +431,14 @@ const sendOrderConfirmationEmail = async (order) => {
 // ─── Carrier Tracking Helpers ───────────────────────────────
 
 const getCarrierTrackingUrl = (carrier, trackingNumber, customUrl) => {
-  if (customUrl && typeof customUrl === 'string' && customUrl.trim().startsWith('http')) {
-    return customUrl.trim();
+  if (customUrl && typeof customUrl === 'string') {
+    let trimmed = customUrl.trim();
+    if (trimmed.length > 0) {
+      if (!trimmed.startsWith('http://') && !trimmed.startsWith('https://')) {
+        trimmed = 'https://' + trimmed;
+      }
+      return trimmed;
+    }
   }
   const cleanAwb = encodeURIComponent((trackingNumber || '').trim());
   const c = (carrier || '').toLowerCase();
