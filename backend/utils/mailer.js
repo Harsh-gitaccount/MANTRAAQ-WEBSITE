@@ -428,26 +428,228 @@ const sendOrderConfirmationEmail = async (order) => {
   );
 };
 
+// ─── Carrier Tracking Helpers ───────────────────────────────
+
+const getCarrierTrackingUrl = (carrier, trackingNumber, customUrl) => {
+  if (customUrl && typeof customUrl === 'string' && customUrl.trim().startsWith('http')) {
+    return customUrl.trim();
+  }
+  const cleanAwb = encodeURIComponent((trackingNumber || '').trim());
+  const c = (carrier || '').toLowerCase();
+
+  if (c.includes('bluedart') || c.includes('blue dart')) {
+    return `https://www.bluedart.com/web/guest/trackdartresult?trackFor=0&trackNo=${cleanAwb}`;
+  }
+  if (c.includes('delhivery')) {
+    return `https://www.delhivery.com/track/package/${cleanAwb}`;
+  }
+  if (c.includes('dtdc')) {
+    return `https://www.dtdc.in/tracking.asp`;
+  }
+  if (c.includes('post') || c.includes('speed post')) {
+    return `https://www.indiapost.gov.in/_layouts/15/dpt.cept.tracking/trackconsignment.aspx`;
+  }
+  if (c.includes('shiprocket')) {
+    return `https://shiprocket.co/tracking/${cleanAwb}`;
+  }
+  if (c.includes('shadowfax')) {
+    return `https://tracker.shadowfax.in/#/track/${cleanAwb}`;
+  }
+  return `https://www.bluedart.com/web/guest/trackdartresult?trackFor=0&trackNo=${cleanAwb}`;
+};
+
+const getCarrierPortalUrl = (carrier) => {
+  const c = (carrier || '').toLowerCase();
+  if (c.includes('bluedart') || c.includes('blue dart')) return 'https://www.bluedart.com/tracking';
+  if (c.includes('delhivery')) return 'https://www.delhivery.com';
+  if (c.includes('dtdc')) return 'https://www.dtdc.in';
+  if (c.includes('post') || c.includes('speed post')) return 'https://www.indiapost.gov.in';
+  if (c.includes('shiprocket')) return 'https://shiprocket.co';
+  if (c.includes('shadowfax')) return 'https://shadowfax.in';
+  return 'https://www.bluedart.com/tracking';
+};
+
 // ─── Order Dispatched Email ─────────────────────────────────
 
-const sendOrderDispatchedEmail = async (order) => {
+const sendOrderDispatchedEmail = async (order, customTrackingUrl) => {
   const email = order.shippingAddress?.email;
   if (!email) return null;
 
-  const template = wrapTemplate('Your Order Has Been Shipped! 🚚', `
-    <p style="color:#4b5563;line-height:1.6;">Hi ${order.shippingAddress?.name || 'there'},</p>
-    <p style="color:#4b5563;line-height:1.6;">Great news! Your order <strong>#${order.id.slice(0, 8).toUpperCase()}</strong> has been dispatched and is on its way to you.</p>
-    ${order.trackingNumber ? `
-    <div style="background:#eff6ff;padding:16px;border-radius:8px;margin:16px 0;">
-      <p style="margin:0;color:#1e40af;font-size:14px;font-weight:600;">Tracking Details:</p>
-      <p style="margin:4px 0 0;color:#3b82f6;font-size:16px;font-weight:700;">${order.trackingNumber}</p>
-      ${order.trackingCarrier ? `<p style="margin:4px 0 0;color:#6b7280;font-size:13px;">Carrier: ${order.trackingCarrier}</p>` : ''}
-    </div>` : ''}
-    <p style="color:#6b7280;font-size:14px;">Estimated delivery: 3-5 business days.</p>
-  `);
+  const orderNumber = order.id.slice(0, 8).toUpperCase();
+  const customerName = order.shippingAddress?.name || 'Customer';
+  const carrier = order.trackingCarrier || 'Blue Dart Express';
+  const trackingNumber = order.trackingNumber || 'Available on request';
+  const trackingUrl = getCarrierTrackingUrl(carrier, trackingNumber, customTrackingUrl);
+  const portalUrl = getCarrierPortalUrl(carrier);
 
-  return sendMail(email, `MantraAQ - Order Shipped #${order.id.slice(0, 8).toUpperCase()}`, template.html,
-    `Your order #${order.id.slice(0, 8).toUpperCase()} has been shipped!${order.trackingNumber ? ` Tracking: ${order.trackingNumber}` : ''}`
+  const itemsRows = (order.orderLineItems || []).map(item => {
+    const pName = item.productName || item.variant?.product?.name || 'Singhara Superfood';
+    const vTitle = item.variantTitle || item.variant?.title || '';
+    return `
+      <tr>
+        <td style="padding:10px 0;border-bottom:1px solid #f1f5f3;color:#1a2e22;font-size:13px;font-weight:600;">
+          ${pName}
+          <span style="display:block;font-size:11px;font-weight:400;color:#6b7c72;margin-top:2px;">
+            ${vTitle ? vTitle + ' &bull; ' : ''}Qty: ${item.quantity}
+          </span>
+        </td>
+        <td style="padding:10px 0;border-bottom:1px solid #f1f5f3;text-align:right;color:#1a2e22;font-size:13px;font-weight:600;vertical-align:top;">
+          ₹${item.priceAtPurchase.toFixed(2)}
+        </td>
+      </tr>
+    `;
+  }).join('');
+
+  const emailHtml = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Order Has Been Dispatched - MantraAQ</title>
+</head>
+<body style="margin:0;padding:0;background-color:#f4f7f5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#1a2e22;-webkit-font-smoothing:antialiased;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f7f5;padding:30px 12px;">
+    <tr>
+      <td align="center">
+        <table width="100%" cellpadding="0" cellspacing="0" style="max-width:580px;background-color:#ffffff;border-radius:14px;overflow:hidden;border:1px solid #e7ede9;box-shadow:0 6px 24px rgba(11,30,20,0.06);">
+          
+          <!-- Compact Luxury Header -->
+          <tr>
+            <td style="background-color:#0b1e14;padding:26px 32px;text-align:center;border-bottom:2px solid #10b981;">
+              <h1 style="margin:0;color:#ffffff;font-size:22px;font-weight:800;letter-spacing:3px;text-transform:uppercase;">MANTRAAQ</h1>
+              <div style="color:#a7f3d0;font-size:10px;font-weight:600;letter-spacing:1.8px;text-transform:uppercase;margin-top:4px;">
+                PURE BIHAR WETLAND HARVEST
+              </div>
+            </td>
+          </tr>
+
+          <!-- Dispatch Announcement Banner -->
+          <tr>
+            <td style="padding:32px 32px 18px;">
+              <table width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td>
+                    <span style="display:inline-block;background-color:#eff6ff;border:1px solid #bfdbfe;color:#1d4ed8;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:4px 10px;border-radius:20px;">
+                      Order Dispatched
+                    </span>
+                    <h2 style="margin:12px 0 6px;color:#0b1e14;font-size:22px;font-weight:700;letter-spacing:-0.3px;">
+                      Your Order Is On Its Way, ${customerName}
+                    </h2>
+                    <p style="margin:0;color:#52665a;font-size:14px;line-height:1.5;">
+                      Your order <strong>#${orderNumber}</strong> has been hand-packed with care and handed over to our courier partner for delivery.
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Courier & Tracking Card -->
+          <tr>
+            <td style="padding:0 32px 24px;">
+              <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f8faf9;border:1px solid #dbe6e0;border-radius:12px;padding:20px 22px;">
+                <tr>
+                  <td>
+                    <div style="font-size:11px;font-weight:700;color:#6b7c72;text-transform:uppercase;letter-spacing:0.8px;">
+                      Courier Partner
+                    </div>
+                    <div style="font-size:16px;font-weight:700;color:#0b1e14;margin-top:4px;">
+                      ${carrier}
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding-top:14px;">
+                    <div style="font-size:11px;font-weight:700;color:#6b7c72;text-transform:uppercase;letter-spacing:0.8px;">
+                      AWB / Tracking Number
+                    </div>
+                    <div style="display:inline-block;background-color:#ffffff;border:1px solid #cbd5e1;padding:8px 14px;border-radius:8px;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:17px;font-weight:700;color:#047857;letter-spacing:1px;margin-top:6px;">
+                      ${trackingNumber}
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding-top:20px;">
+                    <a href="${trackingUrl}" target="_blank" rel="noopener noreferrer" style="display:block;text-align:center;background-color:#059669;color:#ffffff;padding:13px 24px;border-radius:8px;text-decoration:none;font-size:14px;font-weight:700;letter-spacing:0.5px;box-shadow:0 3px 8px rgba(5,150,105,0.25);">
+                      Track Your Shipment &rarr;
+                    </a>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding-top:14px;">
+                    <p style="margin:0;font-size:12px;color:#52665a;line-height:1.5;">
+                      <strong>How to track:</strong> Click the button above to view live transit updates, or visit <a href="${portalUrl}" target="_blank" rel="noopener noreferrer" style="color:#059669;text-decoration:underline;font-weight:600;">${carrier}</a> and enter your AWB number <strong>${trackingNumber}</strong>.
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Items in this Shipment -->
+          ${itemsRows ? `
+          <tr>
+            <td style="padding:0 32px 18px;">
+              <div style="border-top:1px solid #e7ede9;padding-top:16px;">
+                <div style="font-size:11px;font-weight:700;color:#6b7c72;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;">
+                  Items In This Shipment
+                </div>
+                <table width="100%" cellpadding="0" cellspacing="0">
+                  ${itemsRows}
+                </table>
+              </div>
+            </td>
+          </tr>` : ''}
+
+          <!-- Delivery Destination Details -->
+          <tr>
+            <td style="padding:0 32px 28px;">
+              <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#fbfcfb;border:1px solid #e7ede9;border-radius:10px;padding:16px;">
+                <tr>
+                  <td style="vertical-align:top;">
+                    <div style="font-size:11px;font-weight:700;color:#6b7c72;text-transform:uppercase;letter-spacing:0.5px;">Shipping Destination</div>
+                    <div style="font-size:13px;font-weight:600;color:#1a2e22;margin-top:4px;">${order.shippingAddress?.name}</div>
+                    <div style="font-size:12px;color:#52665a;line-height:1.4;margin-top:2px;">
+                      ${order.shippingAddress?.street}, ${order.shippingAddress?.city}, ${order.shippingAddress?.state} - ${order.shippingAddress?.postalCode}
+                    </div>
+                    ${order.shippingAddress?.phone ? `<div style="font-size:12px;color:#52665a;margin-top:2px;">Phone: ${order.shippingAddress?.phone}</div>` : ''}
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Elegant Minimal Footer -->
+          <tr>
+            <td style="background-color:#0b1e14;padding:24px 32px;text-align:center;">
+              <p style="margin:0;color:#d1fae5;font-size:13px;font-weight:500;">
+                Questions about your delivery? We are here to help.
+              </p>
+              <p style="margin:6px 0 0;font-size:12px;">
+                <a href="mailto:hello@mantraaq.com" style="color:#10b981;text-decoration:none;font-weight:600;">hello@mantraaq.com</a>
+                <span style="color:#335342;margin:0 8px;">|</span>
+                <a href="tel:+918283816755" style="color:#10b981;text-decoration:none;font-weight:600;">+91 82838 16755</a>
+                <span style="color:#335342;margin:0 8px;">|</span>
+                <a href="https://mantraaq.com/faq.html" style="color:#10b981;text-decoration:none;font-weight:600;">FAQ Center</a>
+              </p>
+              <p style="margin:16px 0 0;color:#6b7c72;font-size:11px;letter-spacing:0.5px;">
+                MantraAQ &bull; Begusarai, Bihar &bull; All rights reserved
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
+
+  return sendMail(
+    email,
+    `MantraAQ - Order Shipped #${orderNumber} via ${carrier}`,
+    emailHtml,
+    `Your order #${orderNumber} has been dispatched via ${carrier}. Tracking / AWB: ${trackingNumber}. Track your shipment: ${trackingUrl}`
   );
 };
 

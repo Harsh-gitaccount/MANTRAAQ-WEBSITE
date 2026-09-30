@@ -114,7 +114,7 @@ exports.getMyOrders = async (req, res) => {
 };
 
 /**
- * Get single order by ID (customer – ownership check)
+ * Get single order by ID (customer - ownership check)
  * GET /api/orders/my-orders/:id
  */
 exports.getMyOrderById = async (req, res) => {
@@ -150,7 +150,7 @@ exports.getMyOrderById = async (req, res) => {
 };
 
 /**
- * Cancel a PAID order (customer – ownership check)
+ * Cancel a PAID order (customer - ownership check)
  * POST /api/orders/my-orders/:id/cancel
  */
 exports.cancelOrder = async (req, res) => {
@@ -226,7 +226,7 @@ exports.cancelOrder = async (req, res) => {
 };
 
 // ═══════════════════════════════════════════════════════════════
-//  ADMIN – ORDER MANAGEMENT
+//  ADMIN - ORDER MANAGEMENT
 // ═══════════════════════════════════════════════════════════════
 
 /**
@@ -334,13 +334,24 @@ exports.getAdminOrderById = async (req, res) => {
 exports.dispatchOrder = async (req, res) => {
   try {
     const { id } = req.params;
-    const { trackingNumber, trackingCarrier } = req.body;
+    const { trackingNumber, trackingCarrier, trackingUrl } = req.body;
 
-    if (!trackingNumber) {
+    if (!trackingNumber || !trackingNumber.trim()) {
       return res.status(400).json({ success: false, message: 'Tracking number is required.' });
     }
 
-    const order = await prisma.order.findUnique({ where: { id } });
+    const order = await prisma.order.findUnique({
+      where: { id },
+      include: {
+        orderLineItems: {
+          include: {
+            variant: {
+              include: { product: true },
+            },
+          },
+        },
+      },
+    });
 
     if (!order) {
       return res.status(404).json({ success: false, message: 'Order not found.' });
@@ -354,26 +365,36 @@ exports.dispatchOrder = async (req, res) => {
       });
     }
 
+    const finalCarrier = (trackingCarrier && trackingCarrier.trim()) ? trackingCarrier.trim() : 'Blue Dart Express';
+
     const updatedOrder = await prisma.order.update({
       where: { id },
       data: {
         status: 'DISPATCHED',
-        trackingNumber,
-        ...(trackingCarrier && { trackingCarrier }),
+        trackingNumber: trackingNumber.trim(),
+        trackingCarrier: finalCarrier,
       },
-      include: { orderLineItems: true },
+      include: {
+        orderLineItems: {
+          include: {
+            variant: {
+              include: { product: true },
+            },
+          },
+        },
+      },
     });
 
     // Send dispatch email asynchronously
     if (typeof sendOrderDispatchedEmail === 'function') {
-      sendOrderDispatchedEmail(updatedOrder, trackingNumber).catch((err) =>
+      sendOrderDispatchedEmail(updatedOrder, trackingUrl).catch((err) =>
         console.error('Dispatch email notification error:', err)
       );
     }
 
     res.status(200).json({
       success: true,
-      message: 'Order status updated to Dispatched and email notification triggered.',
+      message: `Order status updated to Dispatched via ${finalCarrier} and email notification triggered.`,
       data: updatedOrder,
     });
   } catch (error) {
@@ -498,7 +519,7 @@ exports.adminCancelOrder = async (req, res) => {
 };
 
 // ═══════════════════════════════════════════════════════════════
-//  ADMIN – DASHBOARD METRICS
+//  ADMIN - DASHBOARD METRICS
 // ═══════════════════════════════════════════════════════════════
 
 /**
@@ -671,7 +692,7 @@ exports.getDashboardMetrics = async (req, res) => {
 };
 
 // ═══════════════════════════════════════════════════════════════
-//  ADMIN – CUSTOMER MANAGEMENT
+//  ADMIN - CUSTOMER MANAGEMENT
 // ═══════════════════════════════════════════════════════════════
 
 /**
