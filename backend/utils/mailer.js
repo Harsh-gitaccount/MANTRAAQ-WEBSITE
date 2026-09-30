@@ -141,7 +141,7 @@ const sendWelcomeEmail = async (user) => {
   const template = wrapTemplate('Welcome to MantraAQ! 🎉', `
     <p style="color:#4b5563;line-height:1.6;">Hi ${user.name || 'there'},</p>
     <p style="color:#4b5563;line-height:1.6;">Welcome to <strong>MantraAQ</strong>! We're thrilled to have you join our community of health-conscious food lovers.</p>
-    <p style="color:#4b5563;line-height:1.6;">Explore our premium singhara (water chestnut) products - gluten-free, diabetic-friendly, and sourced directly from Bihar farmers.</p>
+    <p style="color:#4b5563;line-height:1.6;">Explore our premium singhara (water chestnut) products - 100% naturally gluten-free, diabetic-friendly, and clean-label.</p>
     <div style="text-align:center;margin:24px 0;">
       <a href="${process.env.CLIENT_URL || 'http://localhost:5500'}" style="display:inline-block;background:#10b981;color:#fff;padding:12px 32px;border-radius:8px;text-decoration:none;font-weight:600;">Start Shopping →</a>
     </div>
@@ -408,7 +408,7 @@ const sendOrderConfirmationEmail = async (order) => {
                 <a href="https://mantraaq.com/faq.html" style="color:#10b981;text-decoration:none;font-weight:600;">FAQ Center</a>
               </p>
               <p style="margin:16px 0 0;color:#6b7c72;font-size:11px;letter-spacing:0.5px;">
-                MantraAQ &bull; Begusarai, Bihar &bull; All rights reserved
+                MantraAQ &bull; All rights reserved
               </p>
             </td>
           </tr>
@@ -536,7 +536,7 @@ const sendOrderDispatchedEmail = async (order, customTrackingUrl) => {
             <td style="background-color:#0b1e14;padding:26px 32px;text-align:center;border-bottom:2px solid #10b981;">
               <h1 style="margin:0;color:#ffffff;font-size:22px;font-weight:800;letter-spacing:3px;text-transform:uppercase;">MANTRAAQ</h1>
               <div style="color:#a7f3d0;font-size:10px;font-weight:600;letter-spacing:1.8px;text-transform:uppercase;margin-top:4px;">
-                PURE BIHAR WETLAND HARVEST
+                ANCIENT SUPERFOODS &bull; CLEAN NUTRITION
               </div>
             </td>
           </tr>
@@ -651,7 +651,7 @@ const sendOrderDispatchedEmail = async (order, customTrackingUrl) => {
                 <a href="https://mantraaq.com/faq.html" style="color:#10b981;text-decoration:none;font-weight:600;">FAQ Center</a>
               </p>
               <p style="margin:16px 0 0;color:#6b7c72;font-size:11px;letter-spacing:0.5px;">
-                MantraAQ &bull; Begusarai, Bihar &bull; All rights reserved
+                MantraAQ &bull; All rights reserved
               </p>
             </td>
           </tr>
@@ -706,7 +706,7 @@ const sendDeliveryConfirmationEmail = async (order) => {
   <title>Your Order Has Been Delivered - MantraAQ</title>
 </head>
 <body style="margin:0;padding:0;background-color:#f4f7f5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#1a2e22;-webkit-font-smoothing:antialiased;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f7f5;padding:30px 12px;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f7f5;padding:32px 12px;">
     <tr>
       <td align="center">
         <table width="100%" cellpadding="0" cellspacing="0" style="max-width:580px;background-color:#ffffff;border-radius:14px;overflow:hidden;border:1px solid #e7ede9;box-shadow:0 6px 24px rgba(11,30,20,0.06);">
@@ -716,25 +716,25 @@ const sendDeliveryConfirmationEmail = async (order) => {
             <td style="background-color:#0b1e14;padding:26px 32px;text-align:center;border-bottom:2px solid #10b981;">
               <h1 style="margin:0;color:#ffffff;font-size:22px;font-weight:800;letter-spacing:3px;text-transform:uppercase;">MANTRAAQ</h1>
               <div style="color:#a7f3d0;font-size:10px;font-weight:600;letter-spacing:1.8px;text-transform:uppercase;margin-top:4px;">
-                PURE BIHAR WETLAND HARVEST
+                ANCIENT SUPERFOODS &bull; CLEAN NUTRITION
               </div>
             </td>
           </tr>
 
-          <!-- Delivery Announcement Banner -->
+          <!-- Delivery Announcement Hero -->
           <tr>
             <td style="padding:32px 32px 18px;">
               <table width="100%" cellpadding="0" cellspacing="0">
                 <tr>
                   <td>
-                    <span style="display:inline-block;background-color:#ecfdf5;border:1px solid #a7f3d0;color:#047857;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:4px 10px;border-radius:20px;">
-                      Delivered To Your Doorstep
+                    <span style="display:inline-block;background-color:#ecfdf5;border:1px solid #a7f3d0;color:#047857;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:5px 12px;border-radius:20px;">
+                      Delivered Successfully
                     </span>
-                    <h2 style="margin:12px 0 6px;color:#0b1e14;font-size:22px;font-weight:700;letter-spacing:-0.3px;">
-                      Your Fresh Harvest Has Arrived, ${customerName}!
+                    <h2 style="margin:14px 0 6px;color:#0b1e14;font-size:22px;font-weight:700;letter-spacing:-0.3px;">
+                      Your Order Has Arrived, ${customerName}
                     </h2>
                     <p style="margin:0;color:#52665a;font-size:14px;line-height:1.5;">
-                      Your package for order <strong>#${orderNumber}</strong> has been successfully delivered. We hope unboxing your cold-processed superfoods brings wholesome vitality and clean health to your meals.
+                      Your package for order <strong>#${orderNumber}</strong> has been safely delivered to your doorstep. We are truly delighted to bring pure, unadulterated plant superfoods into your home.
                     </p>
                   </td>
                 </tr>
@@ -742,17 +742,17 @@ const sendDeliveryConfirmationEmail = async (order) => {
             </td>
           </tr>
 
-          <!-- Gratitude & Bihar Wetland Story Card -->
+          <!-- Sincere Gratitude Card (Fact-Based) -->
           <tr>
             <td style="padding:0 32px 20px;">
               <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f8faf9;border:1px solid #e2ece6;border-radius:12px;padding:20px;">
                 <tr>
                   <td>
                     <div style="font-size:13px;font-weight:700;color:#065f46;letter-spacing:0.3px;margin-bottom:6px;">
-                      Thank You for Supporting Native Wetland Agriculture 🌿
+                      Thank You for Choosing Clean, Honest Nutrition 🌿
                     </div>
                     <p style="margin:0;color:#44574c;font-size:13px;line-height:1.6;">
-                      By welcoming MantraAQ into your home, you are directly empowering indigenous water chestnut harvesting communities across the wetlands of Begusarai, Bihar. Every product is stone-ground, cold-processed, and free of additives: giving you pure, uncompromised plant nutrition while keeping centuries-old farming traditions alive.
+                      Thank you for trusting MantraAQ for your daily wellness. Every product we craft is made from 100% pure water chestnut: cold-processed, stone-ground, and prepared with zero maida, zero palm oil, and zero preservatives. We appreciate your partnership in making clean whole-food nutrition a daily standard.
                     </p>
                   </td>
                 </tr>
@@ -775,23 +775,74 @@ const sendDeliveryConfirmationEmail = async (order) => {
             </td>
           </tr>` : ''}
 
-          <!-- Discover The Superfood Pantry (Repeat Order Motivation Without Extra Discounts) -->
+          <!-- The Science of Water Chestnut (3 Factual Pillars) -->
+          <tr>
+            <td style="padding:0 32px 22px;">
+              <div style="background-color:#ffffff;border:1px solid #e7ede9;border-radius:12px;padding:18px 20px;">
+                <div style="font-size:11px;font-weight:700;color:#6b7c72;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:12px;">
+                  The MantraAQ Nutritional Standard
+                </div>
+                <table width="100%" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td style="padding-bottom:10px;vertical-align:top;width:24px;font-size:16px;">🌾</td>
+                    <td style="padding-bottom:10px;padding-left:10px;vertical-align:top;">
+                      <div style="font-size:13px;font-weight:700;color:#1a2e22;">100% Naturally Gluten-Free</div>
+                      <div style="font-size:12px;color:#52665a;line-height:1.4;margin-top:2px;">
+                        Derived entirely from the aquatic water chestnut fruit. Zero wheat, zero grain cross-contamination.
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding-bottom:10px;vertical-align:top;width:24px;font-size:16px;">⚡</td>
+                    <td style="padding-bottom:10px;padding-left:10px;vertical-align:top;">
+                      <div style="font-size:13px;font-weight:700;color:#1a2e22;">Low Glycemic & Potassium-Rich</div>
+                      <div style="font-size:12px;color:#52665a;line-height:1.4;margin-top:2px;">
+                        Provides steady, sustained energy without blood sugar spikes, while supporting healthy digestion and gut wellness.
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="vertical-align:top;width:24px;font-size:16px;">🍃</td>
+                    <td style="padding-left:10px;vertical-align:top;">
+                      <div style="font-size:13px;font-weight:700;color:#1a2e22;">Cold-Processed Purity</div>
+                      <div style="font-size:12px;color:#52665a;line-height:1.4;margin-top:2px;">
+                        Stone-ground under low temperatures to preserve natural antioxidants, dietary fiber, and authentic earthy aroma.
+                      </div>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Explore Next: The Full Superfood Range (Repeat Order Motivation) -->
           <tr>
             <td style="padding:0 32px 24px;">
               <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#fbfcfb;border:1px solid #dbe6e0;border-radius:12px;padding:22px 20px;">
                 <tr>
                   <td>
                     <div style="font-size:11px;font-weight:700;color:#059669;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">
-                      Complete Your Superfood Pantry
+                      Complete Your Healthy Kitchen
                     </div>
                     <h3 style="margin:0 0 8px;color:#0b1e14;font-size:17px;font-weight:700;">
-                      Wholesome Nutrition For Every Meal of the Day
+                      Bring Whole-Food Nutrition to Every Meal
                     </h3>
                     <p style="margin:0 0 16px;color:#52665a;font-size:13px;line-height:1.5;">
-                      Loved this harvest? Explore our diverse wetland superfood range: from daily stone-ground <strong>Singhara Atta</strong> for soft gluten-free rotis, to artisanal <strong>Singhara Pasta & Vermicelli</strong>, and guilt-free <strong>Roasted Snacks</strong> with zero maida and zero palm oil.
+                      Loved this order? Discover how easy it is to replace refined grains throughout your week:
                     </p>
+                    <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:16px;">
+                      <tr>
+                        <td style="font-size:12px;color:#334155;padding:3px 0;">&bull; <strong>Singhara Atta:</strong> For soft gluten-free rotis, puris, and vrat recipes</td>
+                      </tr>
+                      <tr>
+                        <td style="font-size:12px;color:#334155;padding:3px 0;">&bull; <strong>Singhara Pasta & Vermicelli:</strong> High-fiber, al dente comfort food</td>
+                      </tr>
+                      <tr>
+                        <td style="font-size:12px;color:#334155;padding:3px 0;">&bull; <strong>Singhara Roasted Snacks:</strong> Light, crunchy snacking with zero palm oil</td>
+                      </tr>
+                    </table>
                     <a href="${process.env.CLIENT_URL || 'https://mantraaq.com'}#products" target="_blank" rel="noopener noreferrer" style="display:block;text-align:center;background-color:#059669;color:#ffffff;padding:13px 24px;border-radius:8px;text-decoration:none;font-size:14px;font-weight:700;letter-spacing:0.5px;box-shadow:0 3px 8px rgba(5,150,105,0.25);">
-                      Explore The Full Harvest Range &rarr;
+                      Explore The Full Superfood Collection &rarr;
                     </a>
                   </td>
                 </tr>
@@ -799,19 +850,19 @@ const sendDeliveryConfirmationEmail = async (order) => {
             </td>
           </tr>
 
-          <!-- Storage & Culinary Tips -->
+          <!-- Culinary & Storage Tips -->
           <tr>
             <td style="padding:0 32px 24px;">
               <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f8faf9;border:1px solid #e7ede9;border-radius:10px;padding:16px 18px;">
                 <tr>
                   <td>
                     <div style="font-size:11px;font-weight:700;color:#6b7c72;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;">
-                      Culinary & Storage Tips
+                      Culinary & Storage Recommendations
                     </div>
                     <div style="font-size:12px;color:#44574c;line-height:1.6;">
-                      &bull; <strong>Airtight Storage:</strong> Transfer contents into a clean, airtight glass or steel jar in a cool, dry place to maintain peak freshness and aroma.<br>
-                      &bull; <strong>Digestive Wellness:</strong> Naturally 100% gluten-free, rich in potassium, and light on digestion: perfect for daily family meals and traditional fasting (vrat).<br>
-                      &bull; <strong>Kitchen Tip:</strong> When kneading Singhara Atta, use warm water with a touch of oil for soft, pliable rotis and puris.
+                      &bull; <strong>Storage:</strong> Transfer into an airtight glass or food-grade container in a cool, dry place away from heat and direct sunlight.<br>
+                      &bull; <strong>Dough Preparation:</strong> For the softest Singhara rotis, knead the flour using warm water with a drop of cold-pressed oil.<br>
+                      &bull; <strong>Pasta Cooking:</strong> Boil in generously salted water for 4 to 5 minutes until tender yet firm to the bite.
                     </div>
                   </td>
                 </tr>
@@ -826,8 +877,8 @@ const sendDeliveryConfirmationEmail = async (order) => {
                 How was your unboxing experience?
               </p>
               <p style="margin:6px 0 0;color:#6b7c72;font-size:12px;line-height:1.5;">
-                Your feedback directly guides our farmers and kitchen innovators.<br>
-                Reply directly to this email or chat with our team on WhatsApp at <strong>+91 82838 16755</strong>.
+                We love hearing how our superfoods fit into your routine.<br>
+                Reply directly to this email or connect with us on WhatsApp at <strong>+91 82838 16755</strong>.
               </p>
             </td>
           </tr>
@@ -836,7 +887,7 @@ const sendDeliveryConfirmationEmail = async (order) => {
           <tr>
             <td style="background-color:#0b1e14;padding:24px 32px;text-align:center;">
               <p style="margin:0;color:#d1fae5;font-size:13px;font-weight:500;">
-                MantraAQ &bull; Pure Bihar Wetland Harvest
+                MantraAQ &bull; Pure Water Chestnut Superfoods
               </p>
               <p style="margin:6px 0 0;font-size:12px;">
                 <a href="mailto:hello@mantraaq.com" style="color:#10b981;text-decoration:none;font-weight:600;">hello@mantraaq.com</a>
@@ -846,7 +897,7 @@ const sendDeliveryConfirmationEmail = async (order) => {
                 <a href="https://mantraaq.com/faq.html" style="color:#10b981;text-decoration:none;font-weight:600;">FAQ Center</a>
               </p>
               <p style="margin:16px 0 0;color:#6b7c72;font-size:11px;letter-spacing:0.5px;">
-                MantraAQ &bull; Begusarai, Bihar &bull; All rights reserved
+                MantraAQ &bull; All rights reserved
               </p>
             </td>
           </tr>
@@ -862,7 +913,7 @@ const sendDeliveryConfirmationEmail = async (order) => {
     email,
     `MantraAQ - Your Order Has Arrived #${orderNumber}`,
     emailHtml,
-    `Your order #${orderNumber} has been delivered successfully! Thank you for supporting native Bihar wetland farming with MantraAQ. Explore our full superfood range at ${process.env.CLIENT_URL || 'https://mantraaq.com'}#products`
+    `Your order #${orderNumber} has been delivered successfully! Thank you for choosing clean water chestnut superfoods with MantraAQ. Explore our full superfood range at ${process.env.CLIENT_URL || 'https://mantraaq.com'}#products`
   );
 };
 
@@ -976,7 +1027,7 @@ const sendNewsletterWelcomeEmail = async (email) => {
       <tr>
         <td style="padding:8px 0;vertical-align:top;width:24px;color:#10b981;font-size:16px;">🧑‍🌾</td>
         <td style="padding:8px 0 8px 8px;color:#4b5563;line-height:1.5;font-size:14px;">
-          <strong>Direct Farmer Sourcing:</strong> Sourced directly from local water chestnut farmers in Bihar, securing fair trade and livelihood support.
+          <strong>Direct Farmer Sourcing:</strong> Sourced responsibly from native water chestnut wetlands, securing fair trade and livelihood support.
         </td>
       </tr>
     </table>
