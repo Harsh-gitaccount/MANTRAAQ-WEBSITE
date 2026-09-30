@@ -469,6 +469,17 @@ const getCarrierPortalUrl = (carrier) => {
   return 'https://www.bluedart.com/tracking';
 };
 
+const getTrackingLabel = (carrier) => {
+  const c = (carrier || '').toLowerCase();
+  if (c.includes('bluedart') || c.includes('blue dart')) {
+    return 'Waybill Number';
+  }
+  if (c.includes('dtdc') || c.includes('post') || c.includes('speed post')) {
+    return 'Consignment Number';
+  }
+  return 'Waybill / Tracking Number';
+};
+
 // ─── Order Dispatched Email ─────────────────────────────────
 
 const sendOrderDispatchedEmail = async (order, customTrackingUrl) => {
@@ -479,6 +490,7 @@ const sendOrderDispatchedEmail = async (order, customTrackingUrl) => {
   const customerName = order.shippingAddress?.name || 'Customer';
   const carrier = order.trackingCarrier || 'Blue Dart Express';
   const trackingNumber = order.trackingNumber || 'Available on request';
+  const trackingLabel = getTrackingLabel(carrier);
   const trackingUrl = getCarrierTrackingUrl(carrier, trackingNumber, customTrackingUrl);
   const portalUrl = getCarrierPortalUrl(carrier);
 
@@ -561,7 +573,7 @@ const sendOrderDispatchedEmail = async (order, customTrackingUrl) => {
                 <tr>
                   <td style="padding-top:14px;">
                     <div style="font-size:11px;font-weight:700;color:#6b7c72;text-transform:uppercase;letter-spacing:0.8px;">
-                      AWB / Tracking Number
+                      ${trackingLabel}
                     </div>
                     <div style="display:inline-block;background-color:#ffffff;border:1px solid #cbd5e1;padding:8px 14px;border-radius:8px;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:17px;font-weight:700;color:#047857;letter-spacing:1px;margin-top:6px;">
                       ${trackingNumber}
@@ -578,7 +590,7 @@ const sendOrderDispatchedEmail = async (order, customTrackingUrl) => {
                 <tr>
                   <td style="padding-top:14px;">
                     <p style="margin:0;font-size:12px;color:#52665a;line-height:1.5;">
-                      <strong>How to track:</strong> Click the button above to view live transit updates, or visit <a href="${portalUrl}" target="_blank" rel="noopener noreferrer" style="color:#059669;text-decoration:underline;font-weight:600;">${carrier}</a> and enter your AWB number <strong>${trackingNumber}</strong>.
+                      <strong>How to track:</strong> Click the button above to view live transit updates, or visit <a href="${portalUrl}" target="_blank" rel="noopener noreferrer" style="color:#059669;text-decoration:underline;font-weight:600;">${carrier}</a> and enter your ${trackingLabel.toLowerCase()} <strong>${trackingNumber}</strong>.
                     </p>
                   </td>
                 </tr>
@@ -649,7 +661,7 @@ const sendOrderDispatchedEmail = async (order, customTrackingUrl) => {
     email,
     `MantraAQ - Order Shipped #${orderNumber} via ${carrier}`,
     emailHtml,
-    `Your order #${orderNumber} has been dispatched via ${carrier}. Tracking / AWB: ${trackingNumber}. Track your shipment: ${trackingUrl}`
+    `Your order #${orderNumber} has been dispatched via ${carrier}. ${trackingLabel}: ${trackingNumber}. Track your shipment: ${trackingUrl}`
   );
 };
 

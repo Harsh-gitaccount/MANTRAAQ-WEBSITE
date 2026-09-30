@@ -131,6 +131,13 @@ export default function Orders() {
     }
   };
 
+  const getCarrierFieldLabel = (carrier) => {
+    const c = (carrier || '').toLowerCase();
+    if (c.includes('bluedart') || c.includes('blue dart')) return 'Waybill Number';
+    if (c.includes('dtdc') || c.includes('post') || c.includes('speed post')) return 'Consignment Number';
+    return 'Waybill / Tracking Number';
+  };
+
   const getAdminTrackingLink = (carrier, awb) => {
     if (!awb) return '#';
     const clean = encodeURIComponent(awb.trim());
@@ -158,7 +165,7 @@ export default function Orders() {
 
   const handleDispatch = async (id) => {
     const trackingNumber = (trackingInputs[id] || '').trim();
-    if (!trackingNumber) return alert('Please input an AWB / Tracking number.');
+    if (!trackingNumber) return alert('Please enter a tracking / waybill number.');
 
     const selectedCarrier = carrierInputs[id] || 'Blue Dart Express';
     const trackingCarrier = selectedCarrier === 'Other' 
@@ -464,16 +471,16 @@ export default function Orders() {
 
                             <div>
                               <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider block mb-1">
-                                AWB / Tracking Number
+                                {getCarrierFieldLabel(carrierInputs[order.id] || 'Blue Dart Express')}
                               </label>
                               <input
                                 type="text"
                                 value={trackingInputs[order.id] || ''}
                                 onChange={(e) => setTrackingInputs({ ...trackingInputs, [order.id]: e.target.value })}
                                 placeholder={
-                                  (carrierInputs[order.id] || 'Blue Dart Express').includes('Blue Dart') 
-                                    ? 'Enter Blue Dart Waybill / AWB No.' 
-                                    : 'Enter AWB / Tracking number'
+                                  (carrierInputs[order.id] || 'Blue Dart Express').toLowerCase().includes('blue dart') 
+                                    ? 'Enter Blue Dart Waybill No. (e.g. 74839201948)' 
+                                    : 'Enter Waybill / Tracking number'
                                 }
                                 className="w-full bg-slate-50 border border-slate-200 rounded-lg py-2 px-3 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500 text-sm font-mono font-medium"
                               />
@@ -515,7 +522,7 @@ export default function Orders() {
                                 <span className="text-blue-700 bg-blue-50 font-semibold px-2 py-0.5 rounded">Shipped</span>
                               </p>
                               <p><strong>Carrier:</strong> {order.trackingCarrier || 'Blue Dart Express'}</p>
-                              <p><strong>AWB / Tracking:</strong> <span className="font-mono font-bold text-slate-800">{order.trackingNumber}</span></p>
+                              <p><strong>Tracking / Waybill:</strong> <span className="font-mono font-bold text-slate-800">{order.trackingNumber}</span></p>
                               {order.trackingNumber && (
                                 <p className="pt-1 border-t border-slate-200/60 mt-1.5">
                                   <a
