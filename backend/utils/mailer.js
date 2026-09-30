@@ -677,17 +677,192 @@ const sendDeliveryConfirmationEmail = async (order) => {
   const email = order.shippingAddress?.email;
   if (!email) return null;
 
-  const template = wrapTemplate('Order Delivered! 🎉', `
-    <p style="color:#4b5563;line-height:1.6;">Hi ${order.shippingAddress?.name || 'there'},</p>
-    <p style="color:#4b5563;line-height:1.6;">Your order <strong>#${order.id.slice(0, 8).toUpperCase()}</strong> has been delivered successfully!</p>
-    <p style="color:#4b5563;line-height:1.6;">We hope you love your MantraAQ products. If you have a moment, we'd love to hear your feedback.</p>
-    <div style="text-align:center;margin:24px 0;">
-      <a href="${process.env.CLIENT_URL || 'http://localhost:5500'}#products" style="display:inline-block;background:#10b981;color:#fff;padding:12px 32px;border-radius:8px;text-decoration:none;font-weight:600;">Leave a Review →</a>
-    </div>
-  `);
+  const orderNumber = order.id.slice(0, 8).toUpperCase();
+  const customerName = order.shippingAddress?.name || 'Customer';
 
-  return sendMail(email, `MantraAQ - Order Delivered #${order.id.slice(0, 8).toUpperCase()}`, template.html,
-    `Your order #${order.id.slice(0, 8).toUpperCase()} has been delivered! Thank you for choosing MantraAQ.`
+  const itemsRows = (order.orderLineItems || []).map(item => {
+    const pName = item.productName || item.variant?.product?.name || 'Singhara Superfood';
+    const vTitle = item.variantTitle || item.variant?.title || '';
+    return `
+      <tr>
+        <td style="padding:10px 0;border-bottom:1px solid #f1f5f3;color:#1a2e22;font-size:13px;font-weight:600;">
+          ${pName}
+          <span style="display:block;font-size:11px;font-weight:400;color:#6b7c72;margin-top:2px;">
+            ${vTitle ? vTitle + ' &bull; ' : ''}Qty: ${item.quantity}
+          </span>
+        </td>
+        <td style="padding:10px 0;border-bottom:1px solid #f1f5f3;text-align:right;color:#1a2e22;font-size:13px;font-weight:600;vertical-align:top;">
+          ₹${item.priceAtPurchase.toFixed(2)}
+        </td>
+      </tr>
+    `;
+  }).join('');
+
+  const emailHtml = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Order Has Been Delivered - MantraAQ</title>
+</head>
+<body style="margin:0;padding:0;background-color:#f4f7f5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#1a2e22;-webkit-font-smoothing:antialiased;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f7f5;padding:30px 12px;">
+    <tr>
+      <td align="center">
+        <table width="100%" cellpadding="0" cellspacing="0" style="max-width:580px;background-color:#ffffff;border-radius:14px;overflow:hidden;border:1px solid #e7ede9;box-shadow:0 6px 24px rgba(11,30,20,0.06);">
+          
+          <!-- Compact Luxury Header -->
+          <tr>
+            <td style="background-color:#0b1e14;padding:26px 32px;text-align:center;border-bottom:2px solid #10b981;">
+              <h1 style="margin:0;color:#ffffff;font-size:22px;font-weight:800;letter-spacing:3px;text-transform:uppercase;">MANTRAAQ</h1>
+              <div style="color:#a7f3d0;font-size:10px;font-weight:600;letter-spacing:1.8px;text-transform:uppercase;margin-top:4px;">
+                PURE BIHAR WETLAND HARVEST
+              </div>
+            </td>
+          </tr>
+
+          <!-- Delivery Announcement Banner -->
+          <tr>
+            <td style="padding:32px 32px 18px;">
+              <table width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td>
+                    <span style="display:inline-block;background-color:#ecfdf5;border:1px solid #a7f3d0;color:#047857;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:4px 10px;border-radius:20px;">
+                      Delivered To Your Doorstep
+                    </span>
+                    <h2 style="margin:12px 0 6px;color:#0b1e14;font-size:22px;font-weight:700;letter-spacing:-0.3px;">
+                      Your Fresh Harvest Has Arrived, ${customerName}!
+                    </h2>
+                    <p style="margin:0;color:#52665a;font-size:14px;line-height:1.5;">
+                      Your package for order <strong>#${orderNumber}</strong> has been successfully delivered. We hope unboxing your cold-processed superfoods brings wholesome vitality and clean health to your meals.
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Gratitude & Bihar Wetland Story Card -->
+          <tr>
+            <td style="padding:0 32px 20px;">
+              <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f8faf9;border:1px solid #e2ece6;border-radius:12px;padding:20px;">
+                <tr>
+                  <td>
+                    <div style="font-size:13px;font-weight:700;color:#065f46;letter-spacing:0.3px;margin-bottom:6px;">
+                      Thank You for Supporting Native Wetland Agriculture 🌿
+                    </div>
+                    <p style="margin:0;color:#44574c;font-size:13px;line-height:1.6;">
+                      By welcoming MantraAQ into your home, you are directly empowering indigenous water chestnut harvesting communities across the wetlands of Begusarai, Bihar. Every product is stone-ground, cold-processed, and free of additives: giving you pure, uncompromised plant nutrition while keeping centuries-old farming traditions alive.
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Delivered Items Summary -->
+          ${itemsRows ? `
+          <tr>
+            <td style="padding:0 32px 20px;">
+              <div style="border-top:1px solid #e7ede9;padding-top:16px;">
+                <div style="font-size:11px;font-weight:700;color:#6b7c72;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;">
+                  Items In This Delivery
+                </div>
+                <table width="100%" cellpadding="0" cellspacing="0">
+                  ${itemsRows}
+                </table>
+              </div>
+            </td>
+          </tr>` : ''}
+
+          <!-- Discover The Superfood Pantry (Repeat Order Motivation Without Extra Discounts) -->
+          <tr>
+            <td style="padding:0 32px 24px;">
+              <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#fbfcfb;border:1px solid #dbe6e0;border-radius:12px;padding:22px 20px;">
+                <tr>
+                  <td>
+                    <div style="font-size:11px;font-weight:700;color:#059669;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">
+                      Complete Your Superfood Pantry
+                    </div>
+                    <h3 style="margin:0 0 8px;color:#0b1e14;font-size:17px;font-weight:700;">
+                      Wholesome Nutrition For Every Meal of the Day
+                    </h3>
+                    <p style="margin:0 0 16px;color:#52665a;font-size:13px;line-height:1.5;">
+                      Loved this harvest? Explore our diverse wetland superfood range: from daily stone-ground <strong>Singhara Atta</strong> for soft gluten-free rotis, to artisanal <strong>Singhara Pasta & Vermicelli</strong>, and guilt-free <strong>Roasted Snacks</strong> with zero maida and zero palm oil.
+                    </p>
+                    <a href="${process.env.CLIENT_URL || 'https://mantraaq.com'}#products" target="_blank" rel="noopener noreferrer" style="display:block;text-align:center;background-color:#059669;color:#ffffff;padding:13px 24px;border-radius:8px;text-decoration:none;font-size:14px;font-weight:700;letter-spacing:0.5px;box-shadow:0 3px 8px rgba(5,150,105,0.25);">
+                      Explore The Full Harvest Range &rarr;
+                    </a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Storage & Culinary Tips -->
+          <tr>
+            <td style="padding:0 32px 24px;">
+              <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f8faf9;border:1px solid #e7ede9;border-radius:10px;padding:16px 18px;">
+                <tr>
+                  <td>
+                    <div style="font-size:11px;font-weight:700;color:#6b7c72;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;">
+                      Culinary & Storage Tips
+                    </div>
+                    <div style="font-size:12px;color:#44574c;line-height:1.6;">
+                      &bull; <strong>Airtight Storage:</strong> Transfer contents into a clean, airtight glass or steel jar in a cool, dry place to maintain peak freshness and aroma.<br>
+                      &bull; <strong>Digestive Wellness:</strong> Naturally 100% gluten-free, rich in potassium, and light on digestion: perfect for daily family meals and traditional fasting (vrat).<br>
+                      &bull; <strong>Kitchen Tip:</strong> When kneading Singhara Atta, use warm water with a touch of oil for soft, pliable rotis and puris.
+                    </div>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Founder Care & Feedback -->
+          <tr>
+            <td style="padding:0 32px 28px;text-align:center;">
+              <p style="margin:0;color:#1a2e22;font-size:13px;font-weight:600;">
+                How was your unboxing experience?
+              </p>
+              <p style="margin:6px 0 0;color:#6b7c72;font-size:12px;line-height:1.5;">
+                Your feedback directly guides our farmers and kitchen innovators.<br>
+                Reply directly to this email or chat with our team on WhatsApp at <strong>+91 82838 16755</strong>.
+              </p>
+            </td>
+          </tr>
+
+          <!-- Elegant Minimal Footer -->
+          <tr>
+            <td style="background-color:#0b1e14;padding:24px 32px;text-align:center;">
+              <p style="margin:0;color:#d1fae5;font-size:13px;font-weight:500;">
+                MantraAQ &bull; Pure Bihar Wetland Harvest
+              </p>
+              <p style="margin:6px 0 0;font-size:12px;">
+                <a href="mailto:hello@mantraaq.com" style="color:#10b981;text-decoration:none;font-weight:600;">hello@mantraaq.com</a>
+                <span style="color:#335342;margin:0 8px;">|</span>
+                <a href="tel:+918283816755" style="color:#10b981;text-decoration:none;font-weight:600;">+91 82838 16755</a>
+                <span style="color:#335342;margin:0 8px;">|</span>
+                <a href="https://mantraaq.com/faq.html" style="color:#10b981;text-decoration:none;font-weight:600;">FAQ Center</a>
+              </p>
+              <p style="margin:16px 0 0;color:#6b7c72;font-size:11px;letter-spacing:0.5px;">
+                MantraAQ &bull; Begusarai, Bihar &bull; All rights reserved
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
+
+  return sendMail(
+    email,
+    `MantraAQ - Your Order Has Arrived #${orderNumber}`,
+    emailHtml,
+    `Your order #${orderNumber} has been delivered successfully! Thank you for supporting native Bihar wetland farming with MantraAQ. Explore our full superfood range at ${process.env.CLIENT_URL || 'https://mantraaq.com'}#products`
   );
 };
 

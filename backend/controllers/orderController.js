@@ -427,6 +427,15 @@ exports.deliverOrder = async (req, res) => {
     const updatedOrder = await prisma.order.update({
       where: { id },
       data: { status: 'DELIVERED' },
+      include: {
+        orderLineItems: {
+          include: {
+            variant: {
+              include: { product: true },
+            },
+          },
+        },
+      },
     });
 
     // Send delivery confirmation email asynchronously
