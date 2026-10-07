@@ -312,7 +312,8 @@
 
   function initRails() { $$('[data-rail]').forEach(initRail); }
 
-  /* ── 5. Pond-to-plate story: vertical scroll unrolls the painted scroll sideways ── */
+  /* ── 5. Pond-to-plate story: the painted scroll unrolls as the page scrolls.
+     Large screens: pinned, it unrolls sideways. Elsewhere: it hangs and unrolls downwards. ── */
   function initStory() {
     const story = $('.story');
     const pin = story && $('.story-pin', story);
@@ -323,11 +324,9 @@
     const bar = $('.story-progress-bar', story);
     const labels = $$('.story-progress-steps li', story);
     const wide = window.matchMedia('(min-width: 1000px) and (min-height: 600px)');
-    let pinned = false, dist = 0, ticking = false;
+    let mode = 'static', dist = 0, ticking = false;
 
-    function update() {
-      ticking = false;
-      if (!pinned) return;
+    function updatePinned() {
       const p = dist ? Math.min(1, Math.max(0, -story.getBoundingClientRect().top / dist)) : 0;
       const x = p * dist;
       track.style.transform = `translate3d(${-x}px,0,0)`;
@@ -343,28 +342,45 @@
       });
       labels.forEach((li, i) => li.classList.toggle('is-active', i === active));
     }
+    // The open edge of the paper follows a line near the bottom of the screen, with the
+    // bottom rod on it, so the scroll unrolls as you read and is fully open at the end.
+    function updateUnroll() {
+      const h = paper.offsetHeight;
+      const open = Math.min(h, Math.max(28, window.innerHeight * 0.84 - paper.getBoundingClientRect().top));
+      paper.style.setProperty('--open', open >= h ? '100%' : open.toFixed(1) + 'px');
+      leaves.forEach(leaf => {
+        const t = Math.min(1, Math.max(0, (open - leaf.offsetTop) / (leaf.offsetHeight * 0.7)));
+        leaf.style.setProperty('--t', t.toFixed(3));
+      });
+    }
+    function update() {
+      ticking = false;
+      if (mode === 'pinned') updatePinned();
+      else if (mode === 'unroll') updateUnroll();
+    }
     function onScroll() {
-      if (!ticking) { ticking = true; requestAnimationFrame(update); }
+      if (mode !== 'static' && !ticking) { ticking = true; requestAnimationFrame(update); }
     }
     function measure() {
-      pinned = wide.matches && !reduceMotion;
-      story.classList.toggle('is-pinned', pinned);
-      if (!pinned) {
-        story.style.height = '';
-        track.style.transform = '';
-        leaves.forEach(leaf => leaf.style.removeProperty('--t'));
-        return;
+      mode = reduceMotion ? 'static' : wide.matches ? 'pinned' : 'unroll';
+      story.classList.toggle('is-pinned', mode === 'pinned');
+      story.classList.toggle('is-unroll', mode === 'unroll');
+      story.style.height = '';
+      track.style.transform = '';
+      paper.style.removeProperty('--open');
+      leaves.forEach(leaf => leaf.style.removeProperty('--t'));
+      if (mode === 'pinned') {
+        dist = Math.max(0, track.scrollWidth - window.innerWidth);
+        story.style.height = `${pin.offsetHeight + dist}px`;
       }
-      dist = Math.max(0, track.scrollWidth - window.innerWidth);
-      story.style.height = `${pin.offsetHeight + dist}px`;
       update();
     }
 
     measure();
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', measure);
-    if ('ResizeObserver' in window) new ResizeObserver(() => { if (pinned) measure(); }).observe(track);
-    // Images can change the track width once they load
+    if ('ResizeObserver' in window) new ResizeObserver(() => { if (mode === 'pinned') measure(); else onScroll(); }).observe(track);
+    // Images can change the track size once they load
     $$('img', track).forEach(img => { if (!img.complete) img.addEventListener('load', measure, { once: true }); });
   }
 

@@ -284,8 +284,9 @@ body.site {
 .hero-slide { position: absolute; inset: 0; margin: 0; display: grid; place-items: center; opacity: 0; visibility: hidden; }
 .hero-slide.is-active { opacity: 1; visibility: visible; }
 .hero-slide .hero-food {
+  /* The photo has a transparent background baked in; mix-blend-mode is unreliable on iOS Safari */
   position: absolute; right: -2%; bottom: 4%; width: 62%; height: auto; aspect-ratio: 1; object-fit: contain;
-  mix-blend-mode: multiply; filter: saturate(1.05);
+  filter: saturate(1.05);
 }
 .hero-slide .hero-pack {
   position: relative; z-index: 2; width: 50%; height: auto; margin-right: 22%; margin-bottom: 4%;
@@ -612,9 +613,9 @@ body.site {
 }
 
 /* ══ STORY: a Madhubani scroll that unrolls sideways ═════════════ */
-/* Base layout (phones, short screens, reduced motion): the painted
-   scroll is a swipeable strip. On large screens site.js adds
-   .is-pinned and turns vertical scrolling into the sideways unroll. */
+/* Phones, tablets, short screens: the painted scroll hangs vertically and
+   site.js (.is-unroll) unrolls it downwards as the page scrolls. On large screens
+   site.js adds .is-pinned and turns vertical scrolling into the sideways unroll. */
 .story { background: var(--maroon); color: var(--ivory); position: relative; padding: clamp(72px, 10vw, 140px) 0; }
 .story .eyebrow { color: var(--gold); }
 .story-intro { max-width: var(--max); margin: 0 auto; padding: 0 var(--gutter) clamp(32px, 5vw, 48px); }
@@ -629,29 +630,13 @@ body.site {
 .story.is-pinned .story-hint-d { display: inline; }
 .story-hint svg { width: 16px; height: 16px; animation: story-nudge 1.8s var(--ease) infinite; }
 @keyframes story-nudge { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(6px); } }
+.story:not(.is-pinned) .story-hint svg { rotate: 90deg; }
 
-/* The paper: Mithila flower border along both edges */
-.story-scroll {
-  --band: 34px;
-  position: relative; display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: var(--gutter);
-  padding: calc(var(--band) + 26px) var(--gutter); scrollbar-width: none;
-  background:
-    url(/assets/images/art/band-flower.webp) 0 0 / auto var(--band) repeat-x local,
-    url(/assets/images/art/band-flower.webp) 0 100% / auto var(--band) repeat-x local,
-    var(--paper-art);
-  box-shadow: 0 30px 70px rgba(30, 4, 10, .35);
-}
-.story-scroll::-webkit-scrollbar { display: none; }
-.story-leaf { position: relative; flex: 0 0 min(82%, 520px); display: flex; flex-direction: column; gap: 20px; padding-right: 28px; scroll-snap-align: start; }
-.story-leaf + .story-leaf { padding-left: 28px; }
-/* Dotted dividers, like the water texture in the paintings */
-.story-leaf + .story-leaf::before {
-  content: ''; position: absolute; left: 0; top: 4%; bottom: 4%; width: 4px;
-  background: radial-gradient(circle, rgba(108, 17, 33, .38) 1.3px, transparent 1.8px) 0 0 / 4px 11px repeat-y;
-}
-.story-leaf-art { order: -1; margin: 0; height: 250px; display: flex; align-items: center; }
-.story-leaf-art img { height: 100%; width: auto; max-width: 100%; object-fit: contain; display: block; }
-.story-leaf-art--pair { display: none; }
+/* The paper. Shared look; the borders and rods depend on the direction it unrolls. */
+.story-scroll { position: relative; background-color: var(--paper-art); box-shadow: 0 30px 70px rgba(30, 4, 10, .35); }
+.story-leaf { position: relative; display: flex; flex-direction: column; gap: 20px; }
+.story-leaf-art { order: -1; margin: 0; display: flex; align-items: center; }
+.story-leaf-art img { display: block; object-fit: contain; }
 .story-leaf--pack .story-leaf-art img { filter: drop-shadow(0 18px 22px rgba(58, 10, 19, .3)); }
 .story-leaf-tag { display: block; font-family: var(--font-brand); font-size: 11px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: #9a7334; }
 .story-leaf-num { display: block; margin-top: 10px; font-family: var(--font-display); font-style: italic; font-size: 40px; line-height: 1; color: var(--maroon-2); opacity: .55; }
@@ -659,7 +644,57 @@ body.site {
 .story-leaf p { margin-top: 14px; font-size: 15.5px; line-height: 1.6; color: #5a3238; max-width: 38ch; }
 .story-leaf-cta { margin-top: 18px; color: var(--maroon); white-space: nowrap; }
 .story-leaf-cta svg { width: 16px; height: 16px; flex: none; }
-.story-roll, .story-progress { display: none; }
+.story-progress { display: none; }
+
+/* ── Hanging scroll (everything but the pinned layout) ──
+   Flower borders run down both sides, gold-tipped rods sit across the top and bottom. */
+.story:not(.is-pinned) .story-scroll {
+  --band: 30px; --pad: calc(var(--band) + 22px); --rod-out: 12px; --open: 100%;
+  margin: 0 calc(var(--gutter) + 6px); padding: 0 var(--pad);
+  background:
+    url(/assets/images/art/band-flower-v.webp) 0 0 / var(--band) auto repeat-y,
+    url(/assets/images/art/band-flower-v.webp) 100% 0 / var(--band) auto repeat-y,
+    var(--paper-art);
+  /* Only the unrolled part shows; the sides stay open so the rod tips are not cut */
+  clip-path: inset(0 -40px calc(100% - var(--open) - 12px) -40px);
+}
+.story:not(.is-pinned) .story-leaf { --t: 1; padding: 34px 0; }
+.story:not(.is-pinned) .story-leaf + .story-leaf::before {
+  content: ''; position: absolute; left: 4%; right: 4%; top: 0; height: 4px;
+  background: radial-gradient(circle, rgba(108, 17, 33, .38) 1.3px, transparent 1.8px) 0 0 / 11px 4px repeat-x;
+}
+/* Paintings uncover top to bottom; the 60px margin keeps the pack's shadow from being cut square */
+.story:not(.is-pinned) .story-leaf-art { height: 230px; justify-content: center; clip-path: inset(-60px -60px calc((1 - var(--t)) * (100% + 120px) - 60px) -60px); }
+.story:not(.is-pinned) .story-leaf-art img { height: 100%; width: auto; max-width: 100%; }
+.story:not(.is-pinned) .story-leaf-art--pair { display: none; }
+.story:not(.is-pinned) .story-leaf-text { opacity: calc(.15 + .85 * var(--t)); transform: translateY(calc((1 - var(--t)) * 28px)); }
+.story:not(.is-pinned) .story-roll {
+  display: block; position: relative; z-index: 2; height: 24px; margin: 0 calc((var(--pad) + var(--rod-out)) * -1); border-radius: 12px;
+  background: linear-gradient(180deg, #b39a68 0%, #efe2c3 30%, #f8f0dc 45%, #dcc79c 72%, #a88c5a 100%);
+  box-shadow: 0 14px 30px rgba(30, 4, 10, .35);
+}
+.story:not(.is-pinned) .story-roll::before, .story:not(.is-pinned) .story-roll::after {
+  content: ''; position: absolute; top: 6px; width: 16px; height: 12px; border-radius: 4px;
+  background: linear-gradient(180deg, #8f6a2c, var(--gold-2) 45%, #8f6a2c);
+}
+.story:not(.is-pinned) .story-roll::before { left: -14px; }
+.story:not(.is-pinned) .story-roll::after { left: auto; right: -14px; }
+.story:not(.is-pinned) .story-roll--start { margin-bottom: 4px; }
+/* While unrolling, the bottom rod rides the edge of the open paper */
+.story.is-unroll .story-roll--end { position: absolute; left: 0; right: 0; margin: 0 calc(var(--rod-out) * -1); top: calc(var(--open) - 12px); }
+@media (min-width: 700px) {
+  .story:not(.is-pinned) .story-scroll { margin-inline: max(calc(var(--gutter) + 12px), calc((100% - 860px) / 2)); }
+  .story:not(.is-pinned) .story-leaf { flex-direction: row; align-items: center; gap: 40px; padding: 44px 8px; }
+  .story:not(.is-pinned) .story-leaf-art { order: 0; flex: 0 0 44%; height: 300px; }
+  .story:not(.is-pinned) .story-leaf-text { flex: 1; }
+}
+@media (max-width: 600px) {
+  .story:not(.is-pinned) .story-scroll { --band: 22px; --pad: calc(var(--band) + 14px); --rod-out: 6px; }
+  .story:not(.is-pinned) .story-roll::before { left: -9px; width: 11px; }
+  .story:not(.is-pinned) .story-roll::after { right: -9px; width: 11px; }
+  .story:not(.is-pinned) .story-leaf-art { height: 200px; }
+  .story:not(.is-pinned) .story-leaf h3 { font-size: 28px; }
+}
 
 /* ── Pinned sideways unroll (large screens) ── */
 .story.is-pinned { padding: 0; }
@@ -675,10 +710,17 @@ body.site {
 .story.is-pinned .story-intro { flex: 0 0 auto; width: clamp(340px, 32vw, 500px); margin: 0 clamp(56px, 7vw, 120px) 0 0; padding: 0; }
 .story.is-pinned .story-scroll {
   --band: 40px;
-  height: min(calc(100vh - var(--nav-h) - 150px), 660px); min-height: 420px;
-  overflow: visible; scroll-snap-type: none; padding: 0; border-radius: 2px;
-  background-attachment: scroll;
+  display: flex; height: min(calc(100vh - var(--nav-h) - 150px), 660px); min-height: 420px; padding: 0; border-radius: 2px;
+  background:
+    url(/assets/images/art/band-flower.webp) 0 0 / auto var(--band) repeat-x,
+    url(/assets/images/art/band-flower.webp) 0 100% / auto var(--band) repeat-x,
+    var(--paper-art);
 }
+.story.is-pinned .story-leaf + .story-leaf::before {
+  content: ''; position: absolute; left: 0; width: 4px;
+  background: radial-gradient(circle, rgba(108, 17, 33, .38) 1.3px, transparent 1.8px) 0 0 / 4px 11px repeat-y;
+}
+.story.is-pinned .story-leaf-art img { height: 100%; width: auto; object-fit: contain; }
 .story.is-pinned .story-leaf {
   --t: 1;
   flex: none; flex-direction: row; align-items: center; gap: clamp(32px, 3.4vw, 56px);
@@ -724,16 +766,6 @@ body.site {
 .story-progress-steps li { font-family: var(--font-brand); font-size: 11px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: rgba(243, 236, 219, .42); transition: color .4s; }
 .story-progress-steps li.is-active { color: var(--gold-2); }
 
-/* Mouse users without the pinned unroll still need a way to scroll sideways */
-@media (min-width: 700px) {
-  .story-scroll { scrollbar-width: thin; scrollbar-color: rgba(108, 17, 33, .45) transparent; }
-  .story-scroll::-webkit-scrollbar { display: block; height: 6px; }
-  .story-scroll::-webkit-scrollbar-thumb { background: rgba(108, 17, 33, .45); border-radius: 6px; }
-}
-@media (max-width: 600px) {
-  .story-scroll { --band: 26px; padding-block: calc(var(--band) + 22px); }
-  .story-leaf-art { height: 210px; }
-}
 @media (prefers-reduced-motion: reduce) {
   .story-hint svg { animation: none; }
 }
