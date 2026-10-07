@@ -10,7 +10,16 @@
         "coming-soon",
         "wetland nutrition",
         "singhara superfood",
-        "water chestnut"
+        "water chestnut",
+        "wellness drink",
+        "innovation lab",
+        "plant based",
+        "clean label",
+        "natural ingredients",
+        "future food",
+        "functional nutrition",
+        "made in india",
+        "farmer sourced"
       ],
       "images": [
         "https://res.cloudinary.com/s2rbtvuy/image/upload/v1784485331/mantraaq/products/o95ydbaoikmejpz565wh.png",
@@ -26,8 +35,7 @@
           "title": "200ml Bottle",
           "price": 299,
           "compareAtPrice": 399,
-          "sku": "glowaq-wellness-drink-200ml Bottle",
-          "stockQuantity": 1
+          "stockQuantity": 0
         }
       ],
       "avgRating": null,
@@ -41,7 +49,12 @@
       "tags": [
         "gluten-free",
         "stone-ground",
-        "farmer sourced"
+        "farmer sourced",
+        "fasting-friendly",
+        "wetland nutrition",
+        "traditional nutrition",
+        "made in india",
+        "premium quality"
       ],
       "images": [
         "https://res.cloudinary.com/s2rbtvuy/image/upload/v1784485485/mantraaq/products/crk3t02hftxbj9l5bfg8.png",
@@ -53,28 +66,35 @@
       "isActive": true,
       "variants": [
         {
+          "id": "f873a920-627a-4697-ac71-d5965c866d32",
+          "title": "350 gm",
+          "price": 179,
+          "compareAtPrice": 235,
+          "stockQuantity": 1
+        },
+        {
           "id": "37713afd-732f-4aac-a65d-ba6b9e0224eb",
           "title": "500g",
           "price": 239,
           "compareAtPrice": 299,
-          "sku": "singhara-atta-500g",
-          "stockQuantity": 0
+          "sku": "SA-500",
+          "stockQuantity": 1
         },
         {
           "id": "aa6a1c31-5127-40c3-b251-ebc18130e2b4",
           "title": "1kg",
           "price": 439,
           "compareAtPrice": 550,
-          "sku": "singhara-atta-1kg",
-          "stockQuantity": 0
+          "sku": "SA-1KG",
+          "stockQuantity": 1
         },
         {
           "id": "637f7ea5-2c1b-4cf1-b5fb-024da1fc58e7",
           "title": "10kg",
           "price": 3899,
           "compareAtPrice": 5000,
-          "sku": "singhara-atta-10kg",
-          "stockQuantity": 0
+          "sku": "SA-10KG",
+          "stockQuantity": 1
         }
       ],
       "avgRating": null,
@@ -89,7 +109,13 @@
         "seasonal",
         "fresh harvest",
         "wetland grown",
-        "farmer sourced"
+        "farmer sourced",
+        "seasonal produce",
+        "water chestnut",
+        "made in india",
+        "traditional nutrition",
+        "premium quality",
+        "wetland nutrition"
       ],
       "images": [
         "https://res.cloudinary.com/s2rbtvuy/image/upload/v1784493558/mantraaq/products/vxkiyfdakoefkstsx7rm.png",
@@ -103,7 +129,7 @@
           "title": "1kg",
           "price": 179,
           "compareAtPrice": 210,
-          "sku": "fresh-singhara-1kg",
+          "sku": "FS-1kg",
           "stockQuantity": 1
         },
         {
@@ -111,7 +137,7 @@
           "title": "10kg",
           "price": 1599,
           "compareAtPrice": 1800,
-          "sku": "fresh-singhara-10kg",
+          "sku": "FS-10KG",
           "stockQuantity": 1
         },
         {
@@ -119,7 +145,7 @@
           "title": "100kg",
           "price": 14999,
           "compareAtPrice": 17000,
-          "sku": "fresh-singhara-100kg",
+          "sku": "FS-100KG",
           "stockQuantity": 1
         }
       ],
@@ -133,9 +159,16 @@
       "description": "Pasta, Reimagined.\n\nCrafted with Singhara (Water Chestnut) flour, MantraAQ Singhara Pasta brings traditional nutrition into modern lifestyles.\n\nLight, delicious, and easy to cook, it's made for those who want better ingredients without compromising on taste.\n\nPerfect for everyday meals, healthy recipes, and modern kitchens.\n\nFrom Wetlands to Wellness.",
       "tags": [
         "new-launch",
+        "bestseller",
         "modern nutrition",
         "singhara flour",
-        "pasta alternative"
+        "pasta alternative",
+        "easy to cook",
+        "wetland nutrition",
+        "made in india",
+        "premium quality",
+        "farmer sourced",
+        "innovation kitchen"
       ],
       "images": [
         "https://res.cloudinary.com/s2rbtvuy/image/upload/v1784493635/mantraaq/products/vevojp9es7wqfyag9zjv.png",
@@ -147,35 +180,42 @@
       "variants": [
         {
           "id": "c5cbc752-3440-4798-a6fb-68a2cec1006c",
-          "title": "250g",
+          "title": "200g",
           "price": 149,
           "compareAtPrice": 199,
-          "sku": "singhara-pasta-250g",
+          "sku": "SPM-250",
+          "stockQuantity": 1
+        },
+        {
+          "id": "46919c3c-a1c4-4815-a109-d9f2908c2370",
+          "title": "350 gm",
+          "price": 199,
+          "compareAtPrice": 255,
           "stockQuantity": 1
         },
         {
           "id": "c1da4471-9372-4440-979b-2bdedf4f5355",
           "title": "500g",
-          "price": 249,
-          "compareAtPrice": 349,
-          "sku": "singhara-pasta-500g",
-          "stockQuantity": 1
+          "price": 299,
+          "compareAtPrice": 350,
+          "sku": "SPM-500",
+          "stockQuantity": 0
         },
         {
           "id": "5a46dac6-9819-450c-9bc1-7b8fc0445cd6",
           "title": "1kg",
-          "price": 499,
-          "compareAtPrice": 650,
-          "sku": "singhara-pasta-1kg",
-          "stockQuantity": 1
+          "price": 579,
+          "compareAtPrice": 700,
+          "sku": "SPM-1KG",
+          "stockQuantity": 0
         },
         {
           "id": "be791df1-94d7-45b8-bf64-81d8dabbf3eb",
-          "title": "5kg",
-          "price": 2399,
-          "compareAtPrice": 3100,
-          "sku": "singhara-pasta-5kg",
-          "stockQuantity": 1
+          "title": "5 Kg",
+          "price": 2850,
+          "compareAtPrice": 3500,
+          "sku": "SPM-1KG",
+          "stockQuantity": 0
         }
       ],
       "avgRating": null,
@@ -190,7 +230,13 @@
         "new-launch",
         "traditional nutrition",
         "easy to cook",
-        "vermicelli alternative"
+        "vermicelli alternative",
+        "singhara flour",
+        "wetland nutrition",
+        "made in india",
+        "premium quality",
+        "farmer sourced",
+        "everyday meals"
       ],
       "images": [
         "https://res.cloudinary.com/s2rbtvuy/image/upload/v1784493714/mantraaq/products/ceqx8eeruf1cqbwqev55.png",
@@ -202,27 +248,34 @@
       "variants": [
         {
           "id": "f1072ffc-1ee8-423e-8d46-113bf22792d8",
-          "title": "250g",
-          "price": 129,
-          "compareAtPrice": 179,
-          "sku": "singhara-vermicell-250g",
-          "stockQuantity": 0
+          "title": "200g",
+          "price": 149,
+          "compareAtPrice": 189,
+          "sku": "SV-250",
+          "stockQuantity": 1
+        },
+        {
+          "id": "a3d2e87f-4396-45dd-abdc-eb6d1af6b242",
+          "title": "350 gm",
+          "price": 189,
+          "compareAtPrice": 249,
+          "stockQuantity": 1
         },
         {
           "id": "2bbf060d-2b65-417c-9852-1a0686eafc1a",
           "title": "500g",
-          "price": 229,
-          "compareAtPrice": 299,
-          "sku": "singhara-vermicell-500g",
+          "price": 289,
+          "compareAtPrice": 339,
+          "sku": "SV-500",
           "stockQuantity": 0
         },
         {
           "id": "2af1f091-63c4-4e36-9cc8-1c88e7c8a8db",
           "title": "1kg",
-          "price": 439,
-          "compareAtPrice": 550,
-          "sku": "singhara-vermicell-1kg",
-          "stockQuantity": 0
+          "price": 499,
+          "compareAtPrice": 650,
+          "sku": "SV-1KG",
+          "stockQuantity": 1
         }
       ],
       "avgRating": null,
@@ -237,7 +290,13 @@
         "bestseller",
         "sun-dried",
         "farmer sourced",
-        "traditional nutrition"
+        "traditional nutrition",
+        "wetland nutrition",
+        "water chestnut",
+        "ready to eat",
+        "long shelf life",
+        "made in india",
+        "premium quality"
       ],
       "images": [
         "https://res.cloudinary.com/s2rbtvuy/image/upload/v1784493800/mantraaq/products/fmxds7x41nryyz0ez2gt.png",
@@ -253,7 +312,7 @@
           "title": "250g",
           "price": 149,
           "compareAtPrice": 199,
-          "sku": "dry-singhara-250g",
+          "sku": "DS-250",
           "stockQuantity": 1
         },
         {
@@ -261,7 +320,7 @@
           "title": "500g",
           "price": 229,
           "compareAtPrice": 280,
-          "sku": "dry-singhara-500g",
+          "sku": "DS-500",
           "stockQuantity": 1
         },
         {
@@ -269,7 +328,7 @@
           "title": "1kg",
           "price": 440,
           "compareAtPrice": 500,
-          "sku": "dry-singhara-1kg",
+          "sku": "DS-1Kg",
           "stockQuantity": 1
         },
         {
@@ -277,7 +336,7 @@
           "title": "10kg",
           "price": 4449,
           "compareAtPrice": 4800,
-          "sku": "dry-singhara-10kg",
+          "sku": "DS-10KG",
           "stockQuantity": 1
         }
       ],
@@ -293,7 +352,13 @@
         "coming-soon",
         "ready-to-eat",
         "crunchy snack",
-        "singhara flour"
+        "singhara flour",
+        "traditional spices",
+        "fasting-friendly",
+        "mindful snacking",
+        "wetland nutrition",
+        "made in india",
+        "premium quality"
       ],
       "images": [
         "https://res.cloudinary.com/s2rbtvuy/image/upload/v1784493883/mantraaq/products/m4hynifl7qjjuzagtyy4.png",
@@ -307,24 +372,24 @@
           "title": "50g",
           "price": 55,
           "compareAtPrice": 75,
-          "sku": "singhara-snacks-50g",
-          "stockQuantity": 1
+          "sku": "SS-50",
+          "stockQuantity": 0
         },
         {
           "id": "879c879a-b4b9-4640-b4c6-fc22930bd8b1",
           "title": "200g",
           "price": 128,
           "compareAtPrice": 169,
-          "sku": "singhara-snacks-200g",
-          "stockQuantity": 1
+          "sku": "SS-200",
+          "stockQuantity": 0
         },
         {
           "id": "53164df3-eebe-4b86-91c0-e5a5af1b9558",
           "title": "400g",
           "price": 228,
           "compareAtPrice": 299,
-          "sku": "singhara-snacks-400g",
-          "stockQuantity": 1
+          "sku": "SS-400",
+          "stockQuantity": 0
         }
       ],
       "avgRating": null,
