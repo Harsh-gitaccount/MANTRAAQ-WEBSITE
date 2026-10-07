@@ -88,6 +88,37 @@ function initCardGallery(card) {
  * from data attributes; the Add button is still a link to the product page),
  * and becomes a real add-to-cart once the product is in loadedProductsMap.
  */
+/**
+ * Cards show at most four size pills. With more, the first three (and the selected one)
+ * stay (sold-out sizes fold first) and a "+2" pill reveals the rest, so any number of sizes fits.
+ */
+const MAX_PILLS = 4;
+function foldPills(card) {
+  const box = card.querySelector('.variant-selector');
+  if (!box || box.dataset.folded) return;
+  const pills = Array.from(box.querySelectorAll('.variant-btn'));
+  if (pills.length <= MAX_PILLS) return;
+  box.dataset.folded = '1';
+  // Keep the selected size, then sizes in stock, then sold-out ones; shown in their usual order
+  const out = b => b.disabled || b.classList.contains('is-out') || b.dataset.stock === '0';
+  const rank = b => (b.classList.contains('active') ? 0 : out(b) ? 2 : 1);
+  const keep = pills.slice().sort((x, y) => rank(x) - rank(y)).slice(0, MAX_PILLS - 1);
+  const hidden = pills.filter(b => !keep.includes(b));
+  hidden.forEach(b => b.classList.add('is-folded'));
+  const more = document.createElement('button');
+  more.type = 'button';
+  more.className = 'variant-btn variant-more';
+  more.textContent = '+' + hidden.length;
+  more.setAttribute('aria-label', `Show ${hidden.length} more sizes`);
+  more.addEventListener('click', e => {
+    e.preventDefault();
+    e.stopPropagation();
+    hidden.forEach(b => b.classList.remove('is-folded'));
+    more.remove();
+  });
+  box.appendChild(more);
+}
+
 function bindCard(card) {
   initCardGallery(card);
 
@@ -109,6 +140,7 @@ function bindCard(card) {
       });
     });
   }
+  foldPills(card);
 
   if (!product || card.dataset.cartBound) return;
   const addBtn = card.querySelector('[data-add]');
