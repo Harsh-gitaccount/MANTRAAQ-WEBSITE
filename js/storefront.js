@@ -88,6 +88,37 @@ function initCardGallery(card) {
  * from data attributes; the Add button is still a link to the product page),
  * and becomes a real add-to-cart once the product is in loadedProductsMap.
  */
+/**
+ * Cards show at most four size pills. With more, the first three (and the selected one)
+ * stay (sold-out sizes fold first) and a "+2" pill reveals the rest, so any number of sizes fits.
+ */
+const MAX_PILLS = 4;
+function foldPills(card) {
+  const box = card.querySelector('.variant-selector');
+  if (!box || box.dataset.folded) return;
+  const pills = Array.from(box.querySelectorAll('.variant-btn'));
+  if (pills.length <= MAX_PILLS) return;
+  box.dataset.folded = '1';
+  // Keep the selected size, then sizes in stock, then sold-out ones; shown in their usual order
+  const out = b => b.disabled || b.classList.contains('is-out') || b.dataset.stock === '0';
+  const rank = b => (b.classList.contains('active') ? 0 : out(b) ? 2 : 1);
+  const keep = pills.slice().sort((x, y) => rank(x) - rank(y)).slice(0, MAX_PILLS - 1);
+  const hidden = pills.filter(b => !keep.includes(b));
+  hidden.forEach(b => b.classList.add('is-folded'));
+  const more = document.createElement('button');
+  more.type = 'button';
+  more.className = 'variant-btn variant-more';
+  more.textContent = '+' + hidden.length;
+  more.setAttribute('aria-label', `Show ${hidden.length} more sizes`);
+  more.addEventListener('click', e => {
+    e.preventDefault();
+    e.stopPropagation();
+    hidden.forEach(b => b.classList.remove('is-folded'));
+    more.remove();
+  });
+  box.appendChild(more);
+}
+
 function bindCard(card) {
   initCardGallery(card);
 
@@ -109,6 +140,7 @@ function bindCard(card) {
       });
     });
   }
+  foldPills(card);
 
   if (!product || card.dataset.cartBound) return;
   const addBtn = card.querySelector('[data-add]');
@@ -209,6 +241,28 @@ function applyFilter(slug) {
   });
   const title = document.getElementById('shop-all-title');
   if (title) title.textContent = label;
+  showCount(grid, slugs);
+}
+
+/** "2 of 7 products, Show all" under the filters, so a filtered grid never looks like the whole range */
+function showCount(grid, slugs) {
+  const bar = document.getElementById('shop-filters');
+  if (!bar || bar.hidden) return;
+  let line = document.getElementById('shop-count');
+  if (!line) {
+    line = document.createElement('p');
+    line.id = 'shop-count';
+    line.className = 'shop-count';
+    line.setAttribute('aria-live', 'polite');
+    bar.after(line);
+    line.addEventListener('click', e => { if (e.target.closest('button')) applyFilter('all'); });
+  }
+  const cards = grid.querySelectorAll('.product-card');
+  const shown = grid.querySelectorAll('.product-card:not(.is-hidden)').length;
+  const word = n => n === 1 ? 'product' : 'products';
+  line.innerHTML = slugs.includes('all')
+    ? `<b>${cards.length}</b> ${word(cards.length)}`
+    : `Showing <b>${shown}</b> of ${cards.length} ${word(cards.length)}<button type="button">Show all</button>`;
 }
 window.MantraAQShopFilter = applyFilter;
 

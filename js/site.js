@@ -189,30 +189,65 @@
   }
 
   /* ── 4. Horizontal rails (products, recipes, reviews) ────────── */
+  const arrow = d => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="${d}"/></svg>`;
+
   function initRail(wrap) {
     const rail = $('.rail', wrap);
     if (!rail || rail.dataset.bound) return;
     rail.dataset.bound = '1';
-    const prev = $('[data-rail-prev]', wrap);
-    const next = $('[data-rail-next]', wrap);
-    const bar = $('.rail-progress i', wrap);
+    const progress = $('.rail-progress', wrap);
+    const bar = progress && $('i', progress);
 
+    // Phones hide the header arrows, so a row under the rail carries a "2 / 7" count and small arrows.
+    // It tells shoppers there is more to swipe through, and how much.
+    let count = null;
+    if (progress && !progress.parentElement.classList.contains('rail-meta')) {
+      const meta = document.createElement('div');
+      meta.className = 'rail-meta';
+      progress.before(meta);
+      meta.innerHTML = '<span class="rail-count" aria-hidden="true"></span>'
+        + '<span class="rail-mini">'
+        + '<button class="rail-btn" type="button" data-rail-prev aria-label="Previous">' + arrow('M19 12H5M11 6l-6 6 6 6') + '</button>'
+        + '<button class="rail-btn" type="button" data-rail-next aria-label="Next">' + arrow('M5 12h14M13 6l6 6-6 6') + '</button>'
+        + '</span>';
+      meta.prepend(progress);
+      count = $('.rail-count', meta);
+    }
+    const prevs = $$('[data-rail-prev]', wrap);
+    const nexts = $$('[data-rail-next]', wrap);
+
+    function gap() { return parseFloat(getComputedStyle(rail).columnGap) || 16; }
     function step() {
       const item = rail.firstElementChild;
-      return item ? item.getBoundingClientRect().width + parseFloat(getComputedStyle(rail).columnGap || 16) : rail.clientWidth;
+      return item ? item.getBoundingClientRect().width + gap() : rail.clientWidth;
+    }
+    // Scroll by code with snapping paused: iOS Safari can cancel a smooth scroll on a snapping strip
+    let snapTimer;
+    function go(left) {
+      clearTimeout(snapTimer);
+      rail.style.scrollSnapType = 'none';
+      rail.scrollTo({ left, behavior: reduceMotion ? 'auto' : 'smooth' });
+      snapTimer = setTimeout(() => { rail.style.scrollSnapType = ''; }, 700);
     }
     function update() {
       const max = rail.scrollWidth - rail.clientWidth;
-      if (prev) prev.disabled = rail.scrollLeft <= 4;
-      if (next) next.disabled = rail.scrollLeft >= max - 4;
+      prevs.forEach(b => { b.disabled = rail.scrollLeft <= 4; });
+      nexts.forEach(b => { b.disabled = rail.scrollLeft >= max - 4; });
       if (bar) {
         const visible = Math.min(1, rail.clientWidth / Math.max(rail.scrollWidth, 1));
         bar.style.width = (visible * 100) + '%';
         bar.style.transform = `translateX(${max > 0 ? (rail.scrollLeft / max) * ((1 - visible) / visible) * 100 : 0}%)`;
       }
+      if (count) {
+        const total = rail.children.length;
+        const shown = rail.scrollLeft >= max - 4 ? total : Math.min(total, Math.max(1, Math.round(rail.scrollLeft / step()) + 1));
+        const pad = n => String(n).padStart(2, '0');
+        count.innerHTML = `<b>${pad(shown)}</b> / ${pad(total)}`;
+        count.parentElement.hidden = max <= 4;
+      }
     }
-    prev && prev.addEventListener('click', () => rail.scrollBy({ left: -step(), behavior: 'smooth' }));
-    next && next.addEventListener('click', () => rail.scrollBy({ left: step(), behavior: 'smooth' }));
+    prevs.forEach(b => b.addEventListener('click', () => go(Math.max(0, rail.scrollLeft - step()))));
+    nexts.forEach(b => b.addEventListener('click', () => go(rail.scrollLeft + step())));
     rail.addEventListener('scroll', update, { passive: true });
     window.addEventListener('resize', update, { passive: true });
     wrap.addEventListener('rail:updated', () => requestAnimationFrame(update));
@@ -236,38 +271,43 @@
         rail.classList.remove('is-dragging');
         // Snap to the nearest card after a drag
         const s = step();
-        rail.scrollTo({ left: Math.round(rail.scrollLeft / s) * s, behavior: 'smooth' });
+        go(Math.round(rail.scrollLeft / s) * s);
         const block = ev => { ev.preventDefault(); ev.stopPropagation(); };
         rail.addEventListener('click', block, { capture: true, once: true });
         setTimeout(() => rail.removeEventListener('click', block, { capture: true }), 50);
       }
     });
     update();
-    initAutoplay(wrap, rail, step);
+    initAutoplay(wrap, rail, step, go);
   }
 
   /* Rails with data-autoplay="ms" advance one card at a time and loop.
+     The first move comes soon after the rail scrolls into view, so it reads as a carousel.
      They pause while hovered, touched, focused, off screen or in a background tab. */
-  function initAutoplay(wrap, rail, step) {
+  function initAutoplay(wrap, rail, step, go) {
     const delay = parseInt(wrap.dataset.autoplay || '0', 10);
     if (!delay || reduceMotion) return;
-    let visible = false, holdUntil = 0, hovering = false;
+    let visible = false, holdUntil = 0, hovering = false, timer = null;
     const hold = ms => { holdUntil = Date.now() + ms; };
     wrap.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') hovering = true; });
     wrap.addEventListener('pointerleave', () => { hovering = false; hold(1500); });
     rail.addEventListener('touchstart', () => hold(8000), { passive: true });
     wrap.addEventListener('focusin', () => hold(10000));
     $$('[data-rail-prev], [data-rail-next]', wrap).forEach(b => b.addEventListener('click', () => hold(8000)));
-    if ('IntersectionObserver' in window) {
-      new IntersectionObserver(([e]) => { visible = e.isIntersecting; }, { threshold: 0.35 }).observe(rail);
-    } else visible = true;
-    setInterval(() => {
+    function tick() {
+      timer = setTimeout(tick, delay);
       if (!visible || hovering || document.hidden || Date.now() < holdUntil || rail.classList.contains('is-dragging')) return;
       const max = rail.scrollWidth - rail.clientWidth;
       if (max <= 4) return;
       const atEnd = rail.scrollLeft >= max - 4;
-      rail.scrollTo({ left: atEnd ? 0 : Math.min(max, rail.scrollLeft + step()), behavior: 'smooth' });
-    }, delay);
+      go(atEnd ? 0 : Math.min(max, rail.scrollLeft + step()));
+    }
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(([e]) => {
+        visible = e.isIntersecting;
+        if (visible && !timer) timer = setTimeout(tick, 1600);
+      }, { threshold: 0.5 }).observe(rail);
+    } else { visible = true; timer = setTimeout(tick, delay); }
   }
 
   function initRails() { $$('[data-rail]').forEach(initRail); }
