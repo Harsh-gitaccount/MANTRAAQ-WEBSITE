@@ -402,7 +402,7 @@ body.site {
 .cat h3 { font-size: clamp(26px, 2.3vw, 34px); max-width: 9ch; }
 .cat p { font-size: 14px; color: var(--ink-2); margin-top: 8px; max-width: 24ch; }
 .cat-img {
-  position: absolute; z-index: -1; top: 48px; right: -8%; width: 76%; height: auto; aspect-ratio: 1; object-fit: contain;
+  position: absolute; z-index: -1; top: 48px; right: -3%; width: 76%; height: auto; aspect-ratio: 1; object-fit: contain;
   mix-blend-mode: multiply; transition: transform .9s var(--ease);
   -webkit-mask-image: radial-gradient(closest-side, #000 72%, transparent); mask-image: radial-gradient(closest-side, #000 72%, transparent);
 }
