@@ -209,6 +209,28 @@ function applyFilter(slug) {
   });
   const title = document.getElementById('shop-all-title');
   if (title) title.textContent = label;
+  showCount(grid, slugs);
+}
+
+/** "2 of 7 products, Show all" under the filters, so a filtered grid never looks like the whole range */
+function showCount(grid, slugs) {
+  const bar = document.getElementById('shop-filters');
+  if (!bar || bar.hidden) return;
+  let line = document.getElementById('shop-count');
+  if (!line) {
+    line = document.createElement('p');
+    line.id = 'shop-count';
+    line.className = 'shop-count';
+    line.setAttribute('aria-live', 'polite');
+    bar.after(line);
+    line.addEventListener('click', e => { if (e.target.closest('button')) applyFilter('all'); });
+  }
+  const cards = grid.querySelectorAll('.product-card');
+  const shown = grid.querySelectorAll('.product-card:not(.is-hidden)').length;
+  const word = n => n === 1 ? 'product' : 'products';
+  line.innerHTML = slugs.includes('all')
+    ? `<b>${cards.length}</b> ${word(cards.length)}`
+    : `Showing <b>${shown}</b> of ${cards.length} ${word(cards.length)}<button type="button">Show all</button>`;
 }
 window.MantraAQShopFilter = applyFilter;
 
