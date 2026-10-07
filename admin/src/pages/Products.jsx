@@ -310,7 +310,7 @@ export default function Products() {
         </div>
         <button
           onClick={openCreateModal}
-          className="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold px-4 py-2.5 rounded-lg text-sm transition-colors shadow-sm flex items-center gap-1.5"
+          className="bg-maroon-700 hover:bg-maroon-600 text-white font-semibold px-4 py-2.5 rounded-lg text-sm transition-colors shadow-sm flex items-center gap-1.5"
         >
           <Plus className="w-4 h-4" /> Add New Product
         </button>
@@ -319,7 +319,7 @@ export default function Products() {
       {/* Product Table */}
       {loading ? (
         <div className="flex items-center justify-center py-24">
-          <div className="w-10 h-10 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+          <div className="w-10 h-10 border-4 border-maroon-700 border-t-transparent rounded-full animate-spin"></div>
         </div>
       ) : products.length === 0 ? (
         <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-12 text-center text-slate-400">
@@ -390,7 +390,7 @@ export default function Products() {
                         {product.variants.map((v) => (
                           <div key={v.id} className="text-xs">
                             <span className="font-semibold text-slate-700">{v.title}:</span>{' '}
-                            <span className="text-emerald-600 font-bold">₹{v.price.toFixed(0)}</span>
+                            <span className="text-maroon-700 font-bold">₹{v.price.toFixed(0)}</span>
                             {v.compareAtPrice && (
                               <span className="text-slate-400 line-through ml-1.5">₹{v.compareAtPrice.toFixed(0)}</span>
                             )}
@@ -421,7 +421,7 @@ export default function Products() {
                       <span className={`inline-block px-2.5 py-0.5 rounded-full text-xs font-bold ${
                         totalStock === 0 ? 'bg-rose-100 text-rose-800' :
                         totalStock <= 15 ? 'bg-amber-100 text-amber-800' :
-                        'bg-emerald-100 text-emerald-800'
+                        'bg-leaf-100 text-leaf-800'
                       }`}>
                         {totalStock} in stock
                       </span>
@@ -430,7 +430,7 @@ export default function Products() {
                     {/* Column 6: Active/Inactive Status */}
                     <td className="py-5 px-6">
                       <span className={`inline-block px-2.5 py-0.5 rounded-full text-xs font-bold ${
-                        product.isActive ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-200 text-slate-500'
+                        product.isActive ? 'bg-leaf-100 text-leaf-800' : 'bg-slate-200 text-slate-500'
                       }`}>
                         {product.isActive ? 'Active' : 'Draft'}
                       </span>
@@ -490,7 +490,7 @@ export default function Products() {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="Singhara Flour"
-                    className="w-full bg-slate-50 border border-slate-200 rounded-lg py-2.5 px-3 text-slate-800 focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-lg py-2.5 px-3 text-slate-800 focus:outline-none focus:border-maroon-600"
                     required
                   />
                 </div>
@@ -502,7 +502,7 @@ export default function Products() {
                     value={handle}
                     onChange={(e) => setHandle(e.target.value)}
                     placeholder="singhara-atta"
-                    className="w-full bg-slate-50 border border-slate-200 rounded-lg py-2.5 px-3 text-slate-800 focus:outline-none focus:border-emerald-500 font-mono"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-lg py-2.5 px-3 text-slate-800 focus:outline-none focus:border-maroon-600 font-mono"
                     required
                   />
                 </div>
@@ -515,7 +515,7 @@ export default function Products() {
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Tell customers about the healthy features of this item..."
                   rows="3"
-                  className="w-full bg-slate-50 border border-slate-200 rounded-lg py-2 px-3 text-slate-800 focus:outline-none focus:border-emerald-500"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-lg py-2 px-3 text-slate-800 focus:outline-none focus:border-maroon-600"
                 />
               </div>
 
@@ -527,7 +527,7 @@ export default function Products() {
                     value={category}
                     onChange={(e) => setCategory(e.target.value)}
                     placeholder="e.g. Flour, Snacks, Sweeteners"
-                    className="w-full bg-slate-50 border border-slate-200 rounded-lg py-2.5 px-3 text-slate-800 focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-lg py-2.5 px-3 text-slate-800 focus:outline-none focus:border-maroon-600"
                   />
                 </div>
 
@@ -538,12 +538,12 @@ export default function Products() {
                     onClick={() => setIsActive(!isActive)}
                     className={`w-full flex items-center justify-between gap-2 border rounded-lg py-2.5 px-3 text-sm font-semibold transition-all ${
                       isActive
-                        ? 'bg-emerald-50 border-emerald-300 text-emerald-700'
+                        ? 'bg-leaf-50 border-leaf-300 text-leaf-700'
                         : 'bg-slate-50 border-slate-200 text-slate-500'
                     }`}
                   >
                     <span>{isActive ? 'Active — Live on storefront' : 'Draft — Hidden from customers'}</span>
-                    {isActive ? <ToggleRight className="w-5 h-5 text-emerald-500" /> : <ToggleLeft className="w-5 h-5 text-slate-400" />}
+                    {isActive ? <ToggleRight className="w-5 h-5 text-leaf-600" /> : <ToggleLeft className="w-5 h-5 text-slate-400" />}
                   </button>
                 </div>
               </div>
@@ -581,7 +581,7 @@ export default function Products() {
                     value={customTags}
                     onChange={(e) => setCustomTags(e.target.value)}
                     placeholder="e.g. gluten-free, high-protein, stone-ground"
-                    className="w-full bg-slate-50 border border-slate-200 rounded-lg py-2 px-3 text-slate-800 focus:outline-none focus:border-emerald-500 text-sm"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-lg py-2 px-3 text-slate-800 focus:outline-none focus:border-maroon-600 text-sm"
                   />
                   <p className="text-[11px] text-slate-400 mt-1">Available storefront icons: gluten-free, cold-processed, qr-traced, 100%-natural, high-protein, premium-quality, stone-ground, farm-direct, fresh-&-juicy, sun-dried, etc.</p>
                 </div>
@@ -593,15 +593,15 @@ export default function Products() {
                 
                 {/* Drag-and-Drop upload zone */}
                 <div
-                  onDragOver={(e) => { e.preventDefault(); e.currentTarget.classList.add('border-emerald-500', 'bg-emerald-50/30'); }}
-                  onDragLeave={(e) => { e.preventDefault(); e.currentTarget.classList.remove('border-emerald-500', 'bg-emerald-50/30'); }}
-                  onDrop={(e) => { e.preventDefault(); e.currentTarget.classList.remove('border-emerald-500', 'bg-emerald-50/30'); handleImageUpload(e); }}
+                  onDragOver={(e) => { e.preventDefault(); e.currentTarget.classList.add('border-maroon-600', 'bg-maroon-50/30'); }}
+                  onDragLeave={(e) => { e.preventDefault(); e.currentTarget.classList.remove('border-maroon-600', 'bg-maroon-50/30'); }}
+                  onDrop={(e) => { e.preventDefault(); e.currentTarget.classList.remove('border-maroon-600', 'bg-maroon-50/30'); handleImageUpload(e); }}
                   onClick={() => document.getElementById('product-file-input').click()}
-                  className="border-2 border-dashed border-slate-200 hover:border-emerald-500 bg-slate-50/50 hover:bg-emerald-50/10 rounded-xl p-6 text-center cursor-pointer transition-all duration-200 flex flex-col items-center justify-center gap-2 group"
+                  className="border-2 border-dashed border-slate-200 hover:border-maroon-600 bg-slate-50/50 hover:bg-maroon-50/40 rounded-xl p-6 text-center cursor-pointer transition-all duration-200 flex flex-col items-center justify-center gap-2 group"
                 >
-                  <Upload className="w-8 h-8 text-slate-400 group-hover:text-emerald-500 transition-colors" />
+                  <Upload className="w-8 h-8 text-slate-400 group-hover:text-maroon-600 transition-colors" />
                   <div>
-                    <span className="font-semibold text-slate-700 group-hover:text-emerald-600 transition-colors">Click to upload</span> or drag and drop
+                    <span className="font-semibold text-slate-700 group-hover:text-maroon-700 transition-colors">Click to upload</span> or drag and drop
                   </div>
                   <p className="text-xs text-slate-400">PNG, JPG, JPEG, WEBP or GIF. Select multiple files at once.</p>
                   <input
@@ -621,7 +621,7 @@ export default function Products() {
                     placeholder="Or paste an image URL here..."
                     value={inputUrl}
                     onChange={(e) => setInputUrl(e.target.value)}
-                    className="flex-1 bg-white border border-slate-200 rounded-md py-1.5 px-3 text-xs focus:outline-none focus:border-emerald-500"
+                    className="flex-1 bg-white border border-slate-200 rounded-md py-1.5 px-3 text-xs focus:outline-none focus:border-maroon-600"
                   />
                   <button
                     type="button"
@@ -655,7 +655,7 @@ export default function Products() {
                             }
                           }}
                           onDragEnd={() => setDraggedImageIndex(null)}
-                          className={`relative aspect-square bg-white border rounded-lg overflow-hidden group cursor-grab active:cursor-grabbing shadow-sm hover:shadow-md transition-all duration-200 ${draggedImageIndex === idx ? 'opacity-35 border-emerald-500 scale-[0.96]' : 'border-slate-200'}`}
+                          className={`relative aspect-square bg-white border rounded-lg overflow-hidden group cursor-grab active:cursor-grabbing shadow-sm hover:shadow-md transition-all duration-200 ${draggedImageIndex === idx ? 'opacity-35 border-maroon-600 scale-[0.96]' : 'border-slate-200'}`}
                         >
                           <img
                             src={getImageUrl(imgUrl)}
@@ -690,7 +690,7 @@ export default function Products() {
                   <button
                     type="button"
                     onClick={handleAddVariantField}
-                    className="text-emerald-500 hover:text-emerald-600 font-semibold text-xs flex items-center gap-1"
+                    className="text-maroon-700 hover:text-maroon-600 font-semibold text-xs flex items-center gap-1"
                   >
                     <Plus className="w-3.5 h-3.5" /> Add Weight Variant
                   </button>
@@ -782,7 +782,7 @@ export default function Products() {
                 </button>
                 <button
                   type="submit"
-                  className="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold px-4 py-2 rounded-lg text-xs flex items-center gap-1.5 shadow-sm"
+                  className="bg-maroon-700 hover:bg-maroon-600 text-white font-semibold px-4 py-2 rounded-lg text-xs flex items-center gap-1.5 shadow-sm"
                 >
                   <Save className="w-4 h-4" /> Save Product
                 </button>

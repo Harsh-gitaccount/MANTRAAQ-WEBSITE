@@ -1,6 +1,9 @@
 /**
  * Mantraaq Storefront Product Syncing Script
- * Fully dynamic rendering of products from the admin/backend database.
+ * Renders product cards from the admin/backend database into:
+ *   - #storefront-products-grid (the main shop grid, with category filters)
+ *   - any [data-product-rail] container (carousels such as "Complete your pantry")
+ * Card markup comes from js/product-card.js, shared with the static build.
  */
 
 const PRODUCT_MAP = {
@@ -14,12 +17,13 @@ const PRODUCT_MAP = {
 
 // Fallback images for storefront products when database images array is empty
 const LOCAL_IMAGE_FALLBACK = {
-  'singhara-pasta-macaroni': ['assets/images/products/pasta-macaroni-1.png'],
-  'singhara-vermicell':     ['assets/images/products/vermicelli-1.png'],
-  'singhara-atta':           ['assets/images/products/atta-1.png'],
-  'fresh-singhara':          ['assets/images/products/fresh-singhara-1.png'],
-  'dry-singhara':            ['assets/images/products/dry-singhara-1.png'],
-  'singhara-snacks':         ['assets/images/products/singhara-snacks-1.png']
+  'singhara-pasta-macaroni': ['/assets/images/web/pasta-800.webp'],
+  'singhara-pasta':          ['/assets/images/web/pasta-800.webp'],
+  'singhara-vermicell':      ['/assets/images/web/vermicelli-800.webp'],
+  'singhara-atta':           ['/assets/images/web/atta-800.webp'],
+  'fresh-singhara':          ['/assets/images/web/fresh-singhara-800.webp'],
+  'dry-singhara':            ['/assets/images/web/dry-singhara-800.webp'],
+  'singhara-snacks':         ['/assets/images/web/snacks-800.webp']
 };
 
 // Store loaded products globally for variant lookups
@@ -29,238 +33,199 @@ let loadedProductsMap = {};
 window._loadedProductsMap = loadedProductsMap;
 window._PRODUCT_MAP = PRODUCT_MAP;
 
-/**
- * Badge tag mapping — maps backend tag strings to CSS class + display label
- */
-const TAG_BADGE_MAP = {
-  'bestseller':  { cls: 'bestseller',  label: 'Bestseller' },
-  'new-launch':  { cls: 'new',         label: 'New Launch' },
-  'seasonal':    { cls: 'seasonal',    label: 'Seasonal' },
-  'coming-soon': { cls: 'coming-soon', label: 'Coming Soon' },
-};
+const Card = window.MantraAQCard;
 
-/**
- * Build dynamic feature tags with emojis
- */
-function buildFeatureTags(product) {
-  const badgeTags = ['bestseller', 'new-launch', 'seasonal', 'coming-soon'];
-  const features = (product.tags || []).filter(t => !badgeTags.includes(t.toLowerCase().replace(/\s+/g, '-')));
-  
-  if (features.length === 0) {
-    return '';
-  }
-
-  const emojiMap = {
-    'gluten-free': '🌾',
-    'cold-processed': '❄️',
-    'qr-traced': '📱',
-    '100%-natural': '🌿',
-    'high-protein': '💪',
-    'premium-quality': '⭐',
-    'stone-ground': '🪨',
-    'multi-purpose': '📦',
-    'high-fiber': '🌾',
-    'farm-direct': '🚜',
-    '48hr-delivery': '⚡',
-    'fresh-&-juicy': '🍉',
-    'sun-dried': '☀️',
-    'long-shelf-life': '🥫',
-    'versatile': '🥣',
-    'diabetic-friendly': '🥗',
-    'clean-ingredients': '🍃'
-  };
-
-  return features.slice(0, 3).map(f => {
-    const key = f.toLowerCase().replace(/\s+/g, '-');
-    const emoji = emojiMap[key] || '🏷️';
-    return `<span class="feature-tag">${emoji} ${f}</span>`;
-  }).join('');
-}
-
-/**
- * Build dynamic badge overlay HTML
- */
-function buildBadgeHTML(product) {
-  const tags = product.tags || [];
-  for (let i = 0; i < tags.length; i++) {
-    const tagKey = tags[i].toLowerCase().replace(/\s+/g, '-');
-    const mapped = TAG_BADGE_MAP[tagKey];
-    if (mapped) {
-      // Return only the first matched badge to completely prevent stacking bugs
-      return `<div class="product-badge ${mapped.cls}">${mapped.label}</div>`;
-    }
-  }
-  return '';
-}
-
-/**
- * Check if a product is marked as "Coming Soon"
- */
-function isComingSoon(product) {
-  const tags = (product.tags || []).map(t => t.toLowerCase().replace(/\s+/g, '-'));
-  return tags.includes('coming-soon');
-}
-
-/**
- * Render dynamic weight pills/selectors for variants
- */
-function buildVariantSelector(variants, handle, selectedVariantId) {
-  if (!variants || variants.length === 0) return '';
-  
-  if (variants.length === 1) {
-    return `
-      <div class="variant-selector" data-handle="${handle}">
-        <span class="variant-btn active" style="cursor:default; padding: 5px 12px; border-radius: 6px; font-size: 11px; background: rgba(15, 81, 50, 0.08); color: #0f5132; font-weight: 600; display: inline-block;">
-          ${variants[0].title}
-        </span>
-      </div>`;
-  }
-
-  return `
-    <div class="variant-selector flex gap-2 flex-wrap" data-handle="${handle}">
-      ${variants.map(v => {
-        const isActive = v.id === selectedVariantId;
-        return `
-        <button
-          type="button"
-          class="variant-btn border rounded-lg px-3 py-1 text-xs transition-all ${
-            isActive ? 'active font-bold' : 'border-slate-200 text-slate-500 hover:bg-slate-50 font-semibold'
-          } ${v.stockQuantity === 0 ? 'opacity-40 line-through cursor-not-allowed' : ''}"
-          data-variant-id="${v.id}"
-          data-price="${v.price}"
-          data-compare="${v.compareAtPrice || ''}"
-          data-stock="${v.stockQuantity}"
-          ${v.stockQuantity === 0 ? 'disabled' : ''}
-          title="${v.stockQuantity === 0 ? 'Out of Stock' : v.title}">
-          ${v.title}
-        </button>
-        `;
-      }).join('')}
-    </div>`;
+function productForCard(card) {
+  const key = card.getAttribute('data-product');
+  return loadedProductsMap[PRODUCT_MAP[key] || key] || null;
 }
 
 /**
  * Update pricing display inside a card
  */
 function updatePriceDisplay(card, price, compareAt) {
-  const priceEl = card.querySelector('.price-current');
   const pw = card.querySelector('.price-wrapper');
-  if (!priceEl || !pw) return;
+  if (!pw) return;
+  pw.innerHTML = Card.priceHtml({ price: parseFloat(price), compareAtPrice: compareAt ? parseFloat(compareAt) : null });
+}
 
-  priceEl.textContent = `₹${parseFloat(price).toFixed(0)}`;
+/**
+ * Card image gallery: arrows and dots switch images; on desktop, hovering
+ * shows the second photo. No autoplay, so the grid stays calm.
+ */
+function initCardGallery(card) {
+  if (card.dataset.galleryBound) return;
+  card.dataset.galleryBound = '1';
 
-  // Clear existing comparison details
-  pw.querySelectorAll('.price-original, .price-discount').forEach(el => el.remove());
+  const images = card.querySelectorAll('.product-img');
+  const indicators = card.querySelectorAll('.indicator');
+  if (images.length <= 1) return;
 
-  if (compareAt && parseFloat(compareAt) > parseFloat(price)) {
-    const discount = Math.round(((compareAt - price) / compareAt) * 100);
-    pw.insertAdjacentHTML('beforeend', `
-      <span class="price-original">₹${parseFloat(compareAt).toFixed(0)}</span>
-      <span class="price-discount">${discount}% OFF</span>
-    `);
+  let current = 0;
+  function goTo(index) {
+    if (index < 0) index = images.length - 1;
+    if (index >= images.length) index = 0;
+    images.forEach((img, i) => img.classList.toggle('active', i === index));
+    indicators.forEach((ind, i) => ind.classList.toggle('active', i === index));
+    current = index;
+  }
+
+  const prev = card.querySelector('.gallery-nav.prev');
+  const next = card.querySelector('.gallery-nav.next');
+  prev && prev.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); goTo(current - 1); });
+  next && next.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); goTo(current + 1); });
+  indicators.forEach((ind, i) => ind.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); goTo(i); }));
+
+  if (window.matchMedia('(hover: hover)').matches) {
+    const media = card.querySelector('.product-image-wrapper');
+    media.addEventListener('mouseenter', () => goTo(1));
+    media.addEventListener('mouseleave', () => goTo(0));
   }
 }
 
 /**
- * Wire up click events for product gallery inside a card
+ * Variant pills and the Add button. Works before live data arrives (prices come
+ * from data attributes; the Add button is still a link to the product page),
+ * and becomes a real add-to-cart once the product is in loadedProductsMap.
  */
-function initCardGallery(card, product) {
-  const images = card.querySelectorAll('.product-img');
-  const indicators = card.querySelectorAll('.indicator');
-  const prevBtn = card.querySelector('.gallery-nav.prev');
-  const nextBtn = card.querySelector('.gallery-nav.next');
-  
-  if (images.length <= 1) return;
-  
-  let currentIndex = 0;
-  let autoPlayInterval = null;
-  let userInteractionTimeout = null;
-  let isHovered = false;
-  
-  function goToImage(index) {
-    if (index < 0) index = images.length - 1;
-    if (index >= images.length) index = 0;
-    
-    images.forEach((img, i) => {
-      img.classList.toggle('active', i === index);
+function bindCard(card) {
+  initCardGallery(card);
+
+  const product = productForCard(card);
+  let selectedVariantId = (card.querySelector('.variant-btn.active') || {}).dataset?.variantId;
+
+  if (!card.dataset.pillsBound) {
+    card.dataset.pillsBound = '1';
+    card.querySelectorAll('.variant-btn').forEach(btn => {
+      btn.addEventListener('click', e => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (btn.disabled || btn.dataset.stock === '0') return;
+        card.querySelectorAll('.variant-btn').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
+        btn.classList.add('active');
+        btn.setAttribute('aria-pressed', 'true');
+        card.dataset.selectedVariant = btn.dataset.variantId;
+        updatePriceDisplay(card, btn.dataset.price, btn.dataset.compare);
+      });
     });
-    
-    indicators.forEach((ind, i) => {
-      ind.classList.toggle('active', i === index);
-    });
-    
-    currentIndex = index;
   }
-  
-  function startAutoPlay() {
-    stopAutoPlay();
-    if (isHovered) return;
-    autoPlayInterval = setInterval(() => {
-      goToImage(currentIndex + 1);
-    }, 4000);
-  }
-  
-  function stopAutoPlay() {
-    if (autoPlayInterval) {
-      clearInterval(autoPlayInterval);
-      autoPlayInterval = null;
+
+  if (!product || card.dataset.cartBound) return;
+  const addBtn = card.querySelector('[data-add]');
+  if (!addBtn) return;
+  card.dataset.cartBound = '1';
+
+  addBtn.addEventListener('click', e => {
+    e.preventDefault();
+    e.stopPropagation();
+    const liveProduct = productForCard(card) || product;
+    const variantId = card.dataset.selectedVariant || selectedVariantId;
+    const variant = liveProduct.variants.find(v => v.id === variantId) || Card.defaultVariant(liveProduct);
+    if (!variant) return;
+    if (variant.stockQuantity !== undefined && variant.stockQuantity <= 0) {
+      window.Toast.error(`Out of Stock: "${liveProduct.name} (${variant.title})" is sold out.`);
+      return;
     }
-  }
-  
-  function handleUserInteraction() {
-    stopAutoPlay();
-    if (userInteractionTimeout) {
-      clearTimeout(userInteractionTimeout);
-    }
-    userInteractionTimeout = setTimeout(() => {
-      startAutoPlay();
-    }, 8000); // Resume autoplay after 8s of inactivity
-  }
-  
-  if (prevBtn) {
-    prevBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      goToImage(currentIndex - 1);
-      handleUserInteraction();
-    });
-  }
-  
-  if (nextBtn) {
-    nextBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      goToImage(currentIndex + 1);
-      handleUserInteraction();
-    });
-  }
-  
-  indicators.forEach((ind, idx) => {
-    ind.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      goToImage(idx);
-      handleUserInteraction();
-    });
+    window.Cart.addItem(variant, liveProduct, 1);
+    addBtn.classList.add('is-added');
+    setTimeout(() => addBtn.classList.remove('is-added'), 900);
+  });
+}
+
+function renderCards(products, opts) {
+  return products.map((p, i) => Card.render(p, {
+    index: i,
+    eager: opts && opts.eager && i < 2,
+    fallbackImages: LOCAL_IMAGE_FALLBACK[p.handle] || [],
+    resolveImage: url => MantraAQSanitizeURL(window.MantraaqAPI.resolveImageUrl(url))
+  })).join('');
+}
+
+/**
+ * Category filter chips above the main grid, built from the cards already in it,
+ * so filtering works on the pre-rendered page even before (or without) the API.
+ */
+function buildFilters() {
+  const bar = document.getElementById('shop-filters');
+  const grid = document.getElementById('storefront-products-grid');
+  if (!bar || !grid) return;
+
+  const cards = Array.from(grid.querySelectorAll('.product-card'));
+  const seen = new Map();
+  cards.forEach(card => {
+    if (card.dataset.soon === 'true' || !card.dataset.category) return;
+    const label = (card.querySelector('.pc-cat') || {}).textContent || card.dataset.category;
+    if (!seen.has(card.dataset.category)) seen.set(card.dataset.category, label.trim());
+  });
+  if (seen.size < 2) { bar.hidden = true; return; }
+  bar.hidden = false;
+
+  const chips = [['all', 'All'], ...seen.entries()];
+  if (cards.some(c => c.dataset.soon === 'true')) chips.push(['soon', 'Coming soon']);
+
+  bar.innerHTML = chips.map(([slug, label], i) =>
+    `<button type="button" class="filter${i === 0 ? ' is-active' : ''}" data-filter="${Card.escapeHtml(slug)}" aria-pressed="${i === 0}">${Card.escapeHtml(label)}</button>`
+  ).join('');
+
+  bar.querySelectorAll('.filter').forEach(chip => {
+    chip.addEventListener('click', () => applyFilter(chip.dataset.filter));
   });
 
-  // Pause on hover
-  card.addEventListener('mouseenter', () => {
-    isHovered = true;
-    stopAutoPlay();
-    if (userInteractionTimeout) {
-      clearTimeout(userInteractionTimeout);
-      userInteractionTimeout = null;
+  applyFilter(currentFilter || new URLSearchParams(window.location.search).get('category') || 'all');
+}
+
+let currentFilter = null;
+
+function applyFilter(slug) {
+  currentFilter = slug;
+  const bar = document.getElementById('shop-filters');
+  const grid = document.getElementById('storefront-products-grid');
+  if (!grid) return;
+  // Accepts one slug or several separated by commas (e.g. a tile covering two categories)
+  let slugs = String(slug || 'all').split(',').map(s => s.trim()).filter(Boolean);
+  let any = false;
+  grid.querySelectorAll('.product-card').forEach(card => {
+    const show = slugs.includes('all')
+      || (slugs.includes('soon') && card.dataset.soon === 'true')
+      || (slugs.includes(card.dataset.category) && card.dataset.soon !== 'true');
+    card.classList.toggle('is-hidden', !show);
+    any = any || show;
+  });
+  if (!any) {
+    slugs = ['all'];
+    grid.querySelectorAll('.product-card').forEach(c => c.classList.remove('is-hidden'));
+  }
+  bar && bar.querySelectorAll('.filter').forEach(c => {
+    const on = slugs.includes(c.dataset.filter);
+    c.classList.toggle('is-active', on);
+    c.setAttribute('aria-pressed', String(on));
+  });
+  // Mark the matching category tile and name the grid after it
+  let label = 'All products';
+  document.querySelectorAll('[data-shop-filter]').forEach(tile => {
+    const on = slugs.join(',') === tile.dataset.shopFilter;
+    tile.classList.toggle('is-active', on);
+    if (on) label = (tile.querySelector('h3') || {}).textContent || label;
+  });
+  const title = document.getElementById('shop-all-title');
+  if (title) title.textContent = label;
+}
+window.MantraAQShopFilter = applyFilter;
+
+/** Product rails: <div data-product-rail data-exclude="handle" data-limit="8"> */
+function renderRails(products) {
+  document.querySelectorAll('[data-product-rail]').forEach(rail => {
+    const exclude = (rail.dataset.exclude || '').split(',').filter(Boolean);
+    const limit = parseInt(rail.dataset.limit || '8', 10);
+    const list = products.filter(p => !exclude.includes(p.handle) && !Card.isComingSoon(p) && Card.isInStock(p)).slice(0, limit);
+    if (!list.length) {
+      const section = rail.closest('[data-rail-section]');
+      if (section) section.hidden = true;
+      return;
     }
+    rail.innerHTML = renderCards(list);
+    rail.dispatchEvent(new CustomEvent('rail:updated', { bubbles: true }));
   });
-  
-  card.addEventListener('mouseleave', () => {
-    isHovered = false;
-    startAutoPlay();
-  });
-  
-  // Start the slideshow automatically
-  startAutoPlay();
 }
 
 /**
@@ -268,37 +233,36 @@ function initCardGallery(card, product) {
  */
 async function syncProductCards() {
   const gridContainer = document.getElementById('storefront-products-grid');
-  if (!gridContainer) return;
+  const hasRails = document.querySelector('[data-product-rail]');
+
+  // Bind pre-rendered cards right away so pills and galleries work before the API answers
+  document.querySelectorAll('.product-card').forEach(bindCard);
+  buildFilters();
 
   let products;
   try {
-    products = await window.MantraaqAPI.fetchProducts();
+    products = await window.MantraaqAPI.fetchProducts({ limit: 100 });
   } catch (e) {
     console.warn('Storefront: Could not fetch products, preserving pre-rendered cards', e);
-    // If cards are already pre-rendered, DO NOT replace them with an error message
-    if (gridContainer.querySelector('.product-card')) {
-      return;
+    if (gridContainer && !gridContainer.querySelector('.product-card')) {
+      gridContainer.innerHTML = `<div class="grid-empty">We couldn't load products right now. Please refresh in a moment.</div>`;
     }
-    gridContainer.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding: 40px; color: #94a3b8;">Unable to load products. Please check connection.</div>`;
     return;
   }
 
   if (!products || products.length === 0) {
-    if (gridContainer.querySelector('.product-card')) {
-      return;
+    if (gridContainer && !gridContainer.querySelector('.product-card')) {
+      gridContainer.innerHTML = `<div class="grid-empty">No products found.</div>`;
     }
-    gridContainer.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding: 40px; color: #94a3b8;">No products found in the database.</div>`;
     return;
   }
 
   // Filter for active products
-  const activeProducts = products.filter(p => p.isActive !== false && p.variants && p.variants.length > 0);
+  const activeProducts = Card.sortForShelf(products.filter(p => p.isActive !== false && p.variants && p.variants.length > 0));
 
   // Index active products globally
   loadedProductsMap = {};
-  activeProducts.forEach(p => {
-    loadedProductsMap[p.handle] = p;
-  });
+  activeProducts.forEach(p => { loadedProductsMap[p.handle] = p; });
   window._loadedProductsMap = loadedProductsMap;
 
   // Sync cart items with fetched product stock levels
@@ -306,208 +270,54 @@ async function syncProductCards() {
     window.Cart.syncStock(products);
   }
 
-  // Render cards
-  gridContainer.innerHTML = activeProducts.map(product => {
-    // Map database handle back to static keys if wishlist/search expects it
-    let productKey = product.handle;
-    for (const [key, handle] of Object.entries(PRODUCT_MAP)) {
-      if (handle === product.handle) {
-        productKey = key;
-        break;
-      }
-    }
+  if (gridContainer) {
+    gridContainer.innerHTML = renderCards(activeProducts, { eager: true });
+    buildFilters();
+  }
+  if (hasRails) renderRails(activeProducts);
 
-    const defaultVariant = product.variants.find(v => v.stockQuantity > 0) || product.variants[0];
-    const imageFallback = LOCAL_IMAGE_FALLBACK[product.handle] || ['assets/images/placeholder.png'];
-    const galleryImages = product.images && product.images.length > 0 ? product.images : imageFallback;
-
-    return `
-      <div class="product-card" data-product="${productKey}">
-        <div class="product-image-wrapper">
-          ${buildBadgeHTML(product)}
-          
-          <!-- Product Image Gallery -->
-          <div class="product-gallery">
-            ${galleryImages.map((imgUrl, idx) => `
-              <img src="${MantraAQSanitizeURL(window.MantraaqAPI.resolveImageUrl(imgUrl))}" alt="${MantraAQSanitize(product.name)}" class="product-img ${idx === 0 ? 'active' : ''}" data-index="${idx}">
-            `).join('')}
-          </div>
-
-          <!-- Gallery Navigation Controls -->
-          ${galleryImages.length > 1 ? `
-            <button type="button" class="gallery-nav prev" aria-label="Previous image">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <polyline points="15 18 9 12 15 6"></polyline>
-                </svg>
-            </button>
-            <button type="button" class="gallery-nav next" aria-label="Next image">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <polyline points="9 18 15 12 9 6"></polyline>
-                </svg>
-            </button>
-            <div class="gallery-indicators">
-              ${galleryImages.map((_, idx) => `
-                <span class="indicator ${idx === 0 ? 'active' : ''}" data-index="${idx}"></span>
-              `).join('')}
-            </div>
-          ` : ''}
-        </div>
-
-        <div class="product-content">
-          <div class="product-header">
-              <h3 class="product-title"><a href="/products/${product.handle}">${MantraAQSanitize(product.name)}</a></h3>
-          </div>
-
-          <p class="product-description">${MantraAQSanitize(product.description || '')}</p>
-
-          <!-- Dynamic feature badges -->
-          <div class="product-features">
-            ${buildFeatureTags(product)}
-          </div>
-
-          <!-- Dynamic variant selector pills -->
-          <div class="variant-selector-container">
-            ${buildVariantSelector(product.variants, product.handle, defaultVariant.id)}
-          </div>
-
-          <div class="product-footer">
-              <div class="price-wrapper">
-                  <span class="price-current">₹0</span>
-              </div>
-              <div class="tax-label">Inclusive of all taxes</div>
-          </div>
-
-          <button type="button" class="btn-primary">
-              <span>Buy Now</span>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                  <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"></path>
-                  <line x1="3" y1="6" x2="21" y2="6"></line>
-                  <path d="M16 10a4 4 0 01-8 0"></path>
-              </svg>
-          </button>
-        </div>
-      </div>
-    `;
-  }).join('');
-
-  // Attach card behaviors (variant selector, pricing, buy button, and gallery navigation)
-  document.querySelectorAll('.product-card').forEach(card => {
-    const key = card.getAttribute('data-product');
-    const handle = PRODUCT_MAP[key] || key;
-    const product = loadedProductsMap[handle];
-    if (!product) return;
-
-    const defaultVariant = product.variants.find(v => v.stockQuantity > 0) || product.variants[0];
-    let selectedVariant = defaultVariant;
-
-    // Initialize gallery behavior
-    initCardGallery(card, product);
-
-    // Initial pricing display sync
-    updatePriceDisplay(card, defaultVariant.price, defaultVariant.compareAtPrice);
-
-    // Hook variant button selection
-    card.querySelectorAll('.variant-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        if (btn.dataset.stock === '0') return;
-
-        // Reset siblings layout
-        card.querySelectorAll('.variant-btn').forEach(b => {
-          const isOutOfStock = b.getAttribute('data-stock') === '0';
-          b.className = `variant-btn border rounded-lg px-3 py-1 text-xs font-semibold transition-all border-slate-200 text-slate-500 hover:bg-slate-50 ${isOutOfStock ? 'opacity-40 line-through cursor-not-allowed' : ''}`;
-        });
-
-        // Set active button styles
-        btn.className = `variant-btn border rounded-lg px-3 py-1 text-xs font-bold transition-all active`;
-
-        const variantId = btn.dataset.variantId;
-        selectedVariant = product.variants.find(v => v.id === variantId);
-
-        updatePriceDisplay(card, selectedVariant.price, selectedVariant.compareAtPrice);
-      });
-    });
-
-    // Hook buy button click handler
-    const buyBtn = card.querySelector('.btn-primary');
-    if (buyBtn) {
-      buyBtn.style.cursor = 'pointer';
-
-      // ── COMING SOON BADGE LOCK ──
-      if (isComingSoon(product)) {
-        buyBtn.innerHTML = `<span>Coming Soon</span>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <circle cx="12" cy="12" r="10"/>
-            <polyline points="12 6 12 12 16 14"/>
-          </svg>`;
-        buyBtn.classList.add('coming-soon-disabled');
-        return; 
-      }
-
-      // ── OUT OF STOCK LOCK ──
-      const totalStock = product.variants.reduce((sum, v) => sum + v.stockQuantity, 0);
-      if (totalStock === 0) {
-        buyBtn.innerHTML = `<span>Out of Stock</span>`;
-        buyBtn.classList.add('coming-soon-disabled');
-      } else {
-        buyBtn.addEventListener('click', (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          if (selectedVariant) {
-            // Re-check stock to guard against stale UI
-            if (selectedVariant.stockQuantity !== undefined && selectedVariant.stockQuantity <= 0) {
-              window.Toast.error(`Out of Stock: "${product.name} (${selectedVariant.title})" is sold out.`);
-              return;
-            }
-            window.Cart.addItem(selectedVariant, product, 1);
-          }
-        });
-      }
-    }
-  });
+  document.querySelectorAll('.product-card').forEach(bindCard);
 
   // Inject Product Schema Markup dynamically for Search Engine Crawlers
-  try {
-    const existingSchema = document.getElementById('dynamic-product-schema');
-    if (existingSchema) existingSchema.remove();
+  if (gridContainer) {
+    try {
+      const existingSchema = document.getElementById('dynamic-product-schema');
+      if (existingSchema) existingSchema.remove();
 
-    const schemas = activeProducts.map(product => {
-      const defaultVariant = product.variants[0];
-      const imageFallback = LOCAL_IMAGE_FALLBACK[product.handle] || ['assets/images/placeholder.png'];
-      const galleryImages = product.images && product.images.length > 0 ? product.images : imageFallback;
-      const imagesResolved = galleryImages.map(imgUrl => window.MantraaqAPI.resolveImageUrl(imgUrl));
-      const inStock = product.variants.some(v => v.stockQuantity > 0);
+      const schemas = activeProducts.map(product => {
+        const defaultVariant = product.variants[0];
+        const galleryImages = product.images && product.images.length > 0 ? product.images : (LOCAL_IMAGE_FALLBACK[product.handle] || []);
+        const inStock = Card.isInStock(product);
+        return {
+          "@context": "https://schema.org",
+          "@type": "Product",
+          "name": product.name,
+          "description": product.description || `Premium quality ${product.name} from MantraAQ.`,
+          "image": galleryImages.map(imgUrl => window.MantraaqAPI.resolveImageUrl(imgUrl)),
+          "sku": defaultVariant.sku || product.handle,
+          "offers": {
+            "@type": "Offer",
+            "url": `https://mantraaq.com/products/${product.handle}`,
+            "priceCurrency": "INR",
+            "price": defaultVariant.price,
+            "availability": inStock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+            "priceValidUntil": "2030-12-31"
+          }
+        };
+      });
 
-      return {
-        "@context": "https://schema.org",
-        "@type": "Product",
-        "name": product.name,
-        "description": product.description || `Premium quality ${product.name} from MantraAQ.`,
-        "image": imagesResolved,
-        "sku": defaultVariant.sku || product.handle,
-        "offers": {
-          "@type": "Offer",
-          "url": window.location.href,
-          "priceCurrency": "INR",
-          "price": defaultVariant.price,
-          "availability": inStock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
-          "priceValidUntil": "2030-12-31"
-        }
-      };
-    });
-
-    const script = document.createElement('script');
-    script.id = 'dynamic-product-schema';
-    script.type = 'application/ld+json';
-    script.text = JSON.stringify(schemas);
-    document.head.appendChild(script);
-  } catch (schemaErr) {
-    console.warn('Failed to inject product schemas:', schemaErr);
+      const script = document.createElement('script');
+      script.id = 'dynamic-product-schema';
+      script.type = 'application/ld+json';
+      script.text = JSON.stringify(schemas);
+      document.head.appendChild(script);
+    } catch (schemaErr) {
+      console.warn('Failed to inject product schemas:', schemaErr);
+    }
   }
 
-  // Dispatch global event for other modules (wishlist, search) to notice load
-  window.dispatchEvent(new CustomEvent('storefront:synced'));
+  // Dispatch global event for other modules (wishlist, search, site motion) to notice load
+  window.dispatchEvent(new CustomEvent('storefront:synced', { detail: { products: activeProducts } }));
 
   // Trigger wishlist sync directly as well
   if (window.Wishlist && typeof window.Wishlist.syncProductHearts === 'function') {

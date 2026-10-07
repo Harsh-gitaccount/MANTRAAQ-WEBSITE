@@ -271,7 +271,7 @@ export default function Orders() {
             onClick={() => { setActiveTab(tab); setExpandedOrderId(null); }}
             className={`py-3 px-4 text-sm font-semibold transition-all border-b-2 ${
               activeTab === tab 
-                ? 'border-emerald-500 text-emerald-600'
+                ? 'border-maroon-700 text-maroon-700'
                 : 'border-transparent text-slate-400 hover:text-slate-600'
             }`}
           >
@@ -283,7 +283,7 @@ export default function Orders() {
       {/* Orders Grid/Table */}
       {loading ? (
         <div className="flex items-center justify-center py-24">
-          <div className="w-10 h-10 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+          <div className="w-10 h-10 border-4 border-maroon-700 border-t-transparent rounded-full animate-spin"></div>
         </div>
       ) : orders.length === 0 ? (
         <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-12 text-center text-slate-400">
@@ -325,7 +325,7 @@ export default function Orders() {
 
                     <div className="flex items-center gap-2">
                       <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold capitalize ${
-                        order.status === 'PAID' ? 'bg-emerald-100 text-emerald-800' :
+                        order.status === 'PAID' ? 'bg-leaf-100 text-leaf-800' :
                         order.status === 'DISPATCHED' ? 'bg-blue-100 text-blue-800' :
                         order.status === 'DELIVERED' ? 'bg-purple-100 text-purple-800' :
                         order.status === 'CANCELLED' ? 'bg-rose-100 text-rose-800' :
@@ -394,7 +394,7 @@ export default function Orders() {
                             <button
                               type="button"
                               onClick={() => handleEditAddressClick(order.id, order.shippingAddress)}
-                              className="text-[11px] text-emerald-600 hover:text-emerald-700 font-bold hover:underline"
+                              className="text-[11px] text-maroon-700 hover:text-maroon-600 font-bold hover:underline"
                             >
                               Edit Location
                             </button>
@@ -445,7 +445,7 @@ export default function Orders() {
                               <select
                                 value={carrierInputs[order.id] || 'Blue Dart Express'}
                                 onChange={(e) => setCarrierInputs({ ...carrierInputs, [order.id]: e.target.value })}
-                                className="w-full bg-slate-50 border border-slate-200 rounded-lg py-2 px-3 text-slate-800 text-sm focus:outline-none focus:border-emerald-500 font-medium"
+                                className="w-full bg-slate-50 border border-slate-200 rounded-lg py-2 px-3 text-slate-800 text-sm focus:outline-none focus:border-maroon-600 font-medium"
                               >
                                 <option value="Blue Dart Express">Blue Dart Express</option>
                                 <option value="Delhivery">Delhivery</option>
@@ -467,7 +467,7 @@ export default function Orders() {
                                   value={customCarrierInputs[order.id] || ''}
                                   onChange={(e) => setCustomCarrierInputs({ ...customCarrierInputs, [order.id]: e.target.value })}
                                   placeholder="e.g. Professional Couriers"
-                                  className="w-full bg-slate-50 border border-slate-200 rounded-lg py-2 px-3 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500 text-sm"
+                                  className="w-full bg-slate-50 border border-slate-200 rounded-lg py-2 px-3 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-maroon-600 text-sm"
                                 />
                               </div>
                             )}
@@ -485,7 +485,7 @@ export default function Orders() {
                                     ? 'Enter Blue Dart Waybill No. (e.g. 74839201948)' 
                                     : 'Enter Waybill / Tracking number'
                                 }
-                                className="w-full bg-slate-50 border border-slate-200 rounded-lg py-2 px-3 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500 text-sm font-mono font-medium"
+                                className="w-full bg-slate-50 border border-slate-200 rounded-lg py-2 px-3 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-maroon-600 text-sm font-mono font-medium"
                               />
                             </div>
 
@@ -498,18 +498,18 @@ export default function Orders() {
                                 value={customUrlInputs[order.id] || ''}
                                 onChange={(e) => setCustomUrlInputs({ ...customUrlInputs, [order.id]: e.target.value })}
                                 placeholder="Auto-generated if empty, or e.g. bluedart.com"
-                                className="w-full bg-slate-50 border border-slate-200 rounded-lg py-1.5 px-3 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500 text-xs"
+                                className="w-full bg-slate-50 border border-slate-200 rounded-lg py-1.5 px-3 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-maroon-600 text-xs"
                               />
                             </div>
 
-                            <div className="bg-emerald-50/60 border border-emerald-100/80 rounded-lg p-2.5 text-[11px] text-emerald-800 leading-relaxed">
+                            <div className="bg-maroon-50/60 border border-maroon-100/80 rounded-lg p-2.5 text-[11px] text-maroon-800 leading-relaxed">
                               The customer receives a premium dispatch email with direct courier tracking links and portal instructions. No tentative delivery dates are displayed.
                             </div>
 
                             <button
                               onClick={() => handleDispatch(order.id)}
                               disabled={actionLoading[order.id]}
-                              className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-2.5 rounded-lg text-sm transition-colors shadow-sm flex items-center justify-center gap-1.5"
+                              className="w-full bg-maroon-700 hover:bg-maroon-600 text-white font-semibold py-2.5 rounded-lg text-sm transition-colors shadow-sm flex items-center justify-center gap-1.5"
                             >
                               <Truck className="w-4 h-4" />
                               {actionLoading[order.id] ? 'Dispatching...' : 'Dispatch Shipment'}
@@ -532,7 +532,7 @@ export default function Orders() {
                                     href={getAdminTrackingLink(order.trackingCarrier, order.trackingNumber)}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="text-emerald-600 hover:text-emerald-700 font-semibold inline-flex items-center gap-1 hover:underline"
+                                    className="text-maroon-700 hover:text-maroon-600 font-semibold inline-flex items-center gap-1 hover:underline"
                                   >
                                     Track on {order.trackingCarrier || 'Courier'} <ExternalLink className="w-3 h-3" />
                                   </a>
@@ -542,7 +542,7 @@ export default function Orders() {
                             <button
                               onClick={() => handleDeliver(order.id)}
                               disabled={actionLoading[order.id]}
-                              className="w-full bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-2.5 rounded-lg text-sm transition-colors shadow-sm flex items-center justify-center gap-1"
+                              className="w-full bg-maroon-700 hover:bg-maroon-600 text-white font-semibold py-2.5 rounded-lg text-sm transition-colors shadow-sm flex items-center justify-center gap-1"
                             >
                               <CheckCircle className="w-4 h-4" />
                               {actionLoading[order.id] ? 'Updating...' : 'Mark Delivered'}
@@ -551,7 +551,7 @@ export default function Orders() {
                         )}
 
                         {order.status === 'DELIVERED' && (
-                          <div className="flex items-center gap-2 text-emerald-600 bg-emerald-50 border border-emerald-100 p-3 rounded-lg text-sm">
+                          <div className="flex items-center gap-2 text-leaf-700 bg-leaf-50 border border-leaf-200 p-3 rounded-lg text-sm">
                             <CheckCircle className="w-5 h-5 flex-shrink-0" />
                             <span className="font-semibold">Fulfillment Completed</span>
                           </div>
@@ -609,7 +609,7 @@ export default function Orders() {
                     type="text"
                     value={editAddressData.name}
                     onChange={(e) => setEditAddressData({ ...editAddressData, name: e.target.value })}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-slate-800 focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-slate-800 focus:outline-none focus:border-maroon-600"
                     required
                   />
                 </div>
@@ -619,7 +619,7 @@ export default function Orders() {
                     type="text"
                     value={editAddressData.phone}
                     onChange={(e) => setEditAddressData({ ...editAddressData, phone: e.target.value })}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-slate-800 focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-slate-800 focus:outline-none focus:border-maroon-600"
                     required
                   />
                 </div>
@@ -631,7 +631,7 @@ export default function Orders() {
                   type="email"
                   value={editAddressData.email}
                   onChange={(e) => setEditAddressData({ ...editAddressData, email: e.target.value })}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-slate-800 focus:outline-none focus:border-emerald-500"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-slate-800 focus:outline-none focus:border-maroon-600"
                   required
                 />
               </div>
@@ -642,7 +642,7 @@ export default function Orders() {
                   type="text"
                   value={editAddressData.street}
                   onChange={(e) => setEditAddressData({ ...editAddressData, street: e.target.value })}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-slate-800 focus:outline-none focus:border-emerald-500"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-slate-800 focus:outline-none focus:border-maroon-600"
                   required
                 />
               </div>
@@ -654,7 +654,7 @@ export default function Orders() {
                     type="text"
                     value={editAddressData.city}
                     onChange={(e) => setEditAddressData({ ...editAddressData, city: e.target.value })}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-slate-800 focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-slate-800 focus:outline-none focus:border-maroon-600"
                     required
                   />
                 </div>
@@ -664,7 +664,7 @@ export default function Orders() {
                     type="text"
                     value={editAddressData.state}
                     onChange={(e) => setEditAddressData({ ...editAddressData, state: e.target.value })}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-slate-800 focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-slate-800 focus:outline-none focus:border-maroon-600"
                     required
                   />
                 </div>
@@ -674,7 +674,7 @@ export default function Orders() {
                     type="text"
                     value={editAddressData.postalCode}
                     onChange={(e) => setEditAddressData({ ...editAddressData, postalCode: e.target.value })}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-slate-800 focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-slate-800 focus:outline-none focus:border-maroon-600"
                     required
                   />
                 </div>
@@ -690,7 +690,7 @@ export default function Orders() {
                 </button>
                 <button
                   type="submit"
-                  className="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold px-4 py-2 rounded-lg text-xs shadow-sm"
+                  className="bg-maroon-700 hover:bg-maroon-600 text-white font-semibold px-4 py-2 rounded-lg text-xs shadow-sm"
                 >
                   Save Address
                 </button>

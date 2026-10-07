@@ -11,7 +11,7 @@
     .cart-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(8, 6, 13, 0.4);
+      background: rgba(36,19,22, 0.4);
       backdrop-filter: blur(8px);
       z-index: 1000;
       opacity: 0;
@@ -38,7 +38,7 @@
       transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
       display: flex;
       flex-direction: column;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-family: 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
     }
     .cart-overlay.active .cart-drawer {
       transform: translateX(0);
@@ -47,7 +47,7 @@
     /* Header */
     .cart-hdr {
       padding: 24px;
-      border-bottom: 1px solid #f1f5f9;
+      border-bottom: 1px solid #f3ecdb;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -55,7 +55,7 @@
     .cart-hdr h2 {
       font-size: 20px;
       font-weight: 700;
-      color: #0f172a;
+      color: #241316;
       margin: 0;
     }
     .cart-close-btn {
@@ -63,19 +63,19 @@
       border: none;
       font-size: 24px;
       cursor: pointer;
-      color: #64748b;
+      color: #7a6a6c;
       transition: color 0.2s;
     }
     .cart-close-btn:hover {
-      color: #0f172a;
+      color: #241316;
     }
     .checkout-back-btn {
       display: inline-flex !important;
       align-items: center !important;
       gap: 0.6rem !important;
-      color: #10b981 !important;
-      background: rgba(16, 185, 129, 0.05) !important;
-      border: 1px solid rgba(16, 185, 129, 0.18) !important;
+      color: #6c1121 !important;
+      background: rgba(108,17,33, 0.05) !important;
+      border: 1px solid rgba(108,17,33, 0.18) !important;
       border-radius: 50px !important;
       font-size: 0.85rem !important;
       font-weight: 600 !important;
@@ -88,11 +88,11 @@
       box-shadow: none !important;
     }
     .checkout-back-btn:hover {
-      color: #059669 !important;
-      background: rgba(16, 185, 129, 0.1) !important;
-      border-color: rgba(16, 185, 129, 0.35) !important;
+      color: #4f0c18 !important;
+      background: rgba(108,17,33, 0.1) !important;
+      border-color: rgba(108,17,33, 0.35) !important;
       transform: translateY(-1px) !important;
-      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.08) !important;
+      box-shadow: 0 4px 12px rgba(108,17,33, 0.08) !important;
     }
     .checkout-back-btn .back-icon {
       transition: transform 0.3s ease !important;
@@ -111,23 +111,23 @@
       flex-direction: column;
       gap: 20px;
       scrollbar-width: auto;
-      scrollbar-color: #10b981 rgba(15, 23, 42, 0.05);
+      scrollbar-color: #6c1121 rgba(36,19,22, 0.05);
     }
     .cart-body-scrollable::-webkit-scrollbar {
       width: 10px;
       height: 10px;
     }
     .cart-body-scrollable::-webkit-scrollbar-track {
-      background: rgba(15, 23, 42, 0.05);
+      background: rgba(36,19,22, 0.05);
       border-radius: 6px;
     }
     .cart-body-scrollable::-webkit-scrollbar-thumb {
-      background: linear-gradient(to bottom, #4ade80, #10b981);
+      background: linear-gradient(to bottom, #c49a4f, #6c1121);
       border-radius: 6px;
       border: 2px solid #ffffff;
     }
     .cart-body-scrollable::-webkit-scrollbar-thumb:hover {
-      background: linear-gradient(to bottom, #22c55e, #10b981);
+      background: linear-gradient(to bottom, #6c1121, #6c1121);
     }
     /* Inner items list */
     .cart-items-list {
@@ -138,16 +138,16 @@
     .cart-item {
       display: flex;
       gap: 16px;
-      border-bottom: 1px solid #f8fafc;
+      border-bottom: 1px solid #fbf7ee;
       padding-bottom: 16px;
     }
     .cart-item-img {
       width: 70px;
       height: 70px;
       border-radius: 8px;
-      background: #f1f5f9;
+      background: #f3ecdb;
       object-fit: cover;
-      border: 1px solid #e2e8f0;
+      border: 1px solid #e8dfcc;
     }
     .cart-item-details {
       flex: 1;
@@ -158,12 +158,12 @@
     .cart-item-title {
       font-size: 14px;
       font-weight: 600;
-      color: #1e293b;
+      color: #2f1d20;
       margin: 0;
     }
     .cart-item-variant {
       font-size: 12px;
-      color: #64748b;
+      color: #7a6a6c;
       margin: 2px 0 0;
     }
     .cart-item-row {
@@ -175,12 +175,12 @@
     .qty-selectors {
       display: flex;
       align-items: center;
-      border: 1px solid #cbd5e1;
+      border: 1px solid #d9cdb8;
       border-radius: 6px;
       overflow: hidden;
     }
     .qty-btn {
-      background: #f8fafc;
+      background: #fbf7ee;
       border: none;
       padding: 4px 10px;
       font-size: 14px;
@@ -188,7 +188,7 @@
       transition: background 0.2s;
     }
     .qty-btn:hover {
-      background: #e2e8f0;
+      background: #e8dfcc;
     }
     .qty-val {
       padding: 0 10px;
@@ -198,7 +198,7 @@
     .cart-item-price {
       font-size: 14px;
       font-weight: 700;
-      color: #0f172a;
+      color: #241316;
     }
     .cart-item-remove {
       background: none;
@@ -215,8 +215,8 @@
     /* Footer checkout panel */
     .cart-ftr {
       padding: 24px;
-      border-top: 1px solid #f1f5f9;
-      background: #f8fafc;
+      border-top: 1px solid #f3ecdb;
+      background: #fbf7ee;
       display: flex;
       flex-direction: column;
       gap: 12px;
@@ -225,20 +225,20 @@
       display: flex;
       justify-content: space-between;
       font-size: 14px;
-      color: #475569;
+      color: #57474a;
       font-weight: 500;
     }
     .cart-summary-row.total {
       font-size: 17px;
       font-weight: 700;
-      color: #0f172a;
-      border-top: 1.5px dashed #cbd5e1;
+      color: #241316;
+      border-top: 1.5px dashed #d9cdb8;
       padding-top: 10px;
       margin-top: 6px;
     }
     .checkout-btn {
       width: 100%;
-      background: linear-gradient(90deg, #10b981, #059669);
+      background: linear-gradient(90deg, #6c1121, #4f0c18);
       border: none;
       color: #ffffff;
       padding: 14px;
@@ -246,11 +246,11 @@
       font-weight: 600;
       font-size: 15px;
       cursor: pointer;
-      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+      box-shadow: 0 4px 12px rgba(108,17,33, 0.2);
       transition: all 0.3s;
     }
     .checkout-btn:hover {
-      box-shadow: 0 6px 16px rgba(16, 185, 129, 0.3);
+      box-shadow: 0 6px 16px rgba(108,17,33, 0.3);
       transform: translateY(-1px);
     }
     .checkout-btn:disabled {
@@ -280,26 +280,26 @@
     .form-grp label {
       font-size: 11px;
       font-weight: 600;
-      color: #64748b;
+      color: #7a6a6c;
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
     .form-grp input {
-      border: 1px solid #cbd5e1;
+      border: 1px solid #d9cdb8;
       border-radius: 6px;
       padding: 8px 12px;
       font-size: 13px;
-      color: #1e293b;
+      color: #2f1d20;
       outline: none;
       transition: border-color 0.2s;
     }
     .form-grp input:focus {
-      border-color: #10b981;
+      border-color: #6c1121;
     }
 
     /* Cart Badge count */
     .cart-badge {
-      background: #10b981;
+      background: #6c1121;
       color: white;
       font-size: 10px;
       font-weight: 700;
@@ -311,8 +311,8 @@
 
     /* Premium Shipping Promotion Box */
     .shipping-promo-box {
-      background: #fffbeb;
-      border: 1px solid #fef3c7;
+      background: #fbf5e6;
+      border: 1px solid #f3e6c4;
       border-radius: 12px;
       padding: 12px 16px;
       margin-bottom: 12px;
@@ -323,36 +323,36 @@
       transition: all 0.3s ease;
     }
     .shipping-promo-box.free-unlocked {
-      background: #f0fdf4;
-      border-color: #bbf7d0;
+      background: #f6efdf;
+      border-color: #e6d6b4;
     }
     .shipping-promo-msg {
       font-size: 12.5px;
-      color: #92400e;
+      color: #6c1121;
       font-weight: 600;
       text-align: center;
       margin: 0;
       line-height: 1.4;
     }
     .shipping-promo-box.free-unlocked .shipping-promo-msg {
-      color: #166534;
+      color: #2f4429;
     }
     .progress-bar-container {
       width: 100%;
       height: 6px;
-      background: #f1f5f9;
+      background: #f3ecdb;
       border-radius: 99px;
       overflow: hidden;
     }
     .progress-bar-fill {
       height: 100%;
       width: 0%;
-      background: linear-gradient(90deg, #f59e0b, #eab308);
+      background: linear-gradient(90deg, #c49a4f, #c49a4f);
       border-radius: 99px;
       transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
     }
     .shipping-promo-box.free-unlocked .progress-bar-fill {
-      background: linear-gradient(90deg, #10b981, #059669);
+      background: linear-gradient(90deg, #6c1121, #4f0c18);
     }
 
     /* Premium PIN Code Validator Card */
@@ -360,14 +360,14 @@
       margin-bottom: 12px;
       padding: 14px;
       background: #ffffff;
-      border: 1px solid #e2e8f0;
+      border: 1px solid #e8dfcc;
       border-radius: 12px;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
     }
     .pin-input-label {
       font-size: 11px;
       font-weight: 700;
-      color: #475569;
+      color: #57474a;
       display: block;
       margin-bottom: 8px;
       text-transform: uppercase;
@@ -379,7 +379,7 @@
     }
     .pin-input-field {
       flex: 1;
-      border: 1.5px solid #cbd5e1;
+      border: 1.5px solid #d9cdb8;
       border-radius: 8px;
       padding: 8px 12px;
       font-size: 13px;
@@ -387,10 +387,10 @@
       transition: border-color 0.2s;
     }
     .pin-input-field:focus {
-      border-color: #2d7a4f;
+      border-color: #2f4429;
     }
     .pin-check-btn {
-      background: #2d7a4f;
+      background: #2f4429;
       border: none;
       color: white;
       border-radius: 8px;
@@ -401,7 +401,7 @@
       transition: all 0.2s ease;
     }
     .pin-check-btn:hover {
-      background: #225c3c;
+      background: #243620;
     }
     .pin-check-btn:disabled {
       opacity: 0.7;
@@ -425,12 +425,12 @@
       max-height: 180px;
       overflow-y: auto;
       padding-right: 4px;
-      border-top: 1px dashed #e2e8f0;
+      border-top: 1px dashed #e8dfcc;
       padding-top: 8px;
     }
     .coupon-item-card {
       background: #ffffff;
-      border: 1.5px dashed #cbd5e1;
+      border: 1.5px dashed #d9cdb8;
       border-radius: 8px;
       padding: 10px 12px;
       cursor: pointer;
@@ -441,12 +441,12 @@
       transition: all 0.25s ease;
     }
     .coupon-item-card:hover {
-      border-color: #2d7a4f;
-      background: #f4fbf7;
+      border-color: #2f4429;
+      background: #f6efdf;
     }
     .coupon-item-card.applied {
-      border-color: #10b981;
-      background: #f0fdf4;
+      border-color: #6c1121;
+      background: #f6efdf;
       cursor: default;
     }
     .coupon-card-header {
@@ -455,43 +455,43 @@
       align-items: center;
     }
     .coupon-code-badge {
-      background: #e6f4ea;
-      color: #137333;
+      background: #f3ecdb;
+      color: #2f4429;
       font-weight: 700;
       font-size: 11px;
       padding: 3px 8px;
       border-radius: 4px;
       letter-spacing: 0.5px;
-      border: 1px solid #c2e7cc;
+      border: 1px solid #e6d6b4;
       text-transform: uppercase;
     }
     .coupon-item-card.applied .coupon-code-badge {
-      background: #10b981;
+      background: #6c1121;
       color: #ffffff;
-      border-color: #10b981;
+      border-color: #6c1121;
     }
     .coupon-apply-action {
       font-size: 11px;
       font-weight: 700;
-      color: #2d7a4f;
+      color: #2f4429;
     }
     .coupon-item-card.applied .coupon-apply-action {
-      color: #10b981;
+      color: #6c1121;
     }
     .coupon-card-desc {
       font-size: 11.5px;
-      color: #334155;
+      color: #45363a;
       font-weight: 600;
       line-height: 1.3;
     }
     .coupon-card-min-order {
       font-size: 10px;
-      color: #64748b;
+      color: #7a6a6c;
     }
 
     /* Premium Payment Method Selection Cards */
     .payment-method-card {
-      border: 2px solid #e2e8f0;
+      border: 2px solid #e8dfcc;
       border-radius: 10px;
       padding: 14px 10px;
       display: flex;
@@ -506,13 +506,13 @@
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.01);
     }
     .payment-method-card:hover {
-      border-color: #cbd5e1;
+      border-color: #d9cdb8;
       transform: translateY(-1px);
     }
     .payment-method-card.active {
-      border-color: #2d7a4f;
-      background: #f0fdf4;
-      box-shadow: 0 4px 10px rgba(45, 122, 79, 0.08);
+      border-color: #2f4429;
+      background: #f6efdf;
+      box-shadow: 0 4px 10px rgba(47,68,41, 0.08);
     }
     .payment-method-card input[type="radio"] {
       position: absolute;
@@ -523,20 +523,20 @@
     .payment-method-card .method-title {
       font-weight: 700;
       font-size: 13px;
-      color: #475569;
+      color: #57474a;
       transition: color 0.25s;
     }
     .payment-method-card.active .method-title {
-      color: #166534;
+      color: #2f4429;
     }
     .payment-method-card .method-subtitle {
       font-size: 10px;
-      color: #64748b;
+      color: #7a6a6c;
       margin-top: 4px;
       transition: color 0.25s;
     }
     .payment-method-card.active .method-subtitle {
-      color: #15803d;
+      color: #2f4429;
     }
     .payment-method-card::after {
       content: "✓";
@@ -544,7 +544,7 @@
       top: 6px;
       right: 8px;
       font-size: 11px;
-      color: #166534;
+      color: #2f4429;
       font-weight: 700;
       opacity: 0;
       transform: scale(0.7);
@@ -594,12 +594,12 @@
     }
     .checkout-right-col {
       padding: 24px;
-      background: #f8fafc;
+      background: #fbf7ee;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
       gap: 16px;
-      border-top: 1px solid #e2e8f0;
+      border-top: 1px solid #e8dfcc;
     }
     
     @media (min-width: 768px) {
@@ -610,7 +610,7 @@
       }
       .checkout-left-col {
         height: 100%;
-        border-right: 1px solid #e2e8f0;
+        border-right: 1px solid #e8dfcc;
       }
       .checkout-right-col {
         height: 100%;
@@ -628,10 +628,10 @@
     .order-summary-card h3 {
       font-size: 14px;
       font-weight: 700;
-      color: #0f172a;
+      color: #241316;
       margin: 0 0 12px 0;
       padding-bottom: 8px;
-      border-bottom: 1.5px dashed #cbd5e1;
+      border-bottom: 1.5px dashed #d9cdb8;
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
@@ -648,7 +648,7 @@
       align-items: center;
       justify-content: space-between;
       font-size: 13px;
-      color: #334155;
+      color: #45363a;
     }
     .checkout-summary-item-name {
       font-weight: 600;
@@ -659,13 +659,13 @@
       white-space: nowrap;
     }
     .checkout-summary-item-qty {
-      color: #64748b;
+      color: #7a6a6c;
       font-size: 12px;
       margin-right: 12px;
     }
     .checkout-summary-item-price {
       font-weight: 700;
-      color: #0f172a;
+      color: #241316;
     }
   `;
   const styleEl = document.createElement('style');
@@ -895,21 +895,21 @@ const Cart = {
               </div>
 
               <!-- Coupon Area -->
-              <div class="coupon-section" style="border-top:1px solid #e2e8f0; padding-top:12px; margin-top:4px;">
+              <div class="coupon-section" style="border-top:1px solid #e8dfcc; padding-top:12px; margin-top:4px;">
                 <div style="display:flex; gap:8px;" id="couponInputWrapper">
-                  <input type="text" id="cartCouponInput" placeholder="COUPON CODE" style="flex:1; border:1px solid #cbd5e1; border-radius:6px; padding:6px 12px; font-size:12px; text-transform:uppercase; font-weight:700; outline:none;" />
-                  <button id="applyCouponBtn" onclick="Cart.applyCoupon()" style="background:#10b981; border:none; color:white; border-radius:6px; padding:6px 12px; font-size:12px; font-weight:600; cursor:pointer;">Apply</button>
+                  <input type="text" id="cartCouponInput" placeholder="COUPON CODE" style="flex:1; border:1px solid #d9cdb8; border-radius:6px; padding:6px 12px; font-size:12px; text-transform:uppercase; font-weight:700; outline:none;" />
+                  <button id="applyCouponBtn" onclick="Cart.applyCoupon()" style="background:#6c1121; border:none; color:white; border-radius:6px; padding:6px 12px; font-size:12px; font-weight:600; cursor:pointer;">Apply</button>
                 </div>
-                <div id="appliedCouponWrapper" style="display:none; align-items:center; justify-content:space-between; background:#d1fae5; border:1px solid #a7f3d0; border-radius:6px; padding:6px 12px; font-size:12.5px; color:#065f46; font-weight:600; margin-top:4px;">
+                <div id="appliedCouponWrapper" style="display:none; align-items:center; justify-content:space-between; background:#ebdfc4; border:1px solid #e0d0ac; border-radius:6px; padding:6px 12px; font-size:12.5px; color:#2f4429; font-weight:600; margin-top:4px;">
                   <span id="appliedCouponText">WELCOME10 applied</span>
                   <button onclick="Cart.removeCoupon()" style="background:none; border:none; color:#ef4444; font-size:16px; font-weight:700; cursor:pointer; padding:0; line-height:1;">&times;</button>
                 </div>
                 
-                <div id="availableCouponsWrapper" style="margin-top: 8px; border: 1px solid #e2e8f0; border-radius: 8px; background: #ffffff; overflow: hidden;">
-                  <button type="button" onclick="Cart.toggleCouponsAccordion()" style="width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; background: #f8fafc; border: none; font-size: 12px; font-weight: 700; color: #475569; cursor: pointer; text-align: left; outline: none; transition: background 0.2s;">
+                <div id="availableCouponsWrapper" style="margin-top: 8px; border: 1px solid #e8dfcc; border-radius: 8px; background: #ffffff; overflow: hidden;">
+                  <button type="button" onclick="Cart.toggleCouponsAccordion()" style="width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; background: #fbf7ee; border: none; font-size: 12px; font-weight: 700; color: #57474a; cursor: pointer; text-align: left; outline: none; transition: background 0.2s;">
                     <span style="display: flex; align-items: center; gap: 6px;">
                       🏷️ <span id="couponsAccordionTitle">Available Coupons (0)</span>
-                      <span id="couponsLoadingIndicator" style="font-weight: normal; font-size: 10px; text-transform: none; display: none; color: #64748b; margin-left: 4px;">(loading...)</span>
+                      <span id="couponsLoadingIndicator" style="font-weight: normal; font-size: 10px; text-transform: none; display: none; color: #7a6a6c; margin-left: 4px;">(loading...)</span>
                     </span>
                     <span id="couponsAccordionArrow" style="transition: transform 0.2s; font-size: 10px;">▼</span>
                   </button>
@@ -931,7 +931,7 @@ const Cart = {
                 <span id="cartShipping">₹39</span>
               </div>
 
-              <div class="cart-summary-row" id="discountSummaryRow" style="display:none; color:#10b981;">
+              <div class="cart-summary-row" id="discountSummaryRow" style="display:none; color:#6c1121;">
                 <span>Discount:</span>
                 <span id="cartDiscount">-₹0</span>
               </div>
@@ -940,7 +940,7 @@ const Cart = {
                 <span>Total Amount:</span>
                 <span id="cartTotal">₹0</span>
               </div>
-              <div style="text-align: right; font-size: 11px; color: #64748b; margin-top: -6px; margin-bottom: 12px;">Inclusive of all taxes</div>
+              <div style="text-align: right; font-size: 11px; color: #7a6a6c; margin-top: -6px; margin-bottom: 12px;">Inclusive of all taxes</div>
               
               <button class="checkout-btn" onclick="Cart.showCheckoutForm()">Proceed to Checkout</button>
             </div>
@@ -951,8 +951,8 @@ const Cart = {
             <div class="checkout-grid-container">
               <!-- Left Column: Shipping details and Payment Method Selection -->
               <div class="checkout-left-col">
-                <div class="cart-hdr" style="padding: 0 0 16px 0; margin-bottom: 16px; border-bottom: 1px solid #f1f5f9;">
-                  <h2 style="font-size: 18px; font-weight: 700; color: #0f172a; margin: 0;">Shipping Details</h2>
+                <div class="cart-hdr" style="padding: 0 0 16px 0; margin-bottom: 16px; border-bottom: 1px solid #f3ecdb;">
+                  <h2 style="font-size: 18px; font-weight: 700; color: #241316; margin: 0;">Shipping Details</h2>
                   <button type="button" class="checkout-back-btn" onclick="Cart.showCartItemsPanel()">
                     <svg class="back-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14">
                       <path d="M19 12H5M12 19l-7-7 7-7"/>
@@ -991,7 +991,7 @@ const Cart = {
                   <div class="form-grp" style="position: relative;">
                     <label>Postal PIN Code (India)</label>
                     <div style="position: relative; display: flex; align-items: center;">
-                      <input type="text" id="shipPostal" placeholder="6-digit PIN" pattern="[0-9]{6}" maxlength="6" required style="width: 100%; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 8px 12px; font-size: 13px; outline: none; transition: border-color 0.2s;" />
+                      <input type="text" id="shipPostal" placeholder="6-digit PIN" pattern="[0-9]{6}" maxlength="6" required style="width: 100%; border: 1.5px solid #d9cdb8; border-radius: 8px; padding: 8px 12px; font-size: 13px; outline: none; transition: border-color 0.2s;" />
                       <span id="checkoutPinStatus" style="position: absolute; right: 12px; font-size: 12px; display: none;"></span>
                     </div>
                     <span id="checkoutPinMsg" style="font-size: 11px; margin-top: 4px; display: none; font-weight: 600;"></span>
@@ -999,7 +999,7 @@ const Cart = {
                   
                   <!-- Payment Method Selection -->
                   <div class="form-grp" style="margin-top:8px;">
-                    <label style="font-weight: 700; font-size: 13px; color: #334155; margin-bottom: 6px; display:block;">Select Payment Method</label>
+                    <label style="font-weight: 700; font-size: 13px; color: #45363a; margin-bottom: 6px; display:block;">Select Payment Method</label>
                     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
                       <label class="payment-method-card active" id="payMethodOnlineLabel">
                         <input type="radio" name="paymentMethod" value="ONLINE" checked onchange="Cart.handlePaymentMethodChange()" />
@@ -1012,13 +1012,13 @@ const Cart = {
                         <span class="method-subtitle">Convenience Fee applies</span>
                       </label>
                     </div>
-                    <div id="codWarningMsg" style="background:#fffbeb; border:1px solid #fef3c7; border-radius:6px; padding:8px 12px; font-size:11.5px; color:#92400e; font-weight:600; display:none; margin-top:8px; text-align:center;">
+                    <div id="codWarningMsg" style="background:#fbf5e6; border:1px solid #f3e6c4; border-radius:6px; padding:8px 12px; font-size:11.5px; color:#6c1121; font-weight:600; display:none; margin-top:8px; text-align:center;">
                       💡 Save ₹39 by paying online!
                     </div>
                   </div>
 
                   <!-- Trust Badges on Mobile -->
-                  <div class="checkout-mobile-badges" style="margin-top:8px; padding:12px; background:#f0fdf4; border:1px solid #d1fae5; border-radius:8px; display:grid; grid-template-columns:1fr 1fr; gap:8px 12px; font-size:11px; color:#065f46; font-weight:600;">
+                  <div class="checkout-mobile-badges" style="margin-top:8px; padding:12px; background:#f6efdf; border:1px solid #ebdfc4; border-radius:8px; display:grid; grid-template-columns:1fr 1fr; gap:8px 12px; font-size:11px; color:#2f4429; font-weight:600;">
                     <div style="display:flex; align-items:center; gap:6px;">🔒 Secure Payments</div>
                     <div style="display:flex; align-items:center; gap:6px;">📄 GST Invoice Available</div>
                     <div style="display:flex; align-items:center; gap:6px;">🚚 Pan-India Delivery</div>
@@ -1037,33 +1037,33 @@ const Cart = {
                 </div>
 
                 <!-- Price Breakdown Box -->
-                <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:12px; padding:16px; display:flex; flex-direction:column; gap:8px; box-shadow: 0 4px 12px rgba(0,0,0,0.02);">
-                  <div style="display:flex; justify-content:space-between; color:#475569; font-size:13px;">
+                <div style="background:#ffffff; border:1px solid #e8dfcc; border-radius:12px; padding:16px; display:flex; flex-direction:column; gap:8px; box-shadow: 0 4px 12px rgba(0,0,0,0.02);">
+                  <div style="display:flex; justify-content:space-between; color:#57474a; font-size:13px;">
                     <span>Subtotal:</span>
-                    <span id="checkoutSubtotal" style="font-weight: 600; color: #0f172a;">₹0</span>
+                    <span id="checkoutSubtotal" style="font-weight: 600; color: #241316;">₹0</span>
                   </div>
-                  <div style="display:none; justify-content:space-between; color:#10b981; font-size:13px;" id="checkoutDiscountRow">
+                  <div style="display:none; justify-content:space-between; color:#6c1121; font-size:13px;" id="checkoutDiscountRow">
                     <span>Discount:</span>
                     <span id="checkoutDiscount" style="font-weight: 600;">-₹0</span>
                   </div>
-                  <div style="display:flex; justify-content:space-between; color:#475569; font-size:13px;">
+                  <div style="display:flex; justify-content:space-between; color:#57474a; font-size:13px;">
                     <span>Shipping Charge:</span>
-                    <span id="checkoutShipping" style="font-weight: 600; color: #0f172a;">₹0</span>
+                    <span id="checkoutShipping" style="font-weight: 600; color: #241316;">₹0</span>
                   </div>
-                  <div style="display:none; justify-content:space-between; color:#475569; font-size:13px;" id="checkoutCodRow">
+                  <div style="display:none; justify-content:space-between; color:#57474a; font-size:13px;" id="checkoutCodRow">
                     <span>COD Convenience Fee:</span>
-                    <span id="checkoutCod" style="font-weight: 600; color: #0f172a;">₹0</span>
+                    <span id="checkoutCod" style="font-weight: 600; color: #241316;">₹0</span>
                   </div>
-                  <div style="height:1px; background:#e2e8f0; margin:4px 0;"></div>
-                  <div style="display:flex; justify-content:space-between; font-weight:700; font-size:15px; color:#1e293b;">
+                  <div style="height:1px; background:#e8dfcc; margin:4px 0;"></div>
+                  <div style="display:flex; justify-content:space-between; font-weight:700; font-size:15px; color:#2f1d20;">
                     <span>Total Amount:</span>
-                    <span id="checkoutTotal" style="color: #0f172a;">₹0</span>
+                    <span id="checkoutTotal" style="color: #241316;">₹0</span>
                   </div>
-                  <div style="text-align:right; font-size:10px; color:#64748b; margin-top:-2px;">Inclusive of all taxes</div>
+                  <div style="text-align:right; font-size:10px; color:#7a6a6c; margin-top:-2px;">Inclusive of all taxes</div>
                 </div>
 
                 <!-- Trust Badges (Desktop) -->
-                <div class="checkout-desktop-badges" style="padding:12px; background:#f0fdf4; border:1px solid #d1fae5; border-radius:8px; display:grid; grid-template-columns:1fr 1fr; gap:8px 12px; font-size:11px; color:#065f46; font-weight:600; margin-top: auto;">
+                <div class="checkout-desktop-badges" style="padding:12px; background:#f6efdf; border:1px solid #ebdfc4; border-radius:8px; display:grid; grid-template-columns:1fr 1fr; gap:8px 12px; font-size:11px; color:#2f4429; font-weight:600; margin-top: auto;">
                   <div style="display:flex; align-items:center; gap:6px;">🔒 Secure Payments</div>
                   <div style="display:flex; align-items:center; gap:6px;">📄 GST Invoice Available</div>
                   <div style="display:flex; align-items:center; gap:6px;">🚚 Pan-India Delivery</div>
@@ -1071,12 +1071,12 @@ const Cart = {
                   <div style="display:flex; align-items:center; gap:6px; grid-column: span 2; justify-content: center;">🌾 Direct from MantraAQ</div>
                 </div>
 
-                <p style="font-size: 10.5px; color: #94a3b8; line-height: 1.5; text-align: center; margin-top: 10px; padding: 0 4px;">
+                <p style="font-size: 10.5px; color: #a8999a; line-height: 1.5; text-align: center; margin-top: 10px; padding: 0 4px;">
                   By placing this order, you agree to our
-                  <a href="terms-and-conditions.html" target="_blank" style="color: #10b981; text-decoration: underline;">Terms &amp; Conditions</a>,
-                  <a href="privacy-policy.html" target="_blank" style="color: #10b981; text-decoration: underline;">Privacy Policy</a>,
-                  <a href="shipping-policy.html" target="_blank" style="color: #10b981; text-decoration: underline;">Shipping Policy</a> and
-                  <a href="refund-policy.html" target="_blank" style="color: #10b981; text-decoration: underline;">Refund &amp; Replacement Policy</a>.
+                  <a href="terms-and-conditions.html" target="_blank" style="color: #6c1121; text-decoration: underline;">Terms &amp; Conditions</a>,
+                  <a href="privacy-policy.html" target="_blank" style="color: #6c1121; text-decoration: underline;">Privacy Policy</a>,
+                  <a href="shipping-policy.html" target="_blank" style="color: #6c1121; text-decoration: underline;">Shipping Policy</a> and
+                  <a href="refund-policy.html" target="_blank" style="color: #6c1121; text-decoration: underline;">Refund &amp; Replacement Policy</a>.
                 </p>
 
                 <button type="submit" form="shippingForm" class="checkout-btn" id="paySubmitBtn" style="margin-top: 12px;">
@@ -1234,7 +1234,7 @@ const Cart = {
     this.validatedPin = pin;
     this.save();
     msgEl.style.display = 'block';
-    msgEl.style.color = '#15803d';
+    msgEl.style.color = '#2f4429';
     msgEl.textContent = `✓ Standard Delivery (3–8 Business Days) available for ${pin} across India!`;
     window.Toast.success('PIN Verified: Standard delivery is available.');
 
@@ -1251,12 +1251,12 @@ const Cart = {
     const checkoutPinStatus = document.getElementById('checkoutPinStatus');
     if (checkoutPinStatus) {
       checkoutPinStatus.style.display = 'inline';
-      checkoutPinStatus.innerHTML = '<span style="color:#10b981;">✓</span>';
+      checkoutPinStatus.innerHTML = '<span style="color:#6c1121;">✓</span>';
     }
     const checkoutPinMsg = document.getElementById('checkoutPinMsg');
     if (checkoutPinMsg) {
       checkoutPinMsg.style.display = 'block';
-      checkoutPinMsg.style.color = '#15803d';
+      checkoutPinMsg.style.color = '#2f4429';
       checkoutPinMsg.textContent = '✓ Serviceable Pincode';
     }
   },
@@ -1269,7 +1269,7 @@ const Cart = {
 
     if (statusEl) {
       statusEl.style.display = 'inline';
-      statusEl.innerHTML = '<span style="color:#64748b;">⏳</span>';
+      statusEl.innerHTML = '<span style="color:#7a6a6c;">⏳</span>';
     }
 
     const result = await this.validatePinCode(pin);
@@ -1281,11 +1281,11 @@ const Cart = {
 
       if (statusEl) {
         statusEl.style.display = 'inline';
-        statusEl.innerHTML = '<span style="color:#10b981;">✓</span>';
+        statusEl.innerHTML = '<span style="color:#6c1121;">✓</span>';
       }
       if (msgEl) {
         msgEl.style.display = 'block';
-        msgEl.style.color = '#15803d';
+        msgEl.style.color = '#2f4429';
         msgEl.textContent = '✓ Serviceable Pincode';
       }
 
@@ -1305,11 +1305,11 @@ const Cart = {
 
       if (statusEl) {
         statusEl.style.display = 'inline';
-        statusEl.innerHTML = '<span style="color:#eab308;">⚠️</span>';
+        statusEl.innerHTML = '<span style="color:#c49a4f;">⚠️</span>';
       }
       if (msgEl) {
         msgEl.style.display = 'block';
-        msgEl.style.color = '#ca8a04';
+        msgEl.style.color = '#a8803a';
         msgEl.textContent = '⚠️ Auto-population failed (enter City & State manually)';
       }
       window.Toast.warning('Auto-population failed: Please enter City & State manually.');
@@ -1618,7 +1618,7 @@ const Cart = {
 
     if (this.items.length === 0) {
       listEl.innerHTML = `
-        <div style="text-align:center; color:#94a3b8; padding:40px 0;">
+        <div style="text-align:center; color:#a8999a; padding:40px 0;">
           <p style="font-size: 14px;">Your cart is empty.</p>
         </div>
       `;
@@ -1857,7 +1857,7 @@ const Cart = {
     if (!listContainer) return;
 
     if (!this.activeCouponsList || this.activeCouponsList.length === 0) {
-      listContainer.innerHTML = `<div style="font-size:11px; color:#94a3b8; text-align:center; padding:10px 0;">No active coupons available right now.</div>`;
+      listContainer.innerHTML = `<div style="font-size:11px; color:#a8999a; text-align:center; padding:10px 0;">No active coupons available right now.</div>`;
       return;
     }
 

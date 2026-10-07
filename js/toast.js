@@ -25,7 +25,7 @@
       gap: 12px;
       padding: 12px 16px;
       border-radius: 16px;
-      background: rgba(15, 23, 42, 0.96);
+      background: rgba(36,19,22, 0.96);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       border: 1px solid rgba(255, 255, 255, 0.08);
@@ -65,7 +65,7 @@
       flex: 1;
       font-size: 13px;
       font-weight: 500;
-      color: #f8fafc;
+      color: #fbf7ee;
       line-height: 1.4;
       margin: 0;
       word-break: break-word;
@@ -106,15 +106,15 @@
 
     /* ── Type: Success ── */
     .toast-item.toast-success {
-      border-left: 3px solid #10b981;
-      box-shadow: 0 12px 30px rgba(16, 185, 129, 0.1), 0 4px 12px rgba(0, 0, 0, 0.25);
+      border-left: 3px solid #8fb27a;
+      box-shadow: 0 12px 30px rgba(143,178,122, 0.1), 0 4px 12px rgba(0, 0, 0, 0.25);
     }
     .toast-item.toast-success .toast-icon {
-      background: rgba(16, 185, 129, 0.15);
-      color: #34d399;
+      background: rgba(143,178,122, 0.15);
+      color: #b5d39f;
     }
     .toast-item.toast-success .toast-progress {
-      background: linear-gradient(90deg, #10b981, #34d399);
+      background: linear-gradient(90deg, #8fb27a, #b5d39f);
     }
 
     /* ── Type: Error ── */
@@ -145,22 +145,24 @@
 
     /* ── Type: Info ── */
     .toast-item.toast-info {
-      border-left: 3px solid #3b82f6;
-      box-shadow: 0 12px 30px rgba(59, 130, 246, 0.1), 0 4px 12px rgba(0, 0, 0, 0.25);
+      border-left: 3px solid #c49a4f;
+      box-shadow: 0 12px 30px rgba(196,154,79, 0.1), 0 4px 12px rgba(0, 0, 0, 0.25);
     }
     .toast-item.toast-info .toast-icon {
-      background: rgba(59, 130, 246, 0.15);
-      color: #60a5fa;
+      background: rgba(196,154,79, 0.15);
+      color: #e2c27f;
     }
     .toast-item.toast-info .toast-progress {
-      background: linear-gradient(90deg, #3b82f6, #60a5fa);
+      background: linear-gradient(90deg, #c49a4f, #e2c27f);
     }
 
     /* ── Mobile Responsive ── */
+    /* Phones: show toasts at the top so they never cover the cart's
+       Proceed to Pay / Place order button at the bottom of the screen */
     @media (max-width: 480px) {
       .toast-container {
-        bottom: 16px;
-        top: auto;
+        top: 12px;
+        bottom: auto;
         right: 16px;
         left: 16px;
         max-width: none;
@@ -244,8 +246,9 @@
     toast._timer = setTimeout(() => dismissToast(toast), duration);
     toast._dismissed = false;
 
-    // Pause timer on hover
-    toast.addEventListener('mouseenter', () => {
+    // Pause timer on hover (real pointers only: on touch screens a tap fires
+    // mouseenter with no mouseleave, which would leave the toast stuck)
+    if (window.matchMedia && window.matchMedia('(hover: hover)').matches) toast.addEventListener('mouseenter', () => {
       clearTimeout(toast._timer);
       const progress = toast.querySelector('.toast-progress');
       if (progress) progress.style.animationPlayState = 'paused';

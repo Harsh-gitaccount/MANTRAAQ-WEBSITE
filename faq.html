@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="no-js">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
   <!-- Google tag (gtag.js) -->
@@ -38,15 +38,18 @@
   <meta name="twitter:description" content="Straight answers on MantraAQ water chestnut superfoods: sourcing, nutrition, shelf life, and delivery.">
   <meta name="twitter:image" content="https://mantraaq.com/assets/images/logo.png">
 
-  <!-- Favicon -->
-  <link rel="icon" type="image/x-icon" href="/assets/images/logo.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/logo.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/logo.png">
-
-  <!-- Premium Fonts -->
+  <!-- Fonts, styles and icons (same as the rest of the storefront) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://res.cloudinary.com" crossorigin>
+  <link rel="preconnect" href="https://mantraaq-backend.onrender.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500..700&family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,400..600,0,0;1,9..144,400..600,0,1&family=Manrope:wght@400..800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/site.css">
+  <meta name="theme-color" content="#f3ecdb">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon-32x32.png">
+  <link rel="icon" type="image/x-icon" href="/assets/images/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png">
+  <link rel="manifest" href="/assets/images/site.webmanifest">
 
   <!-- FAQPage Schema.org JSON-LD Structured Data for Google and AI Engines -->
   <script type="application/ld+json">
@@ -169,882 +172,365 @@
     ]
   }
   </script>
-
-  <style>
-    /* MantraAQ Permanent Dark Luxury Theme */
-    :root {
-      --bg-dark: #070b0e;
-      --bg-card: rgba(15, 23, 42, 0.65);
-      --bg-card-hover: rgba(22, 33, 56, 0.75);
-      --border-subtle: rgba(255, 255, 255, 0.08);
-      --border-emerald: rgba(16, 185, 129, 0.3);
-      --emerald: #10b981;
-      --emerald-glow: #34d399;
-      --emerald-dark: #059669;
-      --text-white: #f8fafc;
-      --text-light: #e2e8f0;
-      --text-muted: #94a3b8;
-      --text-dim: #64748b;
-      --amber: #f59e0b;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      background-color: var(--bg-dark);
-      background-image: 
-        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(16, 185, 129, 0.15), transparent 70%),
-        radial-gradient(ellipse 60% 40% at 80% 60%, rgba(16, 185, 129, 0.05), transparent 60%);
-      color: var(--text-light);
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      line-height: 1.7;
-      min-height: 100vh;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-    }
-
-    /* Ambient Background Grid */
-    .bg-grid {
-      position: fixed;
-      inset: 0;
-      background-image:
-        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-      background-size: 60px 60px;
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    /* Top Sticky Brand Navigation Bar */
-    .top-bar {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 14px 24px;
-      background: rgba(7, 11, 14, 0.88);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border-bottom: 1px solid var(--border-subtle);
-    }
-
-    .top-nav-inner {
-      max-width: 900px;
-      width: 100%;
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .top-nav-brand {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      text-decoration: none;
-      color: var(--text-white);
-    }
-
-    .top-nav-logo {
-      height: 34px;
-      width: auto;
-      object-fit: contain;
-    }
-
-    .top-nav-name {
-      font-family: 'Playfair Display', Georgia, serif;
-      font-weight: 700;
-      font-size: 1.25rem;
-      letter-spacing: -0.01em;
-      color: var(--emerald);
-    }
-
-    .top-nav-back {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 0.84rem;
-      font-weight: 600;
-      text-decoration: none;
-      color: var(--text-light);
-      padding: 7px 16px;
-      border-radius: 99px;
-      background: rgba(16, 185, 129, 0.08);
-      border: 1px solid rgba(16, 185, 129, 0.25);
-      transition: all 0.25s ease;
-      touch-action: manipulation;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    @media (hover: hover) and (pointer: fine) {
-      .top-nav-back:hover {
-        color: var(--emerald-glow);
-        background: rgba(16, 185, 129, 0.16);
-        border-color: var(--emerald);
-        transform: translateX(-2px);
-      }
-    }
-
-    .wrap {
-      position: relative;
-      z-index: 1;
-      max-width: 820px;
-      margin: 0 auto;
-      padding: 0 20px;
-    }
-
-    h1, h2, h3 {
-      font-family: 'Playfair Display', Georgia, serif;
-      text-wrap: balance;
-      color: var(--text-white);
-    }
-
-    .mono {
-      font-family: 'JetBrains Mono', ui-monospace, monospace;
-      font-variant-numeric: tabular-nums;
-    }
-
-    /* Hero Section */
-    header {
-      padding: 56px 0 36px;
-      border-bottom: 1px solid var(--border-subtle);
-      text-align: left;
-    }
-
-    .eyebrow {
-      display: inline-block;
-      font-size: 0.78rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--emerald);
-      font-weight: 600;
-      margin-bottom: 12px;
-      background: rgba(16, 185, 129, 0.08);
-      border: 1px solid rgba(16, 185, 129, 0.2);
-      padding: 4px 12px;
-      border-radius: 100px;
-    }
-
-    h1 {
-      font-size: clamp(2.2rem, 5.5vw, 3.2rem);
-      font-weight: 700;
-      line-height: 1.15;
-      margin-bottom: 16px;
-      color: #ffffff;
-    }
-
-    header p.lede {
-      max-width: 62ch;
-      color: var(--text-muted);
-      font-size: 1.05rem;
-      line-height: 1.7;
-      margin-bottom: 24px;
-    }
-
-    /* Trust strip */
-    .trust-strip {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    .trust-badge {
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: #86efac;
-      background: rgba(16, 185, 129, 0.08);
-      border: 1px solid rgba(16, 185, 129, 0.22);
-      border-radius: 100px;
-      padding: 6px 14px;
-      backdrop-filter: blur(8px);
-    }
-
-    .trust-badge svg {
-      width: 14px;
-      height: 14px;
-      flex-shrink: 0;
-      color: var(--emerald);
-    }
-
-    /* Category Jump Navigation */
-    nav.jump {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      padding: 16px 0;
-      border-bottom: 1px solid var(--border-subtle);
-      position: sticky;
-      top: 63px;
-      background: rgba(7, 11, 14, 0.92);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      z-index: 20;
-    }
-
-    nav.jump a {
-      font-size: 0.82rem;
-      font-weight: 600;
-      text-decoration: none;
-      color: var(--text-muted);
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid var(--border-subtle);
-      padding: 7px 14px;
-      border-radius: 100px;
-      white-space: nowrap;
-      transition: all 0.2s ease;
-      touch-action: manipulation;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    @media (hover: hover) and (pointer: fine) {
-      nav.jump a:hover {
-        border-color: var(--emerald);
-        color: var(--emerald-glow);
-        background: rgba(16, 185, 129, 0.1);
-      }
-    }
-
-    nav.jump a:focus-visible {
-      outline: 2px solid var(--emerald);
-      outline-offset: 2px;
-    }
-
-    /* Sections */
-    section.category {
-      padding: 48px 0 8px;
-      scroll-margin-top: 130px;
-    }
-
-    .cat-head {
-      display: flex;
-      align-items: baseline;
-      gap: 14px;
-      margin-bottom: 24px;
-    }
-
-    .cat-num {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.82rem;
-      color: var(--emerald);
-      background: rgba(16, 185, 129, 0.08);
-      border: 1px solid rgba(16, 185, 129, 0.25);
-      border-radius: 6px;
-      padding: 3px 8px;
-      flex-shrink: 0;
-    }
-
-    .cat-head h2 {
-      font-size: 1.45rem;
-      font-weight: 700;
-      color: var(--text-white);
-    }
-
-    /* FAQ Card Items */
-    .faq {
-      border: 1px solid var(--border-subtle);
-      border-radius: 14px;
-      background: var(--bg-card);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
-      margin-bottom: 14px;
-      overflow: hidden;
-      transition: border-color 0.25s ease, background-color 0.25s ease;
-    }
-
-    @media (hover: hover) and (pointer: fine) {
-      .faq:hover {
-        border-color: var(--border-emerald);
-        background: var(--bg-card-hover);
-      }
-    }
-
-    .faq summary {
-      list-style: none;
-      cursor: pointer;
-      padding: 20px 22px;
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      font-weight: 600;
-      font-size: 1.02rem;
-      color: var(--text-white);
-      touch-action: manipulation;
-      -webkit-tap-highlight-color: transparent;
-      user-select: none;
-    }
-
-    .faq summary::-webkit-details-marker { display: none; }
-
-    .faq summary .q-mark {
-      flex-shrink: 0;
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--emerald), var(--emerald-dark));
-      color: #051a0e;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: 'Playfair Display', serif;
-      font-size: 13px;
-      font-weight: 700;
-      box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
-    }
-
-    .faq summary .chevron {
-      margin-left: auto;
-      flex-shrink: 0;
-      width: 18px;
-      height: 18px;
-      color: var(--emerald);
-      transition: transform 0.25s ease;
-    }
-
-    .faq[open] summary .chevron {
-      transform: rotate(180deg);
-    }
-
-    .faq summary:focus-visible {
-      outline: 2px solid var(--emerald);
-      outline-offset: -2px;
-    }
-
-    .faq .answer {
-      padding: 0 22px 22px 60px;
-      color: var(--text-light);
-      font-size: 0.96rem;
-      max-width: 66ch;
-      line-height: 1.7;
-    }
-
-    .faq .answer p {
-      margin: 0 0 10px;
-    }
-
-    .faq .answer p:last-child {
-      margin-bottom: 0;
-    }
-
-    .faq .answer strong {
-      color: #ffffff;
-      font-weight: 600;
-    }
-
-    .faq .answer .note {
-      display: inline-block;
-      margin-top: 6px;
-      font-size: 0.88rem;
-      color: #fbbf24;
-    }
-
-    /* Stat strip within answers */
-    .stat-row {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      margin: 14px 0 6px;
-    }
-
-    .stat {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid var(--border-subtle);
-      border-radius: 8px;
-      padding: 8px 14px;
-      font-size: 0.84rem;
-    }
-
-    .stat .num {
-      font-family: 'JetBrains Mono', monospace;
-      font-weight: 600;
-      color: var(--emerald-glow);
-      font-variant-numeric: tabular-nums;
-      display: block;
-      font-size: 1.05rem;
-    }
-
-    .stat .label {
-      color: var(--text-muted);
-      font-size: 0.76rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
-    /* Medical disclaimer callout */
-    .disclaimer {
-      display: flex;
-      gap: 14px;
-      background: rgba(245, 158, 11, 0.06);
-      border: 1px solid rgba(245, 158, 11, 0.25);
-      border-left: 3px solid var(--amber);
-      border-radius: 10px;
-      padding: 16px 18px;
-      margin-bottom: 24px;
-      max-width: 66ch;
-    }
-
-    .disclaimer svg {
-      width: 20px;
-      height: 20px;
-      flex-shrink: 0;
-      color: var(--amber);
-      margin-top: 2px;
-    }
-
-    .disclaimer p {
-      margin: 0;
-      font-size: 0.88rem;
-      color: #fef3c7;
-      line-height: 1.6;
-    }
-
-    /* Footer */
-    footer {
-      margin-top: 64px;
-      padding: 40px 0 64px;
-      border-top: 1px solid var(--border-subtle);
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
-
-    footer .brand {
-      font-family: 'Playfair Display', Georgia, serif;
-      font-weight: 700;
-      font-size: 1.25rem;
-      color: var(--emerald);
-    }
-
-    footer p {
-      color: var(--text-muted);
-      font-size: 0.92rem;
-      max-width: 58ch;
-      margin: 0;
-    }
-
-    .contact-block {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-top: 16px;
-    }
-
-    .contact-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 0.9rem;
-      font-weight: 600;
-      text-decoration: none;
-      padding: 11px 20px;
-      border-radius: 8px;
-      transition: all 0.2s ease;
-      touch-action: manipulation;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    @media (hover: hover) and (pointer: fine) {
-      .contact-btn:hover {
-        transform: translateY(-2px);
-      }
-    }
-
-    .contact-btn.primary {
-      background: linear-gradient(135deg, var(--emerald), var(--emerald-dark));
-      color: #051a0e;
-      box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
-    }
-
-    .contact-btn.secondary {
-      background: rgba(255, 255, 255, 0.04);
-      color: var(--text-white);
-      border: 1px solid var(--border-subtle);
-    }
-
-    @media (hover: hover) and (pointer: fine) {
-      .contact-btn.secondary:hover {
-        border-color: var(--border-emerald);
-        background: rgba(16, 185, 129, 0.08);
-      }
-    }
-
-    .contact-btn svg {
-      width: 16px;
-      height: 16px;
-    }
-
-    footer .footer-links {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 16px;
-      margin-top: 14px;
-      font-size: 0.86rem;
-    }
-
-    footer .footer-links a {
-      color: var(--text-muted);
-      text-decoration: none;
-      transition: color 0.2s;
-    }
-
-    @media (hover: hover) and (pointer: fine) {
-      footer .footer-links a:hover {
-        color: var(--emerald);
-        text-decoration: underline;
-      }
-    }
-
-    footer .foot-meta {
-      font-size: 0.82rem;
-      color: var(--text-dim);
-      margin-top: 10px;
-    }
-
-    @media (max-width: 480px) {
-      header { padding: 40px 0 24px; }
-      section.category { padding: 36px 0 8px; }
-      .faq summary { padding: 16px 18px; }
-      .faq .answer { padding-left: 18px; padding-right: 18px; }
-      .cat-head { flex-direction: column; gap: 8px; }
-    }
-  </style>
 </head>
-<body>
 
-  <!-- Ambient background grid -->
-  <div class="bg-grid" aria-hidden="true"></div>
+<body class="site page-doc page-faq">
+<a class="skip-link" href="#main">Skip to content</a>
 
-  <!-- Sticky Top Brand Navigation Bar -->
-  <nav class="top-bar" aria-label="Main Navigation">
-    <div class="top-nav-inner">
-      <a href="/" class="top-nav-brand">
-        <img src="/assets/images/logo.png" alt="MantraAQ Logo" class="top-nav-logo">
-        <span class="top-nav-name">MantraAQ</span>
-      </a>
-      <a href="/" class="top-nav-back" aria-label="Back to store">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="19" y1="12" x2="5" y2="12"></line>
-          <polyline points="12 19 5 12 12 5"></polyline>
-        </svg>
-        Back to Store
-      </a>
+<!-- NAV_START: generated by scripts/partials.js -->
+<nav class="nav-bar" id="mainNav" role="navigation" aria-label="Main navigation">
+  <div class="nav-strip" aria-label="Store highlights">
+    <div class="nav-strip-track" aria-hidden="true"><span>Free shipping on orders above ₹499</span><span>Dispatched in 1–2 business days</span><span>Wetland grown</span><span>Rooted in Bihar</span><span>Free shipping on orders above ₹499</span><span>Dispatched in 1–2 business days</span><span>Wetland grown</span><span>Rooted in Bihar</span></div>
+    <span class="sr-only">Free shipping on orders above ₹499. Dispatched in 1 to 2 business days.</span>
+  </div>
+  <div class="nav-inner">
+    <a href="/" class="nav-logo" id="navLogoLink" aria-label="MantraAQ home">
+      <span class="nav-logo-img-wrap"><img src="/assets/images/brand/logo-maroon-128.webp" alt="" class="nav-logo-img" id="navLogoImg" width="36" height="36"></span>
+      <span class="nav-logo-text">MantraAQ</span>
+    </a>
+    <div class="nav-links" id="navLinks">
+      <a href="/#products" class="nav-link">Shop</a>
+      <a href="/#story" class="nav-link">Our story</a>
+      <a href="/#recipes" class="nav-link">Recipes</a>
+      <a href="/faq" class="nav-link nav-active" aria-current="page">FAQ</a>
+      <a href="/contact" class="nav-link">Contact</a>
     </div>
-  </nav>
+    <div class="nav-actions">
+      <a data-action="search" href="#" class="nav-action" title="Search products" aria-label="Search products">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7.5"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <span class="nav-action-label">Search</span>
+      </a>
+      <a data-action="wishlist" href="#" class="nav-action nav-account" title="Wishlist" aria-label="Wishlist">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+        <span class="nav-action-label">Wishlist</span>
+      </a>
+      <a data-action="account" href="#" class="nav-action nav-account" title="Account" aria-label="Account">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span class="nav-action-label">Account</span>
+      </a>
+      <a data-action="cart" href="#" class="nav-action nav-cart" title="Cart" aria-label="Cart">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7a3 3 0 016 0"/></svg>
+        <span>Cart</span>
+      </a>
+      <button class="nav-hamburger" id="navHamburger" aria-label="Open menu" aria-expanded="false" aria-controls="navDrawer" type="button">
+        <span class="nav-ham-bar"></span><span class="nav-ham-bar"></span><span class="nav-ham-bar"></span>
+      </button>
+    </div>
+  </div>
+  <div class="nav-drawer" id="navDrawer" inert>
+    <div class="nav-drawer-inner">
+      <a href="/#products" class="nav-drawer-link">Shop</a>
+      <a href="/#story" class="nav-drawer-link">Our story</a>
+      <a href="/#recipes" class="nav-drawer-link">Recipes</a>
+      <a href="/faq" class="nav-drawer-link" aria-current="page">FAQ</a>
+      <a href="/contact" class="nav-drawer-link">Contact</a>
+      <div class="nav-drawer-divider"></div>
+      <a data-action="wishlist" href="#" class="nav-drawer-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>Wishlist</a>
+      <a data-action="account" href="#" class="nav-drawer-link nav-drawer-account"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>My account</a>
+      <a data-action="cart" href="#" class="nav-drawer-cart">View cart</a>
+    </div>
+  </div>
+</nav>
+<!-- NAV_END -->
 
-  <div class="wrap">
-
-    <header>
-      <div class="eyebrow">From Bihar's Waters to Your Wellness</div>
-      <h1>Singhara, Answered</h1>
-      <p class="lede">Everything you are likely to ask about MantraAQ's water chestnut snacks and flours: from how they are grown in Bihar's wetlands to why your digestion will thank you. Straight answers, no marketing fog.</p>
-
-      <div class="trust-strip">
-        <span class="trust-badge">
-          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8">
-            <path d="M10 2l6 3v5c0 4-2.6 6.9-6 8-3.4-1.1-6-4-6-8V5l6-3z"/>
-            <path d="M7.5 10l1.8 1.8L13 8" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-          DPIIT-Recognised
-        </span>
-        <span class="trust-badge">
-          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8">
-            <path d="M10 2l6 3v5c0 4-2.6 6.9-6 8-3.4-1.1-6-4-6-8V5l6-3z"/>
-            <path d="M7.5 10l1.8 1.8L13 8" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-          FSSAI-Certified
-        </span>
-        <span class="trust-badge">
-          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8">
-            <path d="M10 2l6 3v5c0 4-2.6 6.9-6 8-3.4-1.1-6-4-6-8V5l6-3z"/>
-            <path d="M7.5 10l1.8 1.8L13 8" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-          ZED-Certified
-        </span>
+<main id="main">
+  <header class="doc-hero">
+    <div class="wrap">
+      <div data-reveal>
+        <span class="eyebrow">From Bihar's Waters to Your Wellness</span>
+        <h1 class="display-l">Singhara, <em class="serif-italic">Answered</em></h1>
+        <p class="lead">Everything you are likely to ask about MantraAQ's water chestnut snacks and flours: from how they are grown in Bihar's wetlands to why your digestion will thank you. Straight answers, no marketing fog.</p>
+        <ul class="doc-badges" aria-label="Certifications">
+          <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M10 2l6 3v5c0 4-2.6 6.9-6 8-3.4-1.1-6-4-6-8V5l6-3z"/><path d="M7.5 10l1.8 1.8L13 8" stroke-linecap="round" stroke-linejoin="round"/></svg>DPIIT-Recognised</li>
+          <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M10 2l6 3v5c0 4-2.6 6.9-6 8-3.4-1.1-6-4-6-8V5l6-3z"/><path d="M7.5 10l1.8 1.8L13 8" stroke-linecap="round" stroke-linejoin="round"/></svg>FSSAI-Certified</li>
+          <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M10 2l6 3v5c0 4-2.6 6.9-6 8-3.4-1.1-6-4-6-8V5l6-3z"/><path d="M7.5 10l1.8 1.8L13 8" stroke-linecap="round" stroke-linejoin="round"/></svg>ZED-Certified</li>
+        </ul>
       </div>
-    </header>
+    </div>
+  </header>
 
-    <nav class="jump" aria-label="Jump to category">
-      <a href="#delivery">Delivery &amp; Returns</a>
-      <a href="#taste">Taste &amp; Purity</a>
-      <a href="#health">Health &amp; Diet</a>
-      <a href="#kitchen">Kitchen &amp; Storage</a>
-      <a href="#sourcing">Sourcing &amp; Trade</a>
-    </nav>
+  <div class="ornament ornament--mithila doc-band" aria-hidden="true"></div>
 
-    <!-- Category 1 -->
-    <section class="category" id="delivery">
-      <div class="cat-head">
-        <span class="cat-num">01</span>
-        <h2>Delivery, Post-Purchase &amp; Checkout Security</h2>
-      </div>
-
-      <details class="faq" open>
-        <summary>
-          <span class="q-mark">Q</span>
-          How long will my order take to reach me?
-          <svg class="chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 7.5L10 12.5L15 7.5"/></svg>
-        </summary>
-        <div class="answer">
-          <p>All domestic orders are processed and dispatched within 1 to 2 business days (24 to 48 hours). Estimated courier transit times are 3 to 7 business days for metro cities, 4 to 10 business days for Tier 2 and Tier 3 cities, and 5 to 14 business days for remote areas.</p>
-          <p>You will receive an automated tracking link via WhatsApp and email as soon as your shipment leaves our hub.</p>
-          <div class="stat-row">
-            <div class="stat"><span class="num mono">24-48 hrs</span><span class="label">order dispatch</span></div>
-            <div class="stat"><span class="num mono">3-7 days</span><span class="label">metro transit</span></div>
-            <div class="stat"><span class="num mono">4-10 days</span><span class="label">other cities</span></div>
-          </div>
-        </div>
-      </details>
-
-      <details class="faq">
-        <summary>
-          <span class="q-mark">Q</span>
-          What is your return policy if I receive a compromised package?
-          <svg class="chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 7.5L10 12.5L15 7.5"/></svg>
-        </summary>
-        <div class="answer">
-          <p>We take quality control seriously. If your package arrives damaged, unsealed, or contains the wrong item, email our support team or report it within <strong>48 hours of delivery</strong>. We will issue a replacement or a full refund, with no hidden complications.</p>
-          <span class="note">Note: for food hygiene and safety reasons, opened or consumed products are not eligible for return.</span>
-        </div>
-      </details>
-    </section>
-
-    <!-- Category 2 -->
-    <section class="category" id="taste">
-      <div class="cat-head">
-        <span class="cat-num">02</span>
-        <h2>Taste, Purity &amp; Premium Justification</h2>
-      </div>
-
-      <details class="faq">
-        <summary>
-          <span class="q-mark">Q</span>
-          Healthy snacks usually taste like cardboard. What do MantraAQ snacks actually taste like?
-          <svg class="chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 7.5L10 12.5L15 7.5"/></svg>
-        </summary>
-        <div class="answer">
-          <p>We do not sacrifice taste for health. Traditional healthy snacks are air-puffed and dry; ours are not. MantraAQ uses a proprietary light seasoning process that bonds natural spices directly to our cold-pressed singhara chips.</p>
-          <p>The result: the same satisfying crunch and bold Indian flavour as traditional chips, with <strong>zero guilt, zero palm oil, and 100% clean ingredients</strong>.</p>
-        </div>
-      </details>
-
-      <details class="faq">
-        <summary>
-          <span class="q-mark">Q</span>
-          I can buy regular singhara flour cheaper at the local market. Why pay a premium for MantraAQ?
-          <svg class="chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 7.5L10 12.5L15 7.5"/></svg>
-        </summary>
-        <div class="answer">
-          <p>Open-market singhara flour is prone to adulteration, grit, dirt, and mould from improper sun-drying by unorganised middlemen. MantraAQ runs an automated, certified facility: our water chestnuts are thoroughly washed, machine-dehulled, and cold-milled into an ultra-fine, grit-free flour.</p>
-          <p>You are paying for pure quality, zero digestive discomfort, and a reliable shelf life, not for the name.</p>
-        </div>
-      </details>
-    </section>
-
-    <!-- Category 3 -->
-    <section class="category" id="health">
-      <div class="cat-head">
-        <span class="cat-num">03</span>
-        <h2>Functional Health &amp; Dietary Integrity</h2>
-      </div>
-
-      <div class="disclaimer">
-        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8">
-          <circle cx="10" cy="10" r="7.5"/>
-          <path d="M10 6.5v4.5" stroke-linecap="round"/>
-          <circle cx="10" cy="13.7" r="0.9" fill="currentColor" stroke="none"/>
-        </svg>
-        <p>MantraAQ products are a natural, low-GI, gluten-free food and are not intended to diagnose, treat, cure, or prevent any disease. If you have diabetes, are pregnant, or are managing a medical condition, please consult your doctor or dietitian before making changes to your diet.</p>
-      </div>
-
-      <details class="faq">
-        <summary>
-          <span class="q-mark">Q</span>
-          Are MantraAQ products truly diabetic-friendly, or is that just marketing?
-          <svg class="chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 7.5L10 12.5L15 7.5"/></svg>
-        </summary>
-        <div class="answer">
-          <p>It is backed by food science. Refined wheat flour (maida) has a high Glycemic Index of around 70+. Raw water chestnut inherently has a low-to-moderate GI, and our cold-processing prevents starch gelatinisation.</p>
-          <p>That means a portion of our snacks releases carbohydrates gradually into your bloodstream, avoiding the sharp insulin spikes typical of mainstream packaged snacks.</p>
-          <div class="stat-row">
-            <div class="stat"><span class="num mono">70+</span><span class="label">GI of maida</span></div>
-            <div class="stat"><span class="num mono">Low-Mod</span><span class="label">GI of singhara</span></div>
-          </div>
-        </div>
-      </details>
-
-      <details class="faq">
-        <summary>
-          <span class="q-mark">Q</span>
-          Are your products entirely gluten-free?
-          <svg class="chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 7.5L10 12.5L15 7.5"/></svg>
-        </summary>
-        <div class="answer">
-          <p>Yes. Water chestnut is a seed fruit, making it inherently 100% gluten-free and grain-free. Our entire facility is dedicated strictly to singhara-based production, eliminating cross-contamination risk with wheat or gluten.</p>
-        </div>
-      </details>
-
-      <details class="faq">
-        <summary>
-          <span class="q-mark">Q</span>
-          Are your snacks safe for toddlers and pregnant individuals?
-          <svg class="chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 7.5L10 12.5L15 7.5"/></svg>
-        </summary>
-        <div class="answer">
-          <p>Yes, entirely. Our labels are fully transparent: no hidden maltodextrin, no INS chemical stabilisers, and no artificial sweeteners. Water chestnuts are rich in potassium, vitamin B6, and natural minerals, making them a nutrient-dense snack option for developing children and expecting mothers.</p>
-        </div>
-      </details>
-
-      <details class="faq">
-        <summary>
-          <span class="q-mark">Q</span>
-          Does MantraAQ use MSG, artificial colours, or chemical preservatives?
-          <svg class="chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 7.5L10 12.5L15 7.5"/></svg>
-        </summary>
-        <div class="answer">
-          <p>Absolutely not. Our clean-label promise is strict: we rely entirely on natural cold-pressed spices, herbs, and rock salt for flavour. <strong>Zero MSG, zero trans-fats, zero palm oil, zero synthetic colours.</strong> What is on the ingredient list is exactly what you get.</p>
-        </div>
-      </details>
-    </section>
-
-    <!-- Category 4 -->
-    <section class="category" id="kitchen">
-      <div class="cat-head">
-        <span class="cat-num">04</span>
-        <h2>Culinary Performance, Storage &amp; Fasting (Vrat)</h2>
-      </div>
-
-      <details class="faq">
-        <summary>
-          <span class="q-mark">Q</span>
-          Can MantraAQ products be consumed during religious fasting (Vrat)?
-          <svg class="chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 7.5L10 12.5L15 7.5"/></svg>
-        </summary>
-        <div class="answer">
-          <p>Yes. Our pure water chestnut flours and snacks are ideal for fasting days like Navratri, Shivratri, and Ekadashi. Our strict clean-label, additive-free process keeps them fully compliant with Vrat dietary guidelines.</p>
-        </div>
-      </details>
-
-      <details class="faq">
-        <summary>
-          <span class="q-mark">Q</span>
-          Singhara is naturally gluten-free: does your Singhara Pasta turn sticky or mushy when boiled?
-          <svg class="chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 7.5L10 12.5L15 7.5"/></svg>
-        </summary>
-        <div class="answer">
-          <p>Not at all. Standard gluten-free pastas often disintegrate when boiled because they lack binding agents. MantraAQ uses a proprietary extrusion process that keeps an al dente structural integrity: it holds its shape and absorbs sauces just like traditional durum wheat pasta.</p>
-          <span class="note">Tip: boil for 6 to 8 minutes with a pinch of salt for the best texture.</span>
-        </div>
-      </details>
-
-      <details class="faq">
-        <summary>
-          <span class="q-mark">Q</span>
-          What is the shelf life of the snacks and flours after opening?
-          <svg class="chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 7.5L10 12.5L15 7.5"/></svg>
-        </summary>
-        <div class="answer">
-          <p>Unopened, our nitrogen-flushed packages stay fresh for 9 months from manufacture. Once opened, transfer into a clean, airtight container and store somewhere cool and dry, and consume within 30 days for the best crunch and flavour.</p>
-          <div class="stat-row">
-            <div class="stat"><span class="num mono">9 mo</span><span class="label">unopened</span></div>
-            <div class="stat"><span class="num mono">30 days</span><span class="label">after opening</span></div>
-          </div>
-        </div>
-      </details>
-    </section>
-
-    <!-- Category 5 -->
-    <section class="category" id="sourcing">
-      <div class="cat-head">
-        <span class="cat-num">05</span>
-        <h2>Sourcing, Sustainability &amp; Trade</h2>
-      </div>
-
-      <details class="faq">
-        <summary>
-          <span class="q-mark">Q</span>
-          Where does MantraAQ source its raw ingredients?
-          <svg class="chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 7.5L10 12.5L15 7.5"/></svg>
-        </summary>
-        <div class="answer">
-          <p>We source directly from local wetland farmers across Bihar, which accounts for over 40% of India's total singhara production. Bypassing traditional middlemen means fair pricing for farmers and immediate post-harvest processing to lock in freshness.</p>
-          <div class="stat-row">
-            <div class="stat"><span class="num mono">40%+</span><span class="label">of India's singhara from Bihar</span></div>
-          </div>
-        </div>
-      </details>
-
-      <details class="faq">
-        <summary>
-          <span class="q-mark">Q</span>
-          How can I trace where my food came from?
-          <svg class="chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 7.5L10 12.5L15 7.5"/></svg>
-        </summary>
-        <div class="answer">
-          <p>Every MantraAQ package carries a unique QR code. Scan it for full supply chain visibility, right down to the regional cluster of farms in Bihar where your crop was grown and harvested.</p>
-        </div>
-      </details>
-
-      <details class="faq">
-        <summary>
-          <span class="q-mark">Q</span>
-          I am a distributor or modern trade buyer: what is your commercial shelf life and supply reliability?
-          <svg class="chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 7.5L10 12.5L15 7.5"/></svg>
-        </summary>
-        <div class="answer">
-          <p>All MantraAQ packaged snack SKUs carry a commercially viable 9-month shelf life, achieved naturally through nitrogen-flushing and high-barrier sustainable packaging, without a single artificial preservative.</p>
-          <p>Backed by direct-from-farm sourcing clusters across Bihar, we maintain year-round raw material stability, insulating retail partners from seasonal disruption or price volatility.</p>
-        </div>
-      </details>
-    </section>
-
-    <footer>
-      <span class="brand">MantraAQ Industries</span>
-      <p>Still have a question we have not covered? Reach out, we are happy to walk you through it.</p>
-
-      <div class="contact-block">
-        <a class="contact-btn primary" href="/#products">
-          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8">
-            <path d="M3 10h14M10 3c2.2 2 3.4 4.4 3.4 7S12.2 15 10 17c-2.2-2-3.4-4.4-3.4-7S7.8 5 10 3z"/>
-          </svg>
-          Shop MantraAQ Products
-        </a>
-        <a class="contact-btn secondary" href="https://wa.me/918283816755" target="_blank" rel="noopener">
-          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8">
-            <path d="M3 17l1.2-3.6A6.5 6.5 0 1110 16.5c-1.1 0-2.1-.3-3-.8L3 17z"/>
-          </svg>
-          WhatsApp: +91 82838 16755
-        </a>
-        <a class="contact-btn secondary" href="mailto:hello@mantraaq.com">
-          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8">
-            <rect x="2.5" y="4.5" width="15" height="11" rx="1.5"/>
-            <path d="M3 5.5l7 5.5 7-5.5" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-          hello@mantraaq.com
-        </a>
-      </div>
-
-      <div class="footer-links">
-        <a href="/">Home</a>
-        <a href="/#products">Products</a>
-        <a href="/shipping-policy">Shipping Policy</a>
-        <a href="/refund-policy">Refund Policy</a>
-        <a href="/privacy-policy">Privacy Policy</a>
-        <a href="/terms-and-conditions">Terms &amp; Conditions</a>
-      </div>
-
-      <p class="foot-meta">DPIIT-recognised &middot; FSSAI-certified &middot; ZED-certified &middot; MantraAQ Industries Private Limited</p>
-    </footer>
-
+  <div class="faq-jump-bar">
+    <div class="wrap">
+      <nav class="faq-jump" aria-label="Jump to category">
+        <a href="#delivery">Delivery &amp; Returns</a>
+        <a href="#taste">Taste &amp; Purity</a>
+        <a href="#health">Health &amp; Diet</a>
+        <a href="#kitchen">Kitchen &amp; Storage</a>
+        <a href="#sourcing">Sourcing &amp; Trade</a>
+      </nav>
+    </div>
   </div>
 
+  <div class="faq-page">
+    <div class="wrap">
+      <section class="faq-cat" id="delivery" aria-labelledby="delivery-h">
+        <div class="faq-cat-head">
+          <span class="faq-cat-num" aria-hidden="true">01</span>
+          <h2 id="delivery-h">Delivery, Post-Purchase &amp; Checkout Security</h2>
+        </div>
+        <div class="qa-list">
+          <details class="qa" open>
+            <summary>How long will my order take to reach me?<i class="qa-icon" aria-hidden="true"></i></summary>
+            <div class="qa-a">
+              <p>All domestic orders are processed and dispatched within 1 to 2 business days (24 to 48 hours). Estimated courier transit times are 3 to 7 business days for metro cities, 4 to 10 business days for Tier 2 and Tier 3 cities, and 5 to 14 business days for remote areas.</p>
+              <p>You will receive an automated tracking link via WhatsApp and email as soon as your shipment leaves our hub.</p>
+              <div class="qa-stats">
+                <div class="qa-stat"><b>24-48 hrs</b><span>order dispatch</span></div>
+                <div class="qa-stat"><b>3-7 days</b><span>metro transit</span></div>
+                <div class="qa-stat"><b>4-10 days</b><span>other cities</span></div>
+              </div>
+            </div>
+          </details>
+          <details class="qa">
+            <summary>What is your return policy if I receive a compromised package?<i class="qa-icon" aria-hidden="true"></i></summary>
+            <div class="qa-a">
+              <p>We take quality control seriously. If your package arrives damaged, unsealed, or contains the wrong item, email our support team or report it within <strong>48 hours of delivery</strong>. We will issue a replacement or a full refund, with no hidden complications.</p>
+              <span class="qa-note">Note: for food hygiene and safety reasons, opened or consumed products are not eligible for return.</span>
+            </div>
+          </details>
+        </div>
+      </section>
+
+      <section class="faq-cat" id="taste" aria-labelledby="taste-h">
+        <div class="faq-cat-head">
+          <span class="faq-cat-num" aria-hidden="true">02</span>
+          <h2 id="taste-h">Taste, Purity &amp; Premium Justification</h2>
+        </div>
+        <div class="qa-list">
+          <details class="qa">
+            <summary>Healthy snacks usually taste like cardboard. What do MantraAQ snacks actually taste like?<i class="qa-icon" aria-hidden="true"></i></summary>
+            <div class="qa-a">
+              <p>We do not sacrifice taste for health. Traditional healthy snacks are air-puffed and dry; ours are not. MantraAQ uses a proprietary light seasoning process that bonds natural spices directly to our cold-pressed singhara chips.</p>
+              <p>The result: the same satisfying crunch and bold Indian flavour as traditional chips, with <strong>zero guilt, zero palm oil, and 100% clean ingredients</strong>.</p>
+            </div>
+          </details>
+          <details class="qa">
+            <summary>I can buy regular singhara flour cheaper at the local market. Why pay a premium for MantraAQ?<i class="qa-icon" aria-hidden="true"></i></summary>
+            <div class="qa-a">
+              <p>Open-market singhara flour is prone to adulteration, grit, dirt, and mould from improper sun-drying by unorganised middlemen. MantraAQ runs an automated, certified facility: our water chestnuts are thoroughly washed, machine-dehulled, and cold-milled into an ultra-fine, grit-free flour.</p>
+              <p>You are paying for pure quality, zero digestive discomfort, and a reliable shelf life, not for the name.</p>
+            </div>
+          </details>
+        </div>
+      </section>
+
+      <section class="faq-cat" id="health" aria-labelledby="health-h">
+        <div class="faq-cat-head">
+          <span class="faq-cat-num" aria-hidden="true">03</span>
+          <h2 id="health-h">Functional Health &amp; Dietary Integrity</h2>
+        </div>
+        <div class="qa-list">
+          <div class="faq-disclaimer" role="note">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10" cy="10" r="7.5"/><path d="M10 6.5v4.5" stroke-linecap="round"/><circle cx="10" cy="13.7" r="0.9" fill="currentColor" stroke="none"/></svg>
+            <p>MantraAQ products are a natural, low-GI, gluten-free food and are not intended to diagnose, treat, cure, or prevent any disease. If you have diabetes, are pregnant, or are managing a medical condition, please consult your doctor or dietitian before making changes to your diet.</p>
+          </div>
+          <details class="qa">
+            <summary>Are MantraAQ products truly diabetic-friendly, or is that just marketing?<i class="qa-icon" aria-hidden="true"></i></summary>
+            <div class="qa-a">
+              <p>It is backed by food science. Refined wheat flour (maida) has a high Glycemic Index of around 70+. Raw water chestnut inherently has a low-to-moderate GI, and our cold-processing prevents starch gelatinisation.</p>
+              <p>That means a portion of our snacks releases carbohydrates gradually into your bloodstream, avoiding the sharp insulin spikes typical of mainstream packaged snacks.</p>
+              <div class="qa-stats">
+                <div class="qa-stat"><b>70+</b><span>GI of maida</span></div>
+                <div class="qa-stat"><b>Low-Mod</b><span>GI of singhara</span></div>
+              </div>
+            </div>
+          </details>
+          <details class="qa">
+            <summary>Are your products entirely gluten-free?<i class="qa-icon" aria-hidden="true"></i></summary>
+            <div class="qa-a">
+              <p>Yes. Water chestnut is a seed fruit, making it inherently 100% gluten-free and grain-free. Our entire facility is dedicated strictly to singhara-based production, eliminating cross-contamination risk with wheat or gluten.</p>
+            </div>
+          </details>
+          <details class="qa">
+            <summary>Are your snacks safe for toddlers and pregnant individuals?<i class="qa-icon" aria-hidden="true"></i></summary>
+            <div class="qa-a">
+              <p>Yes, entirely. Our labels are fully transparent: no hidden maltodextrin, no INS chemical stabilisers, and no artificial sweeteners. Water chestnuts are rich in potassium, vitamin B6, and natural minerals, making them a nutrient-dense snack option for developing children and expecting mothers.</p>
+            </div>
+          </details>
+          <details class="qa">
+            <summary>Does MantraAQ use MSG, artificial colours, or chemical preservatives?<i class="qa-icon" aria-hidden="true"></i></summary>
+            <div class="qa-a">
+              <p>Absolutely not. Our clean-label promise is strict: we rely entirely on natural cold-pressed spices, herbs, and rock salt for flavour. <strong>Zero MSG, zero trans-fats, zero palm oil, zero synthetic colours.</strong> What is on the ingredient list is exactly what you get.</p>
+            </div>
+          </details>
+        </div>
+      </section>
+
+      <section class="faq-cat" id="kitchen" aria-labelledby="kitchen-h">
+        <div class="faq-cat-head">
+          <span class="faq-cat-num" aria-hidden="true">04</span>
+          <h2 id="kitchen-h">Culinary Performance, Storage &amp; Fasting (Vrat)</h2>
+        </div>
+        <div class="qa-list">
+          <details class="qa">
+            <summary>Can MantraAQ products be consumed during religious fasting (Vrat)?<i class="qa-icon" aria-hidden="true"></i></summary>
+            <div class="qa-a">
+              <p>Yes. Our pure water chestnut flours and snacks are ideal for fasting days like Navratri, Shivratri, and Ekadashi. Our strict clean-label, additive-free process keeps them fully compliant with Vrat dietary guidelines.</p>
+            </div>
+          </details>
+          <details class="qa">
+            <summary>Singhara is naturally gluten-free: does your Singhara Pasta turn sticky or mushy when boiled?<i class="qa-icon" aria-hidden="true"></i></summary>
+            <div class="qa-a">
+              <p>Not at all. Standard gluten-free pastas often disintegrate when boiled because they lack binding agents. MantraAQ uses a proprietary extrusion process that keeps an al dente structural integrity: it holds its shape and absorbs sauces just like traditional durum wheat pasta.</p>
+              <span class="qa-note">Tip: boil for 6 to 8 minutes with a pinch of salt for the best texture.</span>
+            </div>
+          </details>
+          <details class="qa">
+            <summary>What is the shelf life of the snacks and flours after opening?<i class="qa-icon" aria-hidden="true"></i></summary>
+            <div class="qa-a">
+              <p>Unopened, our nitrogen-flushed packages stay fresh for 9 months from manufacture. Once opened, transfer into a clean, airtight container and store somewhere cool and dry, and consume within 30 days for the best crunch and flavour.</p>
+              <div class="qa-stats">
+                <div class="qa-stat"><b>9 mo</b><span>unopened</span></div>
+                <div class="qa-stat"><b>30 days</b><span>after opening</span></div>
+              </div>
+            </div>
+          </details>
+        </div>
+      </section>
+
+      <section class="faq-cat" id="sourcing" aria-labelledby="sourcing-h">
+        <div class="faq-cat-head">
+          <span class="faq-cat-num" aria-hidden="true">05</span>
+          <h2 id="sourcing-h">Sourcing, Sustainability &amp; Trade</h2>
+        </div>
+        <div class="qa-list">
+          <details class="qa">
+            <summary>Where does MantraAQ source its raw ingredients?<i class="qa-icon" aria-hidden="true"></i></summary>
+            <div class="qa-a">
+              <p>We source directly from local wetland farmers across Bihar, which accounts for over 40% of India's total singhara production. Bypassing traditional middlemen means fair pricing for farmers and immediate post-harvest processing to lock in freshness.</p>
+              <div class="qa-stats">
+                <div class="qa-stat"><b>40%+</b><span>of India's singhara from Bihar</span></div>
+              </div>
+            </div>
+          </details>
+          <details class="qa">
+            <summary>How can I trace where my food came from?<i class="qa-icon" aria-hidden="true"></i></summary>
+            <div class="qa-a">
+              <p>Every MantraAQ package carries a unique QR code. Scan it for full supply chain visibility, right down to the regional cluster of farms in Bihar where your crop was grown and harvested.</p>
+            </div>
+          </details>
+          <details class="qa">
+            <summary>I am a distributor or modern trade buyer: what is your commercial shelf life and supply reliability?<i class="qa-icon" aria-hidden="true"></i></summary>
+            <div class="qa-a">
+              <p>All MantraAQ packaged snack SKUs carry a commercially viable 9-month shelf life, achieved naturally through nitrogen-flushing and high-barrier sustainable packaging, without a single artificial preservative.</p>
+              <p>Backed by direct-from-farm sourcing clusters across Bihar, we maintain year-round raw material stability, insulating retail partners from seasonal disruption or price volatility.</p>
+            </div>
+          </details>
+        </div>
+      </section>
+
+      <aside class="faq-end" aria-labelledby="faq-end-h">
+        <div class="doc-help">
+          <p class="doc-card-k">MantraAQ Industries</p>
+          <h2 id="faq-end-h">Still have a question we have not covered?</h2>
+          <p>Reach out, we are happy to walk you through it.</p>
+          <div class="doc-help-actions">
+            <a class="btn btn--light" href="/#products">Shop MantraAQ Products<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+            <a class="btn btn--ghost" href="https://wa.me/918283816755" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 01-12.4 7.4L3 21l1.9-5.7A8.5 8.5 0 1121 11.5z"/></svg>WhatsApp: +91 82838 16755</a>
+            <a class="btn btn--ghost" href="mailto:hello@mantraaq.com"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 6l-10 7L2 6"/></svg>hello@mantraaq.com</a>
+          </div>
+          <p class="faq-end-meta">DPIIT-recognised &middot; FSSAI-certified &middot; ZED-certified &middot; MantraAQ Industries Private Limited</p>
+        </div>
+      </aside>
+    </div>
+  </div>
+</main>
+
+<!-- FOOTER_START: generated by scripts/partials.js -->
+<div class="ornament" aria-hidden="true"></div>
+<footer class="foot" id="footer">
+  <div class="wrap">
+    <div class="foot-top">
+      <div class="foot-brand">
+        <a href="/" class="foot-logo"><img src="/assets/images/brand/logo-cream-128.webp" alt="" width="40" height="40">MantraAQ</a>
+        <p><em class="foot-tagline">Eat. Heal. Feel.</em><br>Singhara foods from the wetlands of Bihar, made with 200+ farmer families. MantraAQ Industries Private Limited, Begusarai.</p>
+        <div class="foot-socials">
+          <a href="https://instagram.com/mantraaq" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+          <a href="https://linkedin.com/company/mantraaq" target="_blank" rel="noopener" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-4 0v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></a>
+          <a href="https://wa.me/918283816755" target="_blank" rel="noopener" aria-label="WhatsApp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.4 8.4 0 01-12.4 7.4L3 21l1.9-5.7A8.5 8.5 0 1121 11.5z"/></svg></a>
+        </div>
+      </div>
+      <div>
+        <h4>Shop</h4>
+        <ul>
+          <li><a href="/products/singhara-atta">Singhara Atta</a></li>
+          <li><a href="/products/singhara-pasta">Singhara Macaroni</a></li>
+          <li><a href="/products/singhara-vermicell">Singhara Vermicelli</a></li>
+          <li><a href="/products/dry-singhara">Dry Singhara</a></li>
+          <li><a href="/products/fresh-singhara">Fresh Singhara</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Help</h4>
+        <ul>
+          <li><a href="/faq">FAQ</a></li>
+          <li><a href="/shipping-policy">Shipping</a></li>
+          <li><a href="/refund-policy">Refunds &amp; replacements</a></li>
+          <li><a href="/contact">Contact us</a></li>
+          <li><a href="#" data-action="account">Track your order</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Get in touch</h4>
+        <ul>
+          <li><a href="mailto:hello@mantraaq.com">hello@mantraaq.com</a></li>
+          <li><a href="tel:+918283816755">+91 82838 16755</a></li>
+          <li>Begusarai, Bihar, India</li>
+          <li><a href="/privacy-policy">Privacy policy</a></li>
+          <li><a href="/terms-and-conditions">Terms &amp; conditions</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-word" aria-hidden="true">MantraAQ</div>
+    <div class="foot-bottom">
+      <span>© 2026 MantraAQ Industries Private Limited. FSSAI Lic. No. 20426155000003</span>
+      <span>Wetland grown ❖ Rooted in Bihar</span>
+    </div>
+  </div>
+</footer>
+
+<div id="maq-cookie-banner" class="cookie" role="dialog" aria-label="Cookie notice" hidden>
+  We use cookies and analytics to improve your experience. See our <a href="/privacy-policy">privacy policy</a>.
+  <div class="cookie-actions">
+    <button type="button" class="btn btn--light" data-cookie-close>Accept</button>
+    <button type="button" class="btn btn--ghost" data-cookie-close>Dismiss</button>
+  </div>
+</div>
+<!-- FOOTER_END -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.8/purify.min.js"></script>
+<script src="/js/sanitize.js"></script>
+<script src="/js/toast.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/cart.js"></script>
+<script src="/js/auth.js"></script>
+<script src="/js/product-card.js"></script>
+<script src="/js/storefront.js"></script>
+<script src="/js/search.js"></script>
+<script src="/js/wishlist.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/vendor/gsap.min.js" defer></script>
+<script src="/js/vendor/ScrollTrigger.min.js" defer></script>
+<script src="/js/site.js" defer></script>
+<script>
+  /* Highlights the category currently in view in the jump bar */
+  (function () {
+    var links = Array.prototype.slice.call(document.querySelectorAll('.faq-jump a'));
+    if (!links.length || !('IntersectionObserver' in window)) return;
+    var byId = {};
+    links.forEach(function (a) { byId[a.getAttribute('href').slice(1)] = a; });
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        links.forEach(function (a) { a.classList.toggle('is-active', a === byId[e.target.id]); });
+        var a = byId[e.target.id];
+        if (a && a.parentNode.scrollTo) a.parentNode.scrollTo({ left: a.offsetLeft - 16, behavior: 'smooth' });
+      });
+    }, { rootMargin: '-40% 0px -55% 0px' });
+    Object.keys(byId).forEach(function (id) { var s = document.getElementById(id); if (s) io.observe(s); });
+  })();
+</script>
 </body>
 </html>

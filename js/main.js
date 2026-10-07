@@ -728,7 +728,7 @@ if (window.innerWidth > 768) {
       charCount.textContent = `${len} / ${MAX}`;
       charCount.style.color = len > MAX * 0.9
         ? (len >= MAX ? '#f87171' : '#fb923c')
-        : '#1f2937';
+        : '#2f1d20';
       if (len >= MAX) textarea.value = textarea.value.slice(0, MAX);
     });
   }
@@ -738,7 +738,7 @@ if (window.innerWidth > 768) {
     const field = document.getElementById(fieldId);
     if (!field) return;
     field.style.borderColor = valid
-      ? 'rgba(16,185,129,0.3)'
+      ? 'rgba(196,154,79,0.3)'
       : 'rgba(239,68,68,0.35)';
   }
 
@@ -936,7 +936,7 @@ if (window.innerWidth > 768) {
         if (glow) {
           glow.style.background = `radial-gradient(
             circle at ${xPct}% ${yPct}%,
-            rgba(16,185,129,0.1) 0%,
+            rgba(196,154,79,0.1) 0%,
             transparent 65%
           )`;
         }
@@ -1015,9 +1015,9 @@ if (window.innerWidth > 768) {
     status.style.textAlign   = 'center';
 
     if (type === 'ok') {
-      status.style.background = 'rgba(16,185,129,0.1)';
-      status.style.border     = '1px solid rgba(16,185,129,0.2)';
-      status.style.color      = '#4ade80';
+      status.style.background = 'rgba(196,154,79,0.1)';
+      status.style.border     = '1px solid rgba(196,154,79,0.2)';
+      status.style.color      = '#e2c27f';
     } else {
       status.style.background = 'rgba(239,68,68,0.08)';
       status.style.border     = '1px solid rgba(239,68,68,0.18)';
@@ -1246,7 +1246,8 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function initProductGalleries() {
-    const productCards = document.querySelectorAll('.product-card');
+    // Cards rendered by js/product-card.js (data-category) get their gallery from storefront.js
+    const productCards = document.querySelectorAll('.product-card:not([data-category])');
     
     productCards.forEach(card => {
         const gallery = card.querySelector('.product-gallery');
@@ -1405,18 +1406,18 @@ window.addEventListener('load', function() {
             const styles = `
                 .order-status-overlay {
                     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-                    background: rgba(10, 15, 12, 0.9); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+                    background: rgba(36,8,13, 0.9); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
                     display: flex; align-items: center; justify-content: center; z-index: 100000;
                     opacity: 0; transition: opacity 0.4s ease;
                 }
                 .order-status-overlay.active { opacity: 1; }
                 .order-status-card {
-                    background: #0e1612; border: 1px solid rgba(16, 185, 129, 0.15); border-radius: 24px;
+                    background: #3a0a13; border: 1px solid rgba(196,154,79, 0.15); border-radius: 24px;
                     width: 92%; max-width: 500px; padding: 32px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
                     transform: scale(0.9); transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-                    color: #e2e8f0; font-family: 'Outfit', 'Inter', sans-serif; max-height: 90vh; overflow-y: auto;
+                    color: #ece3d0; font-family: 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif; max-height: 90vh; overflow-y: auto;
                     scrollbar-width: thin;
-                    scrollbar-color: #10b981 rgba(255, 255, 255, 0.02);
+                    scrollbar-color: #c49a4f rgba(255, 255, 255, 0.02);
                 }
                 .order-status-card::-webkit-scrollbar {
                     width: 8px;
@@ -1427,12 +1428,12 @@ window.addEventListener('load', function() {
                     border-radius: 4px;
                 }
                 .order-status-card::-webkit-scrollbar-thumb {
-                    background: linear-gradient(to bottom, #10b981, #059669);
+                    background: linear-gradient(to bottom, #c49a4f, #a8803a);
                     border-radius: 4px;
                     border: 1px solid rgba(255, 255, 255, 0.02);
                 }
                 .order-status-card::-webkit-scrollbar-thumb:hover {
-                    background: linear-gradient(to bottom, #4ade80, #10b981);
+                    background: linear-gradient(to bottom, #e2c27f, #c49a4f);
                 }
                 .order-status-overlay.active .order-status-card { transform: scale(1); }
                 .status-icon-wrapper { display: flex; justify-content: center; margin-bottom: 20px; }
@@ -1440,32 +1441,32 @@ window.addEventListener('load', function() {
                     width: 72px; height: 72px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
                     animation: pulseSuccess 2s infinite;
                 }
-                .status-icon-success { background: rgba(16, 185, 129, 0.1); border: 2px solid #10b981; color: #10b981; }
-                .status-icon-failed { background: rgba(244, 63, 94, 0.1); border: 2px solid #f43f5e; color: #f43f5e; animation: none; }
+                .status-icon-success { background: rgba(196,154,79, 0.1); border: 2px solid #c49a4f; color: #c49a4f; }
+                .status-icon-failed { background: rgba(232, 120, 104, 0.1); border: 2px solid #e87868; color: #e87868; animation: none; }
                 .order-status-title { font-size: 24px; font-weight: 800; text-align: center; margin-bottom: 8px; color: #ffffff; letter-spacing: -0.5px; }
-                .order-status-desc { font-size: 14px; color: #94a3b8; text-align: center; margin-bottom: 24px; line-height: 1.5; }
+                .order-status-desc { font-size: 14px; color: #bcaea4; text-align: center; margin-bottom: 24px; line-height: 1.5; }
                 .order-receipt-box { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 16px; padding: 20px; margin-bottom: 24px; font-size: 13px; }
-                .receipt-row { display: flex; justify-content: space-between; margin-bottom: 12px; color: #94a3b8; }
+                .receipt-row { display: flex; justify-content: space-between; margin-bottom: 12px; color: #bcaea4; }
                 .receipt-row.total { border-top: 1px dashed rgba(255, 255, 255, 0.1); padding-top: 12px; margin-bottom: 0; color: #ffffff; font-weight: 700; font-size: 15px; }
                 .receipt-divider { height: 1px; background: rgba(255, 255, 255, 0.06); margin: 16px 0; }
-                .receipt-items-list { max-height: 140px; overflow-y: auto; margin-bottom: 8px; padding-right: 4px; scrollbar-width: thin; scrollbar-color: #10b981 rgba(255, 255, 255, 0.02); }
+                .receipt-items-list { max-height: 140px; overflow-y: auto; margin-bottom: 8px; padding-right: 4px; scrollbar-width: thin; scrollbar-color: #c49a4f rgba(255, 255, 255, 0.02); }
                 .receipt-items-list::-webkit-scrollbar { width: 8px; height: 8px; }
                 .receipt-items-list::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.02); border-radius: 4px; }
-                .receipt-items-list::-webkit-scrollbar-thumb { background: linear-gradient(to bottom, #10b981, #059669); border-radius: 4px; border: 1px solid rgba(255, 255, 255, 0.02); }
-                .receipt-items-list::-webkit-scrollbar-thumb:hover { background: linear-gradient(to bottom, #4ade80, #10b981); }
-                .receipt-item { display: flex; justify-content: space-between; margin-bottom: 8px; color: #e2e8f0; }
+                .receipt-items-list::-webkit-scrollbar-thumb { background: linear-gradient(to bottom, #c49a4f, #a8803a); border-radius: 4px; border: 1px solid rgba(255, 255, 255, 0.02); }
+                .receipt-items-list::-webkit-scrollbar-thumb:hover { background: linear-gradient(to bottom, #e2c27f, #c49a4f); }
+                .receipt-item { display: flex; justify-content: space-between; margin-bottom: 8px; color: #ece3d0; }
                 .status-buttons-group { display: flex; flex-direction: column; gap: 12px; }
                 .status-btn { width: 100%; padding: 14px; border-radius: 12px; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s ease; border: none; text-align: center; display: inline-block; text-decoration: none; }
-                .status-btn-primary { background: #10b981; color: #051a0e; }
-                .status-btn-primary:hover { background: #059669; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(16, 185, 129, 0.2); }
+                .status-btn-primary { background: #c49a4f; color: #2a0a10; }
+                .status-btn-primary:hover { background: #a8803a; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(196,154,79, 0.2); }
                 .status-btn-secondary { background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08); color: #ffffff; }
                 .status-btn-secondary:hover { background: rgba(255, 255, 255, 0.08); transform: translateY(-2px); }
-                .status-btn-danger { background: #f43f5e; color: #ffffff; }
-                .status-btn-danger:hover { background: #e11d48; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(244, 63, 94, 0.2); }
+                .status-btn-danger { background: #c49a4f; color: #2a0a10; }
+                .status-btn-danger:hover { background: #e2c27f; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(196, 154, 79, 0.25); }
                 @keyframes pulseSuccess {
-                    0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
-                    70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
-                    100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+                    0% { box-shadow: 0 0 0 0 rgba(196,154,79, 0.4); }
+                    70% { box-shadow: 0 0 0 10px rgba(196,154,79, 0); }
+                    100% { box-shadow: 0 0 0 0 rgba(196,154,79, 0); }
                 }
             `;
             const styleEl = document.createElement('style');
@@ -1539,38 +1540,38 @@ window.addEventListener('load', function() {
             const styles = `
                 .order-status-overlay {
                     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-                    background: rgba(10, 15, 12, 0.9); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+                    background: rgba(36,8,13, 0.9); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
                     display: flex; align-items: center; justify-content: center; z-index: 100000;
                     opacity: 0; transition: opacity 0.4s ease;
                 }
                 .order-status-overlay.active { opacity: 1; }
                 .order-status-card {
-                    background: #0e1612; border: 1px solid rgba(16, 185, 129, 0.15); border-radius: 24px;
+                    background: #3a0a13; border: 1px solid rgba(196,154,79, 0.15); border-radius: 24px;
                     width: 92%; max-width: 500px; padding: 32px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
                     transform: scale(0.9); transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-                    color: #e2e8f0; font-family: 'Outfit', 'Inter', sans-serif; max-height: 90vh; overflow-y: auto;
+                    color: #ece3d0; font-family: 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif; max-height: 90vh; overflow-y: auto;
                 }
                 .order-status-overlay.active .order-status-card { transform: scale(1); }
                 .status-icon-wrapper { display: flex; justify-content: center; margin-bottom: 20px; }
                 .status-icon-circle {
                     width: 72px; height: 72px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
                 }
-                .status-icon-success { background: rgba(16, 185, 129, 0.1); border: 2px solid #10b981; color: #10b981; }
-                .status-icon-failed { background: rgba(244, 63, 94, 0.1); border: 2px solid #f43f5e; color: #f43f5e; animation: none; }
+                .status-icon-success { background: rgba(196,154,79, 0.1); border: 2px solid #c49a4f; color: #c49a4f; }
+                .status-icon-failed { background: rgba(232, 120, 104, 0.1); border: 2px solid #e87868; color: #e87868; animation: none; }
                 .order-status-title { font-size: 24px; font-weight: 800; text-align: center; margin-bottom: 8px; color: #ffffff; letter-spacing: -0.5px; }
-                .order-status-desc { font-size: 14px; color: #94a3b8; text-align: center; margin-bottom: 24px; line-height: 1.5; }
+                .order-status-desc { font-size: 14px; color: #bcaea4; text-align: center; margin-bottom: 24px; line-height: 1.5; }
                 .order-receipt-box { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 16px; padding: 20px; margin-bottom: 24px; font-size: 13px; }
-                .receipt-row { display: flex; justify-content: space-between; margin-bottom: 12px; color: #94a3b8; }
+                .receipt-row { display: flex; justify-content: space-between; margin-bottom: 12px; color: #bcaea4; }
                 .receipt-row.total { border-top: 1px dashed rgba(255, 255, 255, 0.1); padding-top: 12px; margin-bottom: 0; color: #ffffff; font-weight: 700; font-size: 15px; }
                 .receipt-divider { height: 1px; background: rgba(255, 255, 255, 0.06); margin: 16px 0; }
                 .status-buttons-group { display: flex; flex-direction: column; gap: 12px; }
                 .status-btn { width: 100%; padding: 14px; border-radius: 12px; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s ease; border: none; text-align: center; display: inline-block; text-decoration: none; }
-                .status-btn-primary { background: #10b981; color: #051a0e; }
-                .status-btn-primary:hover { background: #059669; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(16, 185, 129, 0.2); }
+                .status-btn-primary { background: #c49a4f; color: #2a0a10; }
+                .status-btn-primary:hover { background: #a8803a; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(196,154,79, 0.2); }
                 .status-btn-secondary { background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08); color: #ffffff; }
                 .status-btn-secondary:hover { background: rgba(255, 255, 255, 0.08); transform: translateY(-2px); }
-                .status-btn-danger { background: #f43f5e; color: #ffffff; }
-                .status-btn-danger:hover { background: #e11d48; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(244, 63, 94, 0.2); }
+                .status-btn-danger { background: #c49a4f; color: #2a0a10; }
+                .status-btn-danger:hover { background: #e2c27f; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(196, 154, 79, 0.25); }
             `;
             const styleEl = document.createElement('style');
             styleEl.id = 'order-status-styles';
@@ -1579,13 +1580,13 @@ window.addEventListener('load', function() {
         }
 
         overlay.innerHTML = `
-            <div class="order-status-card" style="border-color: rgba(244, 63, 94, 0.15)">
+            <div class="order-status-card" style="border-color: rgba(232, 120, 104, 0.18)">
                 <div class="status-icon-wrapper">
                     <div class="status-icon-circle status-icon-failed">
                         <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
                     </div>
                 </div>
-                <h2 class="order-status-title" style="color: #f43f5e">Payment Unsuccessful</h2>
+                <h2 class="order-status-title">Payment Unsuccessful</h2>
                 <p class="order-status-desc">We couldn't process your payment. Don't worry, your order is pending and your items are still saved safely in your cart.</p>
                 
                 <div class="order-receipt-box">
@@ -1684,7 +1685,7 @@ function renderReceiptDetails(overlay, order) {
         ${itemsHtml}
         <div class="receipt-row total">
             <span>Paid Amount</span>
-            <span style="color: #10b981;">₹${order.totalAmount.toFixed(0)}</span>
+            <span style="color: #c49a4f;">₹${order.totalAmount.toFixed(0)}</span>
         </div>
     `;
 

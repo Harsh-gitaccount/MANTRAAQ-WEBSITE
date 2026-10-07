@@ -17,7 +17,7 @@ const ProtectedRoute = ({ children }) => {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-900">
-        <div className="w-10 h-10 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+        <div className="w-10 h-10 border-4 border-gold-400 border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
   }
@@ -54,13 +54,13 @@ const AdminLayout = ({ children }) => {
             className="p-2 text-slate-600 hover:text-slate-950 rounded-lg hover:bg-slate-100"
             aria-label="Open sidebar"
           >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
               <line x1="3" y1="12" x2="21" y2="12"></line>
               <line x1="3" y1="6" x2="21" y2="6"></line>
               <line x1="3" y1="18" x2="21" y2="18"></line>
             </svg>
           </button>
-          <span className="font-bold text-slate-800">MantraAQ Admin</span>
+          <span className="font-display font-bold text-maroon-700">MantraAQ Admin</span>
           <div className="w-10"></div> {/* Spacer for alignment */}
         </header>
 

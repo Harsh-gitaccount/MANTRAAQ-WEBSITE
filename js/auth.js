@@ -9,7 +9,7 @@
     .auth-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(3, 10, 5, 0.65);
+      background: rgba(36,8,13, 0.65);
       backdrop-filter: blur(12px);
       z-index: 1200;
       opacity: 0;
@@ -27,7 +27,7 @@
 
     /* Modal Container */
     .auth-modal {
-      background: linear-gradient(135deg, #030a05 0%, #07170c 100%);
+      background: linear-gradient(135deg, #2a0a10 0%, #3a0a13 100%);
       width: 100%;
       max-width: 480px;
       border-radius: 20px;
@@ -38,8 +38,8 @@
       display: flex;
       flex-direction: column;
       max-height: 90vh;
-      border: 1px solid rgba(74, 222, 128, 0.15);
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      border: 1px solid rgba(226,194,127, 0.15);
+      font-family: 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
     }
     .auth-overlay.active .auth-modal {
       transform: scale(1);
@@ -48,7 +48,7 @@
     /* Header */
     .auth-hdr {
       padding: 20px 24px;
-      border-bottom: 1px solid rgba(74, 222, 128, 0.1);
+      border-bottom: 1px solid rgba(226,194,127, 0.1);
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -56,7 +56,7 @@
     .auth-hdr h2 {
       font-size: 18px;
       font-weight: 700;
-      color: #f0fdf4;
+      color: #f3ecdb;
       margin: 0;
       letter-spacing: -0.01em;
     }
@@ -70,7 +70,7 @@
       line-height: 1;
     }
     .auth-close-btn:hover {
-      color: #4ade80;
+      color: #e2c27f;
     }
 
     /* Body */
@@ -79,7 +79,7 @@
       overflow-y: auto;
       flex: 1;
       scrollbar-width: auto;
-      scrollbar-color: #10b981 rgba(255, 255, 255, 0.05);
+      scrollbar-color: #c49a4f rgba(255, 255, 255, 0.05);
     }
     .auth-body::-webkit-scrollbar {
       width: 10px;
@@ -90,18 +90,18 @@
       border-radius: 6px;
     }
     .auth-body::-webkit-scrollbar-thumb {
-      background: linear-gradient(to bottom, #4ade80, #10b981);
+      background: linear-gradient(to bottom, #e2c27f, #c49a4f);
       border-radius: 6px;
-      border: 2px solid #07170c;
+      border: 2px solid #3a0a13;
     }
     .auth-body::-webkit-scrollbar-thumb:hover {
-      background: linear-gradient(to bottom, #22c55e, #10b981);
+      background: linear-gradient(to bottom, #c49a4f, #c49a4f);
     }
 
     /* Tab switcher */
     .auth-tabs {
       display: flex;
-      border-bottom: 1px solid rgba(74, 222, 128, 0.1);
+      border-bottom: 1px solid rgba(226,194,127, 0.1);
       margin-bottom: 24px;
     }
     .auth-tab-btn {
@@ -111,15 +111,15 @@
       font-size: 14px;
       font-weight: 600;
       cursor: pointer;
-      color: rgba(255, 255, 255, 0.4);
+      color: rgba(243, 236, 219, 0.62);
       background: none;
       border: none;
       border-bottom: 2px solid transparent;
       transition: all 0.2s;
     }
     .auth-tab-btn.active {
-      color: #4ade80;
-      border-bottom-color: #4ade80;
+      color: #e2c27f;
+      border-bottom-color: #e2c27f;
     }
 
     /* Forms */
@@ -146,21 +146,21 @@
       justify-content: space-between;
     }
     .auth-form-grp input {
-      border: 1px solid rgba(74, 222, 128, 0.15);
+      border: 1px solid rgba(226,194,127, 0.15);
       border-radius: 8px;
       padding: 10px 14px;
       font-size: 14px;
-      color: #f0fdf4;
+      color: #f3ecdb;
       outline: none;
       transition: border-color 0.2s, background-color 0.2s;
       background: rgba(255, 255, 255, 0.04);
     }
     .auth-form-grp input:focus {
-      border-color: #4ade80;
+      border-color: #e2c27f;
       background: rgba(255, 255, 255, 0.08);
     }
     .auth-btn {
-      background: linear-gradient(90deg, #22c55e, #15803d);
+      background: linear-gradient(90deg, #c49a4f, #a8803a);
       border: none;
       color: #ffffff;
       padding: 12px;
@@ -168,7 +168,7 @@
       font-weight: 700;
       font-size: 14px;
       cursor: pointer;
-      box-shadow: 0 4px 12px rgba(34, 197, 94, 0.2);
+      box-shadow: 0 4px 12px rgba(196,154,79, 0.2);
       transition: all 0.3s;
       margin-top: 8px;
       display: flex;
@@ -177,7 +177,7 @@
       gap: 8px;
     }
     .auth-btn:hover {
-      box-shadow: 0 6px 16px rgba(34, 197, 94, 0.45);
+      box-shadow: 0 6px 16px rgba(196,154,79, 0.45);
       transform: translateY(-1px);
     }
     .auth-btn:disabled {
@@ -190,13 +190,13 @@
     /* Forgot Password link */
     .forgot-link {
       font-size: 12px;
-      color: #4ade80;
+      color: #e2c27f;
       text-decoration: none;
       font-weight: 600;
       cursor: pointer;
     }
     .forgot-link:hover {
-      color: #86efac;
+      color: #ecd7a6;
       text-decoration: underline;
     }
 
@@ -215,13 +215,13 @@
       background: linear-gradient(135deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.02));
       padding: 20px;
       border-radius: 16px;
-      border: 1px solid rgba(74, 222, 128, 0.15);
+      border: 1px solid rgba(226,194,127, 0.15);
       display: flex;
       align-items: center;
       gap: 16px;
     }
     .profile-avatar {
-      background: linear-gradient(135deg, #22c55e, #15803d);
+      background: linear-gradient(135deg, #c49a4f, #a8803a);
       color: #ffffff;
       width: 48px;
       height: 48px;
@@ -231,7 +231,7 @@
       justify-content: center;
       font-size: 20px;
       font-weight: 800;
-      box-shadow: 0 4px 10px rgba(34, 197, 94, 0.2);
+      box-shadow: 0 4px 10px rgba(196,154,79, 0.2);
       flex-shrink: 0;
     }
     .profile-meta {
@@ -244,7 +244,7 @@
     .profile-meta-name {
       font-size: 16px;
       font-weight: 700;
-      color: #f0fdf4;
+      color: #f3ecdb;
       margin: 0;
       white-space: nowrap;
       overflow: hidden;
@@ -263,7 +263,7 @@
     .orders-section h3 {
       font-size: 13px;
       font-weight: 700;
-      color: #f0fdf4;
+      color: #f3ecdb;
       margin: 0 0 12px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
@@ -275,14 +275,14 @@
       padding-right: 4px;
     }
     .profile-order-item {
-      border: 1px solid rgba(74, 222, 128, 0.08);
+      border: 1px solid rgba(226,194,127, 0.08);
       border-radius: 10px;
       background: rgba(255, 255, 255, 0.02);
       overflow: hidden;
       transition: all 0.3s ease;
     }
     .profile-order-item.expanded {
-      border-color: rgba(74, 222, 128, 0.25);
+      border-color: rgba(226,194,127, 0.25);
       background: rgba(255, 255, 255, 0.04);
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
     }
@@ -309,7 +309,7 @@
     .profile-order-id {
       font-family: monospace;
       font-weight: 700;
-      color: #f0fdf4;
+      color: #f3ecdb;
       font-size: 12.5px;
     }
     .profile-order-date {
@@ -332,7 +332,7 @@
     }
     .profile-order-total {
       font-weight: 700;
-      color: #f0fdf4;
+      color: #f3ecdb;
       font-size: 12.5px;
     }
     .profile-order-status-row {
@@ -349,8 +349,8 @@
       display: inline-block;
       letter-spacing: 0.2px;
     }
-    .profile-order-status-badge.pending { background: rgba(241, 245, 249, 0.15); color: #cbd5e1; border: 1px solid rgba(241, 245, 249, 0.2); }
-    .profile-order-status-badge.paid { background: rgba(209, 250, 229, 0.15); color: #34d399; border: 1px solid rgba(209, 250, 229, 0.2); }
+    .profile-order-status-badge.pending { background: rgba(241, 245, 249, 0.15); color: #d9cdb8; border: 1px solid rgba(241, 245, 249, 0.2); }
+    .profile-order-status-badge.paid { background: rgba(209, 250, 229, 0.15); color: #e2c27f; border: 1px solid rgba(209, 250, 229, 0.2); }
     .profile-order-status-badge.dispatched { background: rgba(219, 234, 254, 0.15); color: #60a5fa; border: 1px solid rgba(219, 234, 254, 0.2); }
     .profile-order-status-badge.delivered { background: rgba(243, 232, 255, 0.15); color: #c084fc; border: 1px solid rgba(243, 232, 255, 0.2); }
     .profile-order-status-badge.cancelled { background: rgba(254, 226, 226, 0.15); color: #f87171; border: 1px solid rgba(254, 226, 226, 0.2); }
@@ -362,7 +362,7 @@
     }
     .profile-order-item.expanded .profile-order-chevron {
       transform: rotate(180deg);
-      color: #4ade80;
+      color: #e2c27f;
     }
     
     .profile-order-details-inner {
@@ -382,7 +382,7 @@
       font-size: 11px;
       font-weight: 700;
       text-transform: uppercase;
-      color: #4ade80;
+      color: #e2c27f;
       margin: 0;
       letter-spacing: 0.5px;
     }
@@ -409,7 +409,7 @@
     }
     .order-item-price {
       font-weight: 600;
-      color: #f0fdf4;
+      color: #f3ecdb;
     }
     
     .order-details-section-grid {
@@ -465,7 +465,7 @@
       display: none;
     }
     .timeline-step.completed::before {
-      background: #22c55e;
+      background: #c49a4f;
     }
     .timeline-dot {
       position: absolute;
@@ -475,13 +475,13 @@
       height: 10px;
       border-radius: 99px;
       background: rgba(255, 255, 255, 0.2);
-      border: 2px solid #030a05;
+      border: 2px solid #2a0a10;
       z-index: 2;
       transition: all 0.3s;
     }
     .timeline-step.active .timeline-dot {
-      background: #22c55e;
-      box-shadow: 0 0 8px rgba(34, 197, 94, 0.6);
+      background: #c49a4f;
+      box-shadow: 0 0 8px rgba(196,154,79, 0.6);
     }
     .timeline-step.cancelled .timeline-dot {
       background: #ef4444;
@@ -498,7 +498,7 @@
       color: rgba(255, 255, 255, 0.4);
     }
     .timeline-step.active .timeline-title {
-      color: #f0fdf4;
+      color: #f3ecdb;
     }
     .timeline-step.cancelled .timeline-title {
       color: #fee2e2;
@@ -541,7 +541,7 @@
       flex: 1;
       background: rgba(255, 255, 255, 0.04);
       color: rgba(255, 255, 255, 0.8);
-      border: 1px solid rgba(74, 222, 128, 0.15);
+      border: 1px solid rgba(226,194,127, 0.15);
       padding: 10px 16px;
       border-radius: 8px;
       font-size: 13px;
@@ -554,7 +554,7 @@
     .profile-sub-btn:hover {
       background: rgba(255, 255, 255, 0.08);
       color: #ffffff;
-      border-color: #4ade80;
+      border-color: #e2c27f;
       transform: translateY(-0.5px);
     }
     .profile-logout-btn {
@@ -593,8 +593,8 @@
       display: flex;
     }
     .welcome-icon {
-      background: rgba(74, 222, 128, 0.08);
-      border: 1px solid rgba(74, 222, 128, 0.2);
+      background: rgba(226,194,127, 0.08);
+      border: 1px solid rgba(226,194,127, 0.2);
       border-radius: 99px;
       padding: 16px;
       display: inline-flex;
@@ -607,7 +607,7 @@
     .welcome-title {
       font-size: 20px;
       font-weight: 800;
-      color: #f0fdf4;
+      color: #f3ecdb;
       margin: 0;
     }
     .welcome-desc {
@@ -617,8 +617,8 @@
       margin: 0;
     }
     .welcome-coupon-card {
-      background: linear-gradient(135deg, rgba(74, 222, 128, 0.08), rgba(21, 128, 61, 0.12));
-      border: 1px dashed rgba(74, 222, 128, 0.35);
+      background: linear-gradient(135deg, rgba(226,194,127, 0.08), rgba(168,128,58, 0.12));
+      border: 1px dashed rgba(226,194,127, 0.35);
       border-radius: 12px;
       padding: 16px;
       width: 100%;
@@ -631,12 +631,12 @@
     .coupon-tag {
       font-size: 10px;
       font-weight: 800;
-      color: #86efac;
+      color: #ecd7a6;
       letter-spacing: 1px;
     }
     .coupon-code-box {
       background: rgba(0, 0, 0, 0.25);
-      border: 1px solid rgba(74, 222, 128, 0.2);
+      border: 1px solid rgba(226,194,127, 0.2);
       border-radius: 8px;
       padding: 8px 16px;
       cursor: pointer;
@@ -647,20 +647,20 @@
       transition: all 0.2s;
     }
     .coupon-code-box:hover {
-      border-color: #4ade80;
+      border-color: #e2c27f;
       background: rgba(0, 0, 0, 0.4);
-      box-shadow: 0 4px 12px rgba(74, 222, 128, 0.1);
+      box-shadow: 0 4px 12px rgba(226,194,127, 0.1);
       transform: translateY(-1px);
     }
     .coupon-code {
       font-family: monospace;
       font-size: 16px;
       font-weight: 800;
-      color: #4ade80;
+      color: #e2c27f;
     }
     .coupon-copy-hint {
       font-size: 11px;
-      color: #86efac;
+      color: #ecd7a6;
       font-weight: 600;
     }
     .coupon-details {
@@ -678,9 +678,9 @@
       right: 4px;
       width: 8px;
       height: 8px;
-      background: #4ade80;
+      background: #e2c27f;
       border-radius: 99px;
-      border: 2px solid #030a05;
+      border: 2px solid #2a0a10;
     }
     .nav-account {
       position: relative;
@@ -703,9 +703,9 @@
       animation: alertSlideDown 0.3s ease-out;
     }
     .auth-error-alert.success-alert {
-      background: rgba(74, 222, 128, 0.08);
-      border-color: rgba(74, 222, 128, 0.2);
-      color: #4ade80;
+      background: rgba(226,194,127, 0.08);
+      border-color: rgba(226,194,127, 0.2);
+      color: #e2c27f;
     }
     @keyframes alertSlideDown {
       from { opacity: 0; transform: translateY(-8px); }
@@ -738,7 +738,7 @@
       z-index: 5;
     }
     .password-toggle-btn:hover {
-      color: #4ade80;
+      color: #e2c27f;
     }
   `;
   const styleEl = document.createElement('style');
@@ -913,7 +913,7 @@ const CustomerAuth = {
 
             <!-- FORGOT PASSWORD FORM -->
             <form id="customerForgotForm" class="auth-form" onsubmit="CustomerAuth.handleForgotSubmit(event)">
-              <p style="font-size: 13px; color: #64748b; line-height: 1.5; margin: 0 0 8px 0;">
+              <p style="font-size: 13px; color: #9a8a84; line-height: 1.5; margin: 0 0 8px 0;">
                 Enter your email address below and we will send you a password reset link.
               </p>
               <div class="auth-form-grp">
@@ -929,7 +929,7 @@ const CustomerAuth = {
             <!-- CELEBRATORY WELCOME PANEL -->
             <div id="customerWelcomePanel" class="welcome-panel">
               <div class="welcome-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#c49a4f" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
                   <polyline points="22 4 12 14.01 9 11.01"></polyline>
                 </svg>
@@ -1200,10 +1200,10 @@ const CustomerAuth = {
       const hint = document.getElementById('couponCopyHint');
       if (hint) {
         hint.textContent = 'Copied! 👍';
-        hint.style.color = '#047857';
+        hint.style.color = '#8a6a2e';
         setTimeout(() => {
           hint.textContent = 'Copy Code';
-          hint.style.color = '#10b981';
+          hint.style.color = '#c49a4f';
         }, 2000);
       }
     }).catch(err => {
@@ -1245,7 +1245,7 @@ const CustomerAuth = {
     const ordersList = document.getElementById('profileOrdersList');
     if (!ordersList) return;
 
-    ordersList.innerHTML = `<p style="font-size:12px; color:#94a3b8; text-align:center;">Loading orders...</p>`;
+    ordersList.innerHTML = `<p style="font-size:12px; color:#bcaea4; text-align:center;">Loading orders...</p>`;
 
     const formatDateTime = (dateString) => {
       if (!dateString) return '';
@@ -1264,14 +1264,14 @@ const CustomerAuth = {
       const orders = await window.MantraaqAPI.getMyOrders();
       if (!orders || orders.length === 0) {
         ordersList.innerHTML = `
-          <div style="text-align: center; padding: 24px 10px; color: #94a3b8; display: flex; flex-direction: column; align-items: center; gap: 8px;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <div style="text-align: center; padding: 24px 10px; color: #bcaea4; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#d9cdb8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
               <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
               <line x1="3" y1="6" x2="21" y2="6"></line>
               <path d="M16 10a4 4 0 0 1-8 0"></path>
             </svg>
-            <span style="font-size: 13px; font-weight: 600; color: #64748b;">No orders placed yet</span>
-            <span style="font-size: 11.5px; color: #94a3b8; max-width: 220px; line-height: 1.4;">When you place orders, your order history will appear here.</span>
+            <span style="font-size: 13px; font-weight: 600; color: #9a8a84;">No orders placed yet</span>
+            <span style="font-size: 11.5px; color: #bcaea4; max-width: 220px; line-height: 1.4;">When you place orders, your order history will appear here.</span>
           </div>
         `;
         return;
@@ -1288,12 +1288,12 @@ const CustomerAuth = {
         if (canCancel) {
           cancelBtn = `<button class="order-cancel-btn" onclick="event.stopPropagation(); CustomerAuth.cancelCustomerOrder('${order.id}')">Cancel Order</button>`;
         } else if (order.status === 'DISPATCHED' || order.status === 'DELIVERED') {
-          cancelBtn = `<div style="text-align: center; margin-top: 16px; font-size: 11.5px; color: #64748b; font-style: italic; border-top: 1px dashed rgba(255,255,255,0.06); padding-top: 12px; width: 100%;">
-             Need to cancel or return? Contact support at <a href="mailto:hello@mantraaq.com" style="color: #4ade80; text-decoration: none; font-weight: 500;">hello@mantraaq.com</a>
+          cancelBtn = `<div style="text-align: center; margin-top: 16px; font-size: 11.5px; color: #9a8a84; font-style: italic; border-top: 1px dashed rgba(255,255,255,0.06); padding-top: 12px; width: 100%;">
+             Need to cancel or return? Contact support at <a href="mailto:hello@mantraaq.com" style="color: #e2c27f; text-decoration: none; font-weight: 500;">hello@mantraaq.com</a>
            </div>`;
         } else if ((order.status === 'CANCELLED' || order.status === 'REFUNDED') && !isCod) {
-          cancelBtn = `<div style="text-align: center; margin-top: 16px; font-size: 11.5px; color: #64748b; font-style: italic; border-top: 1px dashed rgba(255,255,255,0.06); padding-top: 12px; width: 100%;">
-             Online refund initiated. For support, email <a href="mailto:hello@mantraaq.com" style="color: #4ade80; text-decoration: none; font-weight: 500;">hello@mantraaq.com</a>
+          cancelBtn = `<div style="text-align: center; margin-top: 16px; font-size: 11.5px; color: #9a8a84; font-style: italic; border-top: 1px dashed rgba(255,255,255,0.06); padding-top: 12px; width: 100%;">
+             Online refund initiated. For support, email <a href="mailto:hello@mantraaq.com" style="color: #e2c27f; text-decoration: none; font-weight: 500;">hello@mantraaq.com</a>
            </div>`;
         }
 
@@ -1369,7 +1369,7 @@ const CustomerAuth = {
               : 'Shipped';
             dispatchedSubtitle = dispDateText;
             if (order.trackingNumber) {
-              dispatchedSubtitle += `<br><span style="font-size: 11px; color: #94a3b8;">${order.trackingCarrier || 'Courier'}: ${order.trackingNumber}</span>`;
+              dispatchedSubtitle += `<br><span style="font-size: 11px; color: #bcaea4;">${order.trackingCarrier || 'Courier'}: ${order.trackingNumber}</span>`;
             }
           }
           

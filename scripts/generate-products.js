@@ -1,447 +1,429 @@
 /**
- * MantraAQ Static Product Page Generator
- * 
- * Fetches all active products from the backend API at build time
- * and generates individual static HTML pages for SEO crawlability.
- * 
- * Also regenerates sitemap.xml with product URLs.
- * 
+ * MantraAQ static page generator
+ *
+ * Fetches all active products from the backend API at build time and writes:
+ *   - products/<handle>.html   one crawlable product page per product
+ *   - index.html               pre-rendered product cards, bestseller rail and ItemList schema
+ *   - sitemap.xml, llms.txt    for search engines and AI assistants
+ *   - scripts/catalog-snapshot.json, the fallback used when the API is unreachable
+ *
  * Run: node scripts/generate-products.js
+ *      node scripts/generate-products.js --snapshot   (offline: build from the snapshot file)
+ *      MANTRAAQ_API_URL=http://localhost:5000/api node scripts/generate-products.js
  */
 
 const fs = require('fs');
 const path = require('path');
+const Card = require('../js/product-card.js');
+const partials = require('./partials');
+const { factsFor } = require('./product-facts');
 
 const SITE_URL = 'https://mantraaq.com';
-const API_URL = 'https://mantraaq-backend.onrender.com/api';
-const OUTPUT_DIR = path.join(__dirname, '..', 'products');
+const API_URL = process.env.MANTRAAQ_API_URL || 'https://mantraaq-backend.onrender.com/api';
+const ROOT = path.join(__dirname, '..');
+const OUTPUT_DIR = path.join(ROOT, 'products');
+const SNAPSHOT_PATH = path.join(__dirname, 'catalog-snapshot.json');
+const SNAPSHOT_FIELDS = ['handle', 'name', 'category', 'description', 'tags', 'images', 'sortOrder', 'isActive'];
+const VARIANT_FIELDS = ['id', 'title', 'price', 'compareAtPrice', 'sku', 'stockQuantity'];
 
-// Fallback images for products when database images array is empty
+// Local photos used when a product has no images in the database
 const LOCAL_IMAGE_FALLBACK = {
-  'singhara-pasta-macaroni': ['assets/images/products/pasta-macaroni-1.png'],
-  'singhara-vermicell':     ['assets/images/products/vermicelli-1.png'],
-  'singhara-atta':           ['assets/images/products/atta-1.png'],
-  'fresh-singhara':          ['assets/images/products/fresh-singhara-1.png'],
-  'dry-singhara':            ['assets/images/products/dry-singhara-1.png'],
-  'singhara-snacks':         ['assets/images/products/singhara-snacks-1.png'],
+  'singhara-pasta-macaroni': ['/assets/images/web/pasta-800.webp'],
+  'singhara-pasta':          ['/assets/images/web/pasta-800.webp'],
+  'singhara-vermicell':      ['/assets/images/web/vermicelli-800.webp'],
+  'singhara-atta':           ['/assets/images/web/atta-800.webp'],
+  'fresh-singhara':          ['/assets/images/web/fresh-singhara-800.webp'],
+  'dry-singhara':            ['/assets/images/web/dry-singhara-800.webp'],
+  'singhara-snacks':         ['/assets/images/web/snacks-800.webp'],
 };
 
-/**
- * Resolve an image URL to an absolute URL
- */
-function resolveImageUrl(url) {
-  if (!url) return `${SITE_URL}/assets/images/placeholder.png`;
-  if (url.startsWith('http://') || url.startsWith('https://')) return url;
+const esc = Card.escapeHtml;
+
+/** URL as used inside the page (root-relative for local files). */
+function pageImageUrl(url) {
+  if (!url) return '/assets/images/web/atta-800.webp';
+  if (/^https?:\/\//.test(url)) return url;
   if (url.startsWith('uploads/')) return `https://mantraaq-backend.onrender.com/${url}`;
-  return url.startsWith('/') ? `${SITE_URL}${url}` : `${SITE_URL}/${url}`;
+  return url.startsWith('/') ? url : `/${url}`;
 }
 
-/**
- * Escape HTML special characters
- */
-function escapeHtml(str) {
-  if (!str) return '';
-  return str
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
+/** Absolute URL for schema and social tags. */
+function absoluteImageUrl(url) {
+  const u = pageImageUrl(url);
+  return u.startsWith('/') ? `${SITE_URL}${u}` : u;
 }
 
-/**
- * Truncate description for meta tag (max ~160 chars)
- */
-function metaDescription(desc) {
-  if (!desc) return 'Premium quality product from MantraAQ. Gluten-free, QR-traceable superfood sourced directly from Bihar farmers.';
-  const clean = desc.replace(/\s+/g, ' ').trim();
-  if (clean.length <= 160) return clean;
-  return clean.substring(0, 157) + '...';
+function productImages(product) {
+  const imgs = product.images && product.images.length ? product.images : (LOCAL_IMAGE_FALLBACK[product.handle] || []);
+  return imgs.map(pageImageUrl);
 }
 
-/**
- * Build Product + Offer JSON-LD structured data
- */
+function metaDescription(product) {
+  const facts = factsFor(product.handle);
+  const lead = Card.tagline(product.description);
+  const body = String(product.description || '').replace(/\s+/g, ' ').trim();
+  let text = body || `${product.name} from MantraAQ, singhara foods from the wetlands of Bihar.`;
+  if (facts && facts.claims) text = `${lead} ${facts.claims.slice(0, 3).join(', ')}. ${body.slice(lead.length).trim()}`.trim();
+  return text.length <= 158 ? text : text.slice(0, 155).replace(/\s+\S*$/, '') + '…';
+}
+
+function paragraphs(text) {
+  return String(text || '').split(/\n\s*\n/).map(p => p.trim()).filter(Boolean);
+}
+
+// ── Structured data ────────────────────────────────────────────────
+
 function buildProductSchema(product, productUrl) {
-  const defaultVariant = product.variants[0];
-  const fallback = LOCAL_IMAGE_FALLBACK[product.handle] || ['assets/images/placeholder.png'];
-  const images = product.images && product.images.length > 0 ? product.images : fallback;
-  const resolvedImages = images.map(img => resolveImageUrl(img));
-  const inStock = product.variants.some(v => v.stockQuantity > 0);
-  const lowestPrice = Math.min(...product.variants.map(v => v.price));
-  const highestPrice = Math.max(...product.variants.map(v => v.price));
-
+  const facts = factsFor(product.handle);
+  const images = productImages(product).map(absoluteImageUrl);
+  if (facts && facts.pack) images.push(`${SITE_URL}${facts.pack}-1000.webp`);
   const schema = {
-    "@context": "https://schema.org",
-    "@type": "Product",
-    "name": product.name,
-    "description": product.description || `Premium quality ${product.name} from MantraAQ.`,
-    "image": resolvedImages,
-    "sku": defaultVariant.sku || product.handle,
-    "brand": {
-      "@type": "Brand",
-      "name": "MantraAQ"
-    },
-    "url": productUrl,
-    "category": product.category || "Food & Beverages",
-    "offers": {
-      "@type": "AggregateOffer",
-      "priceCurrency": "INR",
-      "lowPrice": lowestPrice,
-      "highPrice": highestPrice,
-      "offerCount": product.variants.length,
-      "availability": inStock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
-      "url": productUrl,
-      "seller": {
-        "@type": "Organization",
-        "name": "MantraAQ Industries Private Limited"
-      }
-    }
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.name,
+    description: paragraphs(product.description).join(' ') || `${product.name} from MantraAQ.`,
+    image: images,
+    sku: (product.variants[0] && product.variants[0].sku) || product.handle,
+    brand: { '@type': 'Brand', name: 'MantraAQ' },
+    url: productUrl,
+    category: product.category || 'Food',
+    countryOfOrigin: { '@type': 'Country', name: 'India' },
+    offers: product.variants.map(v => ({
+      '@type': 'Offer',
+      name: `${product.name} ${v.title}`,
+      sku: v.sku || `${product.handle}-${v.title}`.toLowerCase().replace(/\s+/g, '-'),
+      price: Number(v.price),
+      priceCurrency: 'INR',
+      priceValidUntil: `${new Date().getFullYear() + 1}-12-31`,
+      itemCondition: 'https://schema.org/NewCondition',
+      availability: Card.isComingSoon(product) ? 'https://schema.org/PreOrder'
+        : (v.stockQuantity > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock'),
+      url: productUrl,
+      seller: { '@type': 'Organization', name: 'MantraAQ Industries Private Limited' }
+    }))
   };
-
-  // Add aggregate rating if available
-  if (product.avgRating && product.reviewCount) {
-    schema.aggregateRating = {
-      "@type": "AggregateRating",
-      "ratingValue": product.avgRating,
-      "reviewCount": product.reviewCount
-    };
+  if (facts) {
+    const props = [];
+    if (facts.ingredients) props.push({ '@type': 'PropertyValue', name: 'Ingredients', value: facts.ingredients.join(', ') });
+    if (facts.claims) props.push(...facts.claims.map(c => ({ '@type': 'PropertyValue', name: 'Dietary claim', value: c })));
+    if (facts.nutrition) {
+      const col = facts.nutrition.columns[0];
+      props.push(...facts.nutrition.rows.map(r => ({ '@type': 'PropertyValue', name: `${r[0]} (${col.toLowerCase()})`, value: r[1] })));
+    }
+    if (props.length) schema.additionalProperty = props;
+    if (facts.maker) schema.manufacturer = { '@type': 'Organization', name: facts.maker.name, address: facts.maker.address };
   }
-
+  if (product.avgRating && product.reviewCount) {
+    schema.aggregateRating = { '@type': 'AggregateRating', ratingValue: product.avgRating, reviewCount: product.reviewCount };
+  }
   return schema;
 }
 
-/**
- * Build BreadcrumbList JSON-LD
- */
 function buildBreadcrumbSchema(product, productUrl) {
   return {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-      {
-        "@type": "ListItem",
-        "position": 1,
-        "name": "Home",
-        "item": SITE_URL
-      },
-      {
-        "@type": "ListItem",
-        "position": 2,
-        "name": "Products",
-        "item": `${SITE_URL}/#products`
-      },
-      {
-        "@type": "ListItem",
-        "position": 3,
-        "name": product.name,
-        "item": productUrl
-      }
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_URL}/` },
+      { '@type': 'ListItem', position: 2, name: 'Shop', item: `${SITE_URL}/#products` },
+      { '@type': 'ListItem', position: 3, name: product.name, item: productUrl }
     ]
   };
 }
 
-/**
- * Generate a full HTML page for a product
- */
+/** Questions shown on the page and in FAQPage schema. */
+function productFaqs(product) {
+  const facts = factsFor(product.handle);
+  const faqs = facts && facts.faqs ? facts.faqs.slice() : [];
+  faqs.push(
+    ['How long does delivery take?', 'Orders are packed and dispatched within 1 to 2 business days. Delivery takes 3 to 7 business days to metro cities and 4 to 10 business days to most other cities. Shipping is free on orders above ₹499.'],
+    ['What if my order arrives damaged?', 'Write to us within 48 hours of delivery with your order ID and photos, and we will replace or refund damaged, wrong or spoiled products.']
+  );
+  return faqs;
+}
+
+function buildFaqSchema(faqs) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } }))
+  };
+}
+
+function ldJson(obj) {
+  // Escape "<" so text from the admin can't close the script tag
+  return `<script type="application/ld+json">\n${JSON.stringify(obj, null, 2).replace(/</g, '\\u003c')}\n    </script>`;
+}
+
+// ── Product page ───────────────────────────────────────────────────
+
+const CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>';
+const TRUCK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M1 4h14v12H1zM15 9h4l3 3v4h-7"/><circle cx="5.5" cy="18.5" r="2"/><circle cx="18.5" cy="18.5" r="2"/></svg>';
+
+function railSection({ id, eyebrow, title, exclude, cards }) {
+  return `<section class="section" aria-labelledby="${id}" data-rail-section${cards ? '' : ' hidden'}>
+  <div class="wrap" data-rail data-autoplay="5000">
+    <div class="section-head">
+      <div data-reveal>
+        <span class="eyebrow">${eyebrow}</span>
+        <h2 id="${id}" class="display-l">${title}</h2>
+      </div>
+      <div class="rail-controls" data-reveal style="--d:.1s">
+        <button class="rail-btn" type="button" data-rail-prev aria-label="Previous products"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button>
+        <button class="rail-btn" type="button" data-rail-next aria-label="Next products"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+      </div>
+    </div>
+    <div class="rail" data-product-rail data-limit="8"${exclude ? ` data-exclude="${esc(exclude)}"` : ''} aria-live="polite">
+${cards}
+    </div>
+    <div class="rail-progress" aria-hidden="true"><i></i></div>
+  </div>
+</section>`;
+}
+
+/** Cards for a rail: in stock, not coming soon, minus the excluded handle. */
+function railCards(products, exclude) {
+  return products
+    .filter(p => p.handle !== exclude && !Card.isComingSoon(p) && Card.isInStock(p))
+    .slice(0, 8)
+    .map((p, i) => Card.render(p, { index: i, resolveImage: pageImageUrl, fallbackImages: LOCAL_IMAGE_FALLBACK[p.handle] }))
+    .join('\n');
+}
+
+function nutritionTable(n) {
+  return `<table class="nutri">
+              <thead><tr><th scope="col">Nutrient</th>${n.columns.map(c => `<th scope="col">${esc(c)}</th>`).join('')}</tr></thead>
+              <tbody>${n.rows.map(r => `<tr${/^of which/.test(r[0]) ? ' class="sub"' : ''}><th scope="row">${esc(r[0])}</th>${r.slice(1).map(c => `<td>${esc(c)}</td>`).join('')}</tr>`).join('')}</tbody>
+            </table>${n.note ? `\n            <p class="nutri-note">${esc(n.note)}</p>` : ''}`;
+}
+
+function packSection(product, facts) {
+  if (!facts || !facts.pack) return '';
+  return `<section class="section pack" aria-labelledby="pack-h">
+  <div class="wrap pack-grid">
+    <div class="pack-visual" data-reveal>
+      <img src="${facts.pack}-1000.webp" srcset="${facts.pack}-600.webp 600w, ${facts.pack}-1000.webp 1000w" sizes="(max-width: 900px) 80vw, 440px" alt="${esc(facts.packName)} pack front" width="1000" height="1000" loading="lazy" decoding="async">
+      <span class="pack-net">${esc(facts.netWeight)}</span>
+    </div>
+    <div class="pack-facts" data-reveal style="--d:.1s">
+      <span class="eyebrow">On the pack</span>
+      <h2 id="pack-h" class="display-l">What's inside, <em class="serif-italic">nothing hidden.</em></h2>
+      <ul class="pack-claims">${(facts.claims || []).map(c => `<li>${CHECK}${esc(c)}</li>`).join('')}</ul>
+      <h3 class="pack-sub">Ingredients</h3>
+      <p class="pack-ingredients">${facts.ingredients.map(esc).join(' · ')}</p>
+      ${facts.ingredientsNote ? `<p class="pack-note">${esc(facts.ingredientsNote)}</p>` : ''}
+      ${facts.nutrition ? `<h3 class="pack-sub">Nutrition information</h3>\n            ${nutritionTable(facts.nutrition)}` : ''}
+    </div>
+  </div>
+</section>`;
+}
+
 function generateProductHTML(product, allProducts) {
   const productUrl = `${SITE_URL}/products/${product.handle}`;
-  const defaultVariant = product.variants.find(v => v.stockQuantity > 0) || product.variants[0];
-  const fallback = LOCAL_IMAGE_FALLBACK[product.handle] || ['assets/images/placeholder.png'];
-  const images = product.images && product.images.length > 0 ? product.images : fallback;
-  const resolvedImages = images.map(img => resolveImageUrl(img));
-  const firstImage = resolvedImages[0] || `${SITE_URL}/assets/images/og-image.jpg`;
-  const inStock = product.variants.some(v => v.stockQuantity > 0);
-  const lowestPrice = Math.min(...product.variants.map(v => v.price));
+  const facts = factsFor(product.handle);
+  const images = productImages(product);
+  const ogImage = facts && facts.pack ? `${SITE_URL}${facts.pack}-1000.webp` : absoluteImageUrl(images[0]);
+  const dv = Card.defaultVariant(product);
+  const inStock = Card.isInStock(product);
+  const soon = Card.isComingSoon(product);
+  const lowestPrice = Math.min(...product.variants.map(v => Number(v.price)));
+  const tint = Card.tintFor(product, 0);
+  const name = esc(product.name);
+  const desc = metaDescription(product);
+  const faqs = productFaqs(product);
+  const off = Card.discountPct(dv.price, dv.compareAtPrice);
+  const highlights = (facts && facts.claims) || Card.featureTags(product).slice(0, 4);
+  const badge = Card.badgeFor(product);
 
-  const productSchema = buildProductSchema(product, productUrl);
-  const breadcrumbSchema = buildBreadcrumbSchema(product, productUrl);
+  const gallery = images.map((src, i) =>
+    `<figure><img src="${esc(src)}" alt="${name}${i ? ` - image ${i + 1}` : ''}" width="900" height="900" ${i === 0 ? 'fetchpriority="high"' : 'loading="lazy"'} decoding="async"></figure>`
+  ).join('\n          ');
+  const thumbs = images.length > 1 ? images.map((src, i) =>
+    `<button type="button" class="pdp-thumb${i === 0 ? ' is-active' : ''}" data-index="${i}" aria-label="Show image ${i + 1}"><img src="${esc(src)}" alt="" width="76" height="76" loading="lazy"></button>`
+  ).join('\n          ') : '';
 
-  // Build variant rows for the price table
-  const variantRows = product.variants.map(v => {
-    const priceHtml = v.compareAtPrice && v.compareAtPrice > v.price
-      ? `₹${v.price} <span style="text-decoration:line-through;color:#94a3b8;font-size:13px;">₹${v.compareAtPrice}</span>`
-      : `₹${v.price}`;
-    const stockLabel = v.stockQuantity > 0 ? `<span style="color:#16a34a;">In Stock</span>` : `<span style="color:#ef4444;">Out of Stock</span>`;
-    return `<tr><td style="padding:10px 16px;border-bottom:1px solid #e2e8f0;">${escapeHtml(v.title)}</td><td style="padding:10px 16px;border-bottom:1px solid #e2e8f0;">${priceHtml}</td><td style="padding:10px 16px;border-bottom:1px solid #e2e8f0;">${stockLabel}</td></tr>`;
-  }).join('');
+  const sizes = product.variants.map(v => {
+    const out = !(v.stockQuantity > 0);
+    const vOff = Card.discountPct(v.price, v.compareAtPrice);
+    return `<button type="button" class="pdp-size${v.id === dv.id ? ' is-active' : ''}${out ? ' is-out' : ''}" data-variant-id="${esc(v.id)}" aria-pressed="${v.id === dv.id}"${out ? ' disabled' : ''}><b>${esc(v.title)}</b><span>${Card.rupees(v.price)}</span>${vOff ? `<em>-${vOff}%</em>` : ''}</button>`;
+  }).join('\n            ');
 
-  // Build related products links
-  const relatedProducts = allProducts
-    .filter(p => p.handle !== product.handle && p.isActive !== false)
-    .slice(0, 4)
-    .map(p => `<a href="/products/${p.handle}" style="display:block;padding:12px 16px;background:#f8fafc;border-radius:8px;text-decoration:none;color:#1e293b;font-weight:500;transition:background 0.2s;" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f8fafc'">${escapeHtml(p.name)} — from ₹${Math.min(...p.variants.map(v => v.price))}</a>`)
-    .join('');
+  const stockText = soon ? 'Coming soon' : (inStock ? 'In stock, ships in 1 to 2 business days' : 'Sold out right now');
+  const buyButtons = soon
+    ? `<a href="/#newsletter" class="btn btn--block" data-pdp-notify>Notify me when it launches</a>`
+    : `<div class="qty" aria-label="Quantity">
+              <button type="button" data-qty="-1" aria-label="Decrease quantity">−</button>
+              <input type="number" value="1" min="1" max="20" inputmode="numeric" aria-label="Quantity" data-qty-input>
+              <button type="button" data-qty="1" aria-label="Increase quantity">+</button>
+            </div>
+            <button type="button" class="btn" data-pdp-add${inStock ? '' : ' disabled'}>${Card.BAG}<span>${inStock ? 'Add to cart' : 'Sold out'}</span></button>
+            <button type="button" class="btn btn--ghost" data-pdp-buy${inStock ? '' : ' disabled'}>Buy now</button>`;
 
-  // Build tags HTML
-  const tagsHtml = (product.tags || [])
-    .filter(t => !['bestseller', 'new-launch', 'seasonal', 'coming-soon'].includes(t.toLowerCase().replace(/\s+/g, '-')))
-    .slice(0, 6)
-    .map(t => `<span style="display:inline-block;padding:4px 12px;background:#f0fdf4;color:#166534;border-radius:20px;font-size:13px;font-weight:500;">${escapeHtml(t)}</span>`)
-    .join(' ');
+  const accordions = [];
+  accordions.push(['Description', `<div class="acc-body">${esc(paragraphs(product.description).join('\n\n'))}</div>`, true]);
+  if (facts && facts.howToUse) accordions.push(['How to use', `<div class="acc-body"><ol>${facts.howToUse.map(s => `<li>${esc(s)}</li>`).join('')}</ol></div>`]);
+  if (facts && facts.storage) accordions.push(['Storage', `<div class="acc-body">${esc(facts.storage)}</div>`]);
+  accordions.push(['Shipping & replacements', `<div class="acc-body">Packed and dispatched within 1 to 2 business days. Delivery takes 3 to 7 business days to metro cities and 4 to 10 business days elsewhere. Shipping is free on orders above ₹499, otherwise ₹49.\n\nIf anything arrives damaged, wrong or spoiled, tell us within 48 hours and we will replace or refund it. <a href="/shipping-policy">Shipping policy</a> · <a href="/refund-policy">Refund policy</a></div>`]);
+  if (facts && facts.maker) {
+    const m = facts.maker;
+    accordions.push(['Manufacturer & FSSAI', `<div class="acc-body">${esc(m.role)} ${esc(m.name)}, ${esc(m.address)}.\nFSSAI Lic. No. ${esc(m.fssai)}\nCountry of origin: India</div>`]);
+  }
 
-  // Build image gallery HTML (first image visible, rest hidden for SEO but present)
-  const galleryHtml = resolvedImages.map((img, idx) =>
-    `<img src="${escapeHtml(img)}" alt="${escapeHtml(product.name)}${idx > 0 ? ` - Image ${idx + 1}` : ''}" width="500" height="500" style="max-width:100%;height:auto;border-radius:12px;${idx > 0 ? 'margin-top:12px;' : ''}" loading="${idx === 0 ? 'eager' : 'lazy'}">`
-  ).join('\n            ');
+  const pdpData = {
+    handle: product.handle,
+    name: product.name,
+    tags: product.tags || [],
+    images,
+    variants: product.variants.map(v => ({ id: v.id, title: v.title, price: Number(v.price), compareAtPrice: v.compareAtPrice ? Number(v.compareAtPrice) : null, inStock: v.stockQuantity > 0 }))
+  };
 
   return `<!DOCTYPE html>
-<html lang="en">
+<html lang="en-IN">
 <head>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2EGQB9RZHD"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-2EGQB9RZHD');
-    </script>
-
-    <!-- Product Structured Data -->
-    <script type="application/ld+json">
-    ${JSON.stringify(productSchema, null, 2)}
-    </script>
-    <script type="application/ld+json">
-    ${JSON.stringify(breadcrumbSchema, null, 2)}
-    </script>
-
-    <!-- Basic Meta Tags -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+${partials.gtag()}
 
-    <!-- Primary SEO Meta Tags -->
-    <title>${escapeHtml(product.name)} | MantraAQ — Premium Singhara Products</title>
-    <meta name="description" content="${escapeHtml(metaDescription(product.description))}">
-    <meta name="keywords" content="MantraAQ, ${escapeHtml(product.name)}, singhara, water chestnut, gluten-free, ${(product.tags || []).slice(0, 5).join(', ')}">
-    <meta name="author" content="MantraAQ">
+    <title>${name} | Gluten-free singhara food | MantraAQ</title>
+    <meta name="description" content="${esc(desc)}">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <link rel="canonical" href="${productUrl}">
 
-    <!-- Open Graph / Facebook -->
     <meta property="og:type" content="product">
     <meta property="og:url" content="${productUrl}">
-    <meta property="og:title" content="${escapeHtml(product.name)} | MantraAQ">
-    <meta property="og:description" content="${escapeHtml(metaDescription(product.description))}">
-    <meta property="og:image" content="${escapeHtml(firstImage)}">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
+    <meta property="og:title" content="${name} | MantraAQ">
+    <meta property="og:description" content="${esc(desc)}">
+    <meta property="og:image" content="${esc(ogImage)}">
     <meta property="og:site_name" content="MantraAQ">
     <meta property="og:locale" content="en_IN">
     <meta property="product:price:amount" content="${lowestPrice}">
     <meta property="product:price:currency" content="INR">
     <meta property="product:availability" content="${inStock ? 'in stock' : 'out of stock'}">
-
-    <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:url" content="${productUrl}">
-    <meta name="twitter:title" content="${escapeHtml(product.name)} | MantraAQ">
-    <meta name="twitter:description" content="${escapeHtml(metaDescription(product.description))}">
-    <meta name="twitter:image" content="${escapeHtml(firstImage)}">
+    <meta name="twitter:title" content="${name} | MantraAQ">
+    <meta name="twitter:description" content="${esc(desc)}">
+    <meta name="twitter:image" content="${esc(ogImage)}">
 
-    <!-- Canonical URL -->
-    <link rel="canonical" href="${productUrl}">
+${partials.headAssets()}
+    <link rel="preload" as="image" href="${esc(images[0])}">
 
-    <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="/assets/images/logo.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/logo.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/logo.png">
-
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-    <!-- Stylesheets -->
-    <link href="/dist/output.css" rel="stylesheet">
-    <link rel="stylesheet" href="/styles.css">
-
-    <style>
-      .pdp-wrap { max-width: 900px; margin: 100px auto 60px; padding: 0 20px; font-family: 'Inter', system-ui, sans-serif; }
-      .pdp-breadcrumb { font-size: 13px; color: #64748b; margin-bottom: 24px; }
-      .pdp-breadcrumb a { color: #3b82f6; text-decoration: none; }
-      .pdp-breadcrumb a:hover { text-decoration: underline; }
-      .pdp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
-      .pdp-images { display: flex; flex-direction: column; }
-      .pdp-info h1 { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 700; color: #0f172a; margin: 0 0 12px; line-height: 1.2; }
-      .pdp-price { font-size: 1.5rem; font-weight: 700; color: #0f172a; margin-bottom: 16px; }
-      .pdp-desc { color: #475569; line-height: 1.7; margin-bottom: 20px; font-size: 15px; }
-      .pdp-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
-      .pdp-table { width: 100%; border-collapse: collapse; margin-bottom: 24px; font-size: 14px; }
-      .pdp-table th { padding: 10px 16px; background: #f1f5f9; text-align: left; font-weight: 600; color: #334155; border-bottom: 2px solid #e2e8f0; }
-      .pdp-cta { display: inline-block; padding: 14px 32px; background: linear-gradient(135deg, #0f172a, #1e293b); color: #fff; font-weight: 600; font-size: 15px; border-radius: 10px; text-decoration: none; transition: transform 0.2s; }
-      .pdp-cta:hover { transform: translateY(-2px); }
-      .pdp-related { margin-top: 48px; }
-      .pdp-related h2 { font-family: 'Playfair Display', serif; font-size: 1.5rem; margin-bottom: 16px; color: #0f172a; }
-      .pdp-related-grid { display: flex; flex-direction: column; gap: 8px; }
-      @media (max-width: 768px) {
-        .pdp-grid { grid-template-columns: 1fr; gap: 24px; }
-        .pdp-info h1 { font-size: 1.5rem; }
-      }
-    </style>
+    ${ldJson(buildProductSchema(product, productUrl))}
+    ${ldJson(buildBreadcrumbSchema(product, productUrl))}
+    ${ldJson(buildFaqSchema(faqs))}
 </head>
-<body class="font-sans">
-    <!-- Progress Bar -->
-    <div class="fixed top-0 left-0 w-full h-1 bg-gray-200 z-50">
-        <div id="progress-bar" class="h-full bg-gradient-to-r from-blue-500 to-orange-500 transition-all duration-150" style="width: 0%"></div>
+
+<body class="site page-pdp">
+<a class="skip-link" href="#main">Skip to content</a>
+
+${partials.nav()}
+
+<main id="main">
+<article class="pdp" data-pdp="${esc(product.handle)}" style="--tint:${tint}">
+  <div class="wrap">
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a><span aria-hidden="true">/</span><a href="/#products">Shop</a><span aria-hidden="true">/</span><span aria-current="page">${name}</span></nav>
+    <div class="pdp-grid">
+      <div class="pdp-gallery">
+        ${thumbs ? `<div class="pdp-thumbs">\n          ${thumbs}\n        </div>` : '<div class="pdp-thumbs" hidden></div>'}
+        <div>
+          <div class="pdp-main" tabindex="0" aria-label="${name} images">
+          ${gallery}
+          </div>
+          ${images.length > 1 ? `<div class="pdp-dots" aria-hidden="true">${images.map((_, i) => `<i${i === 0 ? ' class="is-active"' : ''}></i>`).join('')}</div>` : ''}
+        </div>
+      </div>
+
+      <div class="pdp-info">
+        <div class="pdp-kicker"><span class="pc-cat">${esc(product.category || 'Singhara')}</span>${badge ? `<span class="product-badge ${badge.cls}">${badge.label}</span>` : ''}<span class="pdp-rating" data-pdp-rating hidden></span></div>
+        <h1>${name}</h1>
+        <p class="pdp-sub">${esc(Card.tagline(product.description))}</p>
+        <div class="pdp-price" data-pdp-price>
+          <span class="now">${Card.rupees(dv.price)}</span>${off ? `<span class="was">${Card.rupees(dv.compareAtPrice)}</span><span class="off">${off}% OFF</span>` : ''}
+          <span class="tax">Inclusive of all taxes</span>
+        </div>
+        <div>
+          <div class="pdp-label">Size <span data-pdp-size-label>${esc(dv.title)}</span></div>
+          <div class="pdp-sizes" role="group" aria-label="Choose size">
+            ${sizes}
+          </div>
+        </div>
+        <div class="pdp-buy">
+            ${buyButtons}
+        </div>
+        <p class="pdp-stock${soon || !inStock ? ' is-out' : ''}" data-pdp-stock>${stockText}</p>
+        <div class="pdp-ship">${TRUCK}<span><b>Free shipping</b> on orders above ₹499. Damaged or wrong item? We replace it.</span></div>
+        ${highlights.length ? `<ul class="pdp-highlights">${highlights.map(h => `<li>${CHECK}${esc(h)}</li>`).join('')}</ul>` : ''}
+        <div class="pdp-acc">
+          ${accordions.map(([t, body, open]) => `<details${open ? ' open' : ''}><summary>${esc(t)}</summary>${body}</details>`).join('\n          ')}
+        </div>
+      </div>
     </div>
+  </div>
+</article>
 
-    <!-- Navbar -->
-    <nav class="nav-bar" id="mainNav" role="navigation" aria-label="Main Navigation">
-      <div class="nav-inner">
-        <a href="/" class="nav-logo" id="navLogoLink">
-          <div class="nav-logo-img-wrap">
-            <img src="/assets/images/logo.png" alt="MantraAQ Logo" class="nav-logo-img" id="navLogoImg">
-          </div>
-          <span class="nav-logo-text">MantraAQ</span>
-        </a>
-        <div class="nav-links" id="navLinks">
-          <a href="/#home" class="nav-link">Home</a>
-          <a href="/#about-us" class="nav-link">About</a>
-          <a href="/#products" class="nav-link">Products</a>
-          <a href="/#contact" class="nav-link">Contact</a>
-        </div>
-        <div class="nav-actions">
-          <a data-action="search" href="#" class="nav-action nav-account" title="Search Products">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            <span class="nav-action-label">Search</span>
-          </a>
-          <a data-action="wishlist" href="#" class="nav-action nav-account" title="My Wishlist">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
-            <span class="nav-action-label">Wishlist</span>
-          </a>
-          <a data-action="account" href="#" class="nav-action nav-account" title="My Account">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-            <span class="nav-action-label">Account</span>
-          </a>
-          <a data-action="cart" href="#" class="nav-action nav-cart" title="Cart">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
-            <span>Cart</span>
-          </a>
-          <button class="nav-hamburger" id="navHamburger" aria-label="Toggle menu" aria-expanded="false" type="button">
-            <span class="nav-ham-bar"></span><span class="nav-ham-bar"></span><span class="nav-ham-bar"></span>
-          </button>
-        </div>
+${packSection(product, facts)}
+
+<section class="section reviews" aria-labelledby="reviews-h" data-reviews data-reviews-handle="${esc(product.handle)}" hidden>
+  <div class="wrap" data-rail data-autoplay="5000">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow">Reviews</span>
+        <h2 id="reviews-h" class="display-l">What customers <em class="serif-italic">say.</em></h2>
       </div>
-      <div class="nav-drawer" id="navDrawer" inert>
-        <div class="nav-drawer-inner">
-          <a href="/" class="nav-drawer-link">Home</a>
-          <a href="/#about-us" class="nav-drawer-link">About</a>
-          <a href="/#products" class="nav-drawer-link">Products</a>
-          <a href="/#contact" class="nav-drawer-link">Contact</a>
-        </div>
-      </div>
-    </nav>
+      <div class="reviews-summary" data-reviews-summary></div>
+    </div>
+    <div class="rail"></div>
+    <div class="rail-progress" aria-hidden="true"><i></i></div>
+  </div>
+</section>
 
-    <!-- Product Detail Page -->
-    <main class="pdp-wrap">
-      <!-- Breadcrumb -->
-      <nav class="pdp-breadcrumb" aria-label="Breadcrumb">
-        <a href="/">Home</a> &rsaquo; <a href="/#products">Products</a> &rsaquo; <strong>${escapeHtml(product.name)}</strong>
-      </nav>
+<section class="section" aria-labelledby="pfaq-h">
+  <div class="wrap faq-grid">
+    <div data-reveal>
+      <span class="eyebrow">Good to know</span>
+      <h2 id="pfaq-h" class="display-l" style="margin-top:14px">${name}, <em class="serif-italic">answered.</em></h2>
+      <p class="lead" style="margin:18px 0 26px">Still unsure? Message us on WhatsApp and a person from our team will reply.</p>
+      <a href="https://wa.me/918283816755" class="link-arrow" target="_blank" rel="noopener">Chat on WhatsApp ${partials.ARROW}</a>
+    </div>
+    <div class="faq-list" data-reveal style="--d:.1s">
+      ${faqs.map(([q, a], i) => `<details class="faq-item"${i === 0 ? ' open' : ''}><summary>${esc(q)}<i></i></summary><div class="faq-a"><p>${esc(a)}</p></div></details>`).join('\n      ')}
+    </div>
+  </div>
+</section>
 
-      <div class="pdp-grid">
-        <!-- Images -->
-        <div class="pdp-images">
-            ${galleryHtml}
-        </div>
+${railSection({ id: 'more-h', eyebrow: 'Keep exploring', title: 'More from the <em class="serif-italic">wetlands.</em>', exclude: product.handle, cards: railCards(allProducts, product.handle) })}
+</main>
 
-        <!-- Product Info -->
-        <div class="pdp-info">
-          <h1>${escapeHtml(product.name)}</h1>
-          <div class="pdp-price">From ₹${lowestPrice}</div>
-          <p class="pdp-desc">${escapeHtml(product.description || '')}</p>
+${partials.footer()}
 
-          ${tagsHtml ? `<div class="pdp-tags">${tagsHtml}</div>` : ''}
+<div class="sticky-buy" data-sticky-buy aria-hidden="true">
+  <div><div class="sb-name">${name} · <span data-sb-size>${esc(dv.title)}</span></div><div class="sb-price" data-sb-price>${Card.rupees(dv.price)}</div></div>
+  <button type="button" class="btn" data-sb-add${inStock && !soon ? '' : ' disabled'}>${soon ? 'Coming soon' : (inStock ? 'Add to cart' : 'Sold out')}</button>
+</div>
 
-          <!-- Variants Table -->
-          <table class="pdp-table">
-            <thead><tr><th>Size</th><th>Price</th><th>Availability</th></tr></thead>
-            <tbody>${variantRows}</tbody>
-          </table>
-
-          <a href="/#products" class="pdp-cta">Shop Now on MantraAQ</a>
-        </div>
-      </div>
-
-      <!-- Related Products (internal links for SEO) -->
-      ${relatedProducts ? `
-      <div class="pdp-related">
-        <h2>More from MantraAQ</h2>
-        <div class="pdp-related-grid">
-          ${relatedProducts}
-        </div>
-      </div>` : ''}
-    </main>
-
-    <!-- Footer (minimal for SEO — links to policies) -->
-    <footer style="background:#0f172a;color:#94a3b8;padding:40px 20px;margin-top:60px;font-family:'Inter',sans-serif;font-size:13px;">
-      <div style="max-width:900px;margin:0 auto;display:flex;flex-wrap:wrap;justify-content:space-between;gap:24px;">
-        <div>
-          <strong style="color:#fff;font-size:15px;">MantraAQ</strong>
-          <p style="margin:8px 0 0;">Premium Singhara (Water Chestnut) Products<br>From finest farms to your table.</p>
-        </div>
-        <div>
-          <strong style="color:#e2e8f0;">Quick Links</strong>
-          <div style="display:flex;flex-direction:column;gap:6px;margin-top:8px;">
-            <a href="/" style="color:#94a3b8;text-decoration:none;">Home</a>
-            <a href="/#products" style="color:#94a3b8;text-decoration:none;">All Products</a>
-            <a href="/#contact" style="color:#94a3b8;text-decoration:none;">Contact</a>
-          </div>
-        </div>
-        <div>
-          <strong style="color:#e2e8f0;">Legal</strong>
-          <div style="display:flex;flex-direction:column;gap:6px;margin-top:8px;">
-            <a href="/shipping-policy.html" style="color:#94a3b8;text-decoration:none;">Shipping Policy</a>
-            <a href="/privacy-policy.html" style="color:#94a3b8;text-decoration:none;">Privacy Policy</a>
-            <a href="/terms-and-conditions.html" style="color:#94a3b8;text-decoration:none;">Terms & Conditions</a>
-            <a href="/refund-policy.html" style="color:#94a3b8;text-decoration:none;">Refund Policy</a>
-          </div>
-        </div>
-      </div>
-      <div style="max-width:900px;margin:24px auto 0;border-top:1px solid rgba(255,255,255,0.08);padding-top:16px;text-align:center;">
-        <p>&copy; ${new Date().getFullYear()} MantraAQ Industries Private Limited. All Rights Reserved.</p>
-      </div>
-    </footer>
-
-    <!-- JS for cart/auth functionality on product pages -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.8/purify.min.js"></script>
-    <script src="/js/sanitize.js"></script>
-    <script src="/js/toast.js"></script>
-    <script src="/js/api.js"></script>
-    <script src="/js/cart.js"></script>
-    <script src="/js/auth.js"></script>
-    <script src="/js/search.js"></script>
-    <script src="/js/wishlist.js"></script>
-    <script src="/js/main.js"></script>
+<script type="application/json" id="pdp-data">${JSON.stringify(pdpData).replace(/</g, '\\u003c')}</script>
+${partials.scripts(['/js/pdp.js'])}
 </body>
-</html>`;
+</html>
+`;
 }
 
-/**
- * Generate sitemap.xml with product URLs
- */
+// ── Sitemap and llms.txt ──────────────────────────────────────────
+
 function generateSitemap(products) {
   const today = new Date().toISOString().split('T')[0];
-
-  const staticUrls = [
+  const urls = [
     { loc: `${SITE_URL}/`, changefreq: 'daily', priority: '1.0' },
-    { loc: `${SITE_URL}/shipping-policy.html`, changefreq: 'monthly', priority: '0.5' },
-    { loc: `${SITE_URL}/privacy-policy.html`, changefreq: 'monthly', priority: '0.5' },
-    { loc: `${SITE_URL}/terms-and-conditions.html`, changefreq: 'monthly', priority: '0.5' },
-    { loc: `${SITE_URL}/refund-policy.html`, changefreq: 'monthly', priority: '0.5' },
+    ...products.map(p => ({ loc: `${SITE_URL}/products/${p.handle}`, changefreq: 'weekly', priority: '0.9' })),
+    { loc: `${SITE_URL}/faq`, changefreq: 'weekly', priority: '0.8' },
+    { loc: `${SITE_URL}/contact`, changefreq: 'monthly', priority: '0.6' },
+    { loc: `${SITE_URL}/shipping-policy`, changefreq: 'monthly', priority: '0.4' },
+    { loc: `${SITE_URL}/refund-policy`, changefreq: 'monthly', priority: '0.4' },
+    { loc: `${SITE_URL}/privacy-policy`, changefreq: 'yearly', priority: '0.3' },
+    { loc: `${SITE_URL}/terms-and-conditions`, changefreq: 'yearly', priority: '0.3' }
   ];
-
-  const productUrls = products.map(p => ({
-    loc: `${SITE_URL}/products/${p.handle}`,
-    changefreq: 'weekly',
-    priority: '0.8',
-  }));
-
-  const allUrls = [...staticUrls, ...productUrls];
-
-  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+  return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${allUrls.map(u => `  <url>
+${urls.map(u => `  <url>
     <loc>${u.loc}</loc>
     <lastmod>${today}</lastmod>
     <changefreq>${u.changefreq}</changefreq>
@@ -449,80 +431,161 @@ ${allUrls.map(u => `  <url>
   </url>`).join('\n')}
 </urlset>
 `;
-
-  return xml;
 }
 
-/**
- * Fetch products from the API with retry logic (handles Render cold starts)
- */
+/** Plain-text brand and catalogue summary for AI assistants (https://llmstxt.org). */
+function generateLlmsTxt(products) {
+  const lines = [
+    '# MantraAQ',
+    '',
+    '> MantraAQ is an Indian food brand making singhara (water chestnut) foods from the wetlands of Bihar, sourced from 200+ farmer families. Products are gluten free, fasting friendly (vrat, Navratri) and maida free. Sold online at mantraaq.com with delivery across India.',
+    '',
+    'Company: MantraAQ Industries Private Limited, Begusarai, Bihar, India. FSSAI Lic. No. 20426155000003.',
+    'Contact: hello@mantraaq.com, +91 82838 16755 (also WhatsApp).',
+    'Shipping: dispatched in 1 to 2 business days; free shipping on orders above ₹499, otherwise ₹49. Damaged, wrong or spoiled items are replaced or refunded if reported within 48 hours.',
+    '',
+    '## Products',
+    ''
+  ];
+  for (const p of products) {
+    const facts = factsFor(p.handle);
+    const prices = p.variants.map(v => `${v.title} ₹${Math.round(v.price)}`).join(', ');
+    const status = Card.isComingSoon(p) ? 'coming soon' : (Card.isInStock(p) ? 'in stock' : 'currently sold out');
+    let line = `- [${p.name}](${SITE_URL}/products/${p.handle}): ${Card.tagline(p.description)} Sizes: ${prices} (${status}).`;
+    if (facts && facts.ingredients) line += ` Ingredients: ${facts.ingredients.join(', ')}.`;
+    if (facts && facts.nutrition) {
+      const kcal = facts.nutrition.rows.find(r => r[0] === 'Energy');
+      const protein = facts.nutrition.rows.find(r => r[0] === 'Protein');
+      const fibre = facts.nutrition.rows.find(r => r[0] === 'Dietary fibre');
+      line += ` Per 100 g: ${[kcal, protein, fibre].filter(Boolean).map(r => `${r[0].toLowerCase()} ${r[1]}`).join(', ')}.`;
+    }
+    lines.push(line);
+  }
+  lines.push(
+    '',
+    '## Guides',
+    '',
+    `- [Singhara answered (FAQ)](${SITE_URL}/faq): what singhara is, nutrition, fasting use, storage and cooking.`,
+    `- [Shipping policy](${SITE_URL}/shipping-policy)`,
+    `- [Refund and replacement policy](${SITE_URL}/refund-policy)`,
+    `- [Contact](${SITE_URL}/contact)`,
+    ''
+  );
+  return lines.join('\n');
+}
+
+// ── Homepage injection ─────────────────────────────────────────────
+
+function buildCatalogSchema(products) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: 'MantraAQ singhara foods',
+    itemListElement: products.map((p, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      url: `${SITE_URL}/products/${p.handle}`,
+      name: p.name
+    }))
+  };
+}
+
+function replaceMarker(html, name, content) {
+  const re = new RegExp(`<!-- ${name}_START -->[\\s\\S]*?<!-- ${name}_END -->`);
+  if (!re.test(html)) return html;
+  return html.replace(re, () => `<!-- ${name}_START -->\n${content}\n<!-- ${name}_END -->`);
+}
+
+function updateIndexHtml(products) {
+  const indexPath = path.join(ROOT, 'index.html');
+  if (!fs.existsSync(indexPath)) return;
+  let html = fs.readFileSync(indexPath, 'utf-8');
+
+  const cards = products.map((p, i) => Card.render(p, { index: i, eager: i < 2, resolveImage: pageImageUrl, fallbackImages: LOCAL_IMAGE_FALLBACK[p.handle] })).join('\n');
+  html = replaceMarker(html, 'PRODUCTS', cards);
+  html = replaceMarker(html, 'RAIL', railCards(products, null));
+  html = replaceMarker(html, 'SCHEMA_PRODUCTS', `    <script id="static-product-schema" type="application/ld+json">\n${JSON.stringify(buildCatalogSchema(products), null, 2)}\n    </script>`);
+
+  fs.writeFileSync(indexPath, html, 'utf-8');
+  console.log(`  ✅ Injected ${products.length} product cards, the bestseller rail and ItemList schema into index.html`);
+}
+
+// ── Data ───────────────────────────────────────────────────────────
+
 async function fetchProducts(retries = 3) {
   for (let attempt = 1; attempt <= retries; attempt++) {
     try {
-      console.log(`  Fetching products from API (attempt ${attempt}/${retries})...`);
-      
+      console.log(`  Fetching products from ${API_URL} (attempt ${attempt}/${retries})...`);
       const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 60000); // 60s timeout
-      
-      const response = await fetch(`${API_URL}/storefront/products?limit=100`, {
-        signal: controller.signal,
-      });
+      const timeout = setTimeout(() => controller.abort(), 60000); // Render cold starts can take ~50s
+      const response = await fetch(`${API_URL}/storefront/products?limit=100`, { signal: controller.signal });
       clearTimeout(timeout);
-      
-      if (!response.ok) {
-        throw new Error(`API responded with status ${response.status}`);
-      }
-      
+      if (!response.ok) throw new Error(`API responded with status ${response.status}`);
       const data = await response.json();
-      
-      if (!data.success || !data.products) {
-        throw new Error('API response missing products');
-      }
-      
+      if (!data.success || !data.products) throw new Error('API response missing products');
       return data.products;
     } catch (err) {
       console.warn(`  Attempt ${attempt} failed: ${err.message}`);
-      if (attempt < retries) {
-        const delay = attempt * 15000; // 15s, 30s, 45s
-        console.log(`  Waiting ${delay / 1000}s before retry...`);
-        await new Promise(r => setTimeout(r, delay));
-      } else {
-        throw err;
-      }
+      if (attempt === retries) throw err;
+      const delay = attempt * 15000;
+      console.log(`  Waiting ${delay / 1000}s before retry...`);
+      await new Promise(r => setTimeout(r, delay));
     }
   }
 }
 
-/**
- * Main build function
- */
-async function main() {
-  console.log('🔨 MantraAQ Static Product Page Generator');
-  console.log('=========================================\n');
+function readSnapshot() {
+  return JSON.parse(fs.readFileSync(SNAPSHOT_PATH, 'utf-8')).products;
+}
 
-  // 1. Fetch products
+/** Keep only public catalogue fields, and store stock as in/out so the file doesn't churn on every sale. */
+function writeSnapshot(products) {
+  const existing = fs.existsSync(SNAPSHOT_PATH) ? JSON.parse(fs.readFileSync(SNAPSHOT_PATH, 'utf-8')) : {};
+  const slim = products.map(p => {
+    const out = {};
+    SNAPSHOT_FIELDS.forEach(k => { if (p[k] !== undefined) out[k] = p[k]; });
+    out.variants = p.variants.map(v => {
+      const vo = {};
+      VARIANT_FIELDS.forEach(k => { if (v[k] !== undefined && v[k] !== null) vo[k] = v[k]; });
+      vo.stockQuantity = v.stockQuantity > 0 ? 1 : 0;
+      return vo;
+    });
+    out.avgRating = p.avgRating || null;
+    out.reviewCount = p.reviewCount || 0;
+    return out;
+  });
+  fs.writeFileSync(SNAPSHOT_PATH, JSON.stringify({ _note: existing._note, products: slim }, null, 2) + '\n', 'utf-8');
+}
+
+// ── Main ───────────────────────────────────────────────────────────
+
+async function main() {
+  console.log('🔨 MantraAQ static page generator');
+  console.log('=================================\n');
+
   let products;
-  try {
-    products = await fetchProducts();
-    console.log(`\n✅ Fetched ${products.length} products from API\n`);
-  } catch (err) {
-    console.error(`\n❌ FATAL: Could not fetch products from API: ${err.message}`);
-    console.error('   The backend may be down. Product pages will NOT be generated.');
-    console.error('   The site will still work — it just won\'t have static product pages.\n');
-    process.exit(0); // Exit gracefully so Vercel build doesn't fail
+  if (process.argv.includes('--snapshot')) {
+    products = readSnapshot();
+    console.log(`  Using ${products.length} products from scripts/catalog-snapshot.json\n`);
+  } else {
+    try {
+      products = await fetchProducts();
+      console.log(`\n✅ Fetched ${products.length} products from the API\n`);
+      writeSnapshot(products);
+    } catch (err) {
+      console.error(`\n❌ Could not fetch products from the API: ${err.message}`);
+      console.error('   Keeping the committed product pages. Run with --snapshot to rebuild from the last known catalogue.\n');
+      process.exit(0); // Don't fail the Vercel build
+    }
   }
 
-  // Filter active products with variants
-  const activeProducts = products.filter(p => p.isActive !== false && p.variants && p.variants.length > 0);
-  
+  const activeProducts = Card.sortForShelf(products.filter(p => p.isActive !== false && p.variants && p.variants.length > 0));
   if (activeProducts.length === 0) {
     console.warn('⚠️ No active products found. Skipping page generation.');
     process.exit(0);
   }
 
-  // 2. Create output directory
   if (fs.existsSync(OUTPUT_DIR)) {
-    // Clean existing generated pages
     const existingFiles = fs.readdirSync(OUTPUT_DIR).filter(f => f.endsWith('.html'));
     existingFiles.forEach(f => fs.unlinkSync(path.join(OUTPUT_DIR, f)));
     console.log(`  Cleaned ${existingFiles.length} existing product pages`);
@@ -530,213 +593,25 @@ async function main() {
     fs.mkdirSync(OUTPUT_DIR, { recursive: true });
   }
 
-  // 3. Generate individual product pages
   for (const product of activeProducts) {
-    const html = generateProductHTML(product, activeProducts);
-    const filePath = path.join(OUTPUT_DIR, `${product.handle}.html`);
-    fs.writeFileSync(filePath, html, 'utf-8');
-    console.log(`  ✅ Generated: /products/${product.handle}`);
+    fs.writeFileSync(path.join(OUTPUT_DIR, `${product.handle}.html`), generateProductHTML(product, activeProducts), 'utf-8');
+    console.log(`  ✅ Generated /products/${product.handle}`);
   }
 
-  // 4. Generate updated sitemap.xml
-  const sitemapXml = generateSitemap(activeProducts);
-  const sitemapPath = path.join(__dirname, '..', 'sitemap.xml');
-  fs.writeFileSync(sitemapPath, sitemapXml, 'utf-8');
-  console.log(`\n✅ Updated sitemap.xml with ${activeProducts.length} product URLs`);
+  fs.writeFileSync(path.join(ROOT, 'sitemap.xml'), generateSitemap(activeProducts), 'utf-8');
+  fs.writeFileSync(path.join(ROOT, 'llms.txt'), generateLlmsTxt(activeProducts), 'utf-8');
+  console.log(`\n✅ Updated sitemap.xml and llms.txt`);
 
-  // 5. Inject pre-rendered product cards and JSON-LD schema into index.html
   updateIndexHtml(activeProducts);
 
-  console.log(`\n🎉 Done! Generated ${activeProducts.length} static product pages and updated index.html & sitemap.xml.\n`);
+  console.log(`\n🎉 Done: ${activeProducts.length} product pages, index.html, sitemap.xml and llms.txt.\n`);
 }
 
-/**
- * Build homepage catalog JSON-LD ItemList schema
- */
-function buildCatalogSchema(products) {
-  return {
-    "@context": "https://schema.org",
-    "@type": "ItemList",
-    "name": "MantraAQ Premium Singhara Collection",
-    "description": "Cold-processed singhara snacks, flour & gluten-free superfoods sourced directly from Bihar farmers.",
-    "numberOfItems": products.length,
-    "itemListElement": products.map((product, index) => {
-      const productUrl = `${SITE_URL}/products/${product.handle}`;
-      const productSchema = buildProductSchema(product, productUrl);
-      return {
-        "@type": "ListItem",
-        "position": index + 1,
-        "name": product.name,
-        "url": productUrl,
-        "item": productSchema
-      };
-    })
-  };
+if (require.main === module) {
+  main().catch(err => {
+    console.error('Build script error:', err);
+    process.exit(0); // Don't fail the Vercel build
+  });
 }
 
-/**
- * Build feature tags for a card
- */
-function buildCardFeatureTags(product) {
-  const badgeTags = ['bestseller', 'new-launch', 'seasonal', 'coming-soon'];
-  const features = (product.tags || []).filter(t => !badgeTags.includes(t.toLowerCase().replace(/\s+/g, '-')));
-  if (features.length === 0) return '';
-  const emojiMap = {
-    'gluten-free': '🌾',
-    'cold-processed': '❄️',
-    'qr-traced': '📱',
-    '100%-natural': '🌿',
-    'high-protein': '💪',
-    'premium-quality': '⭐',
-    'stone-ground': '🪨',
-    'multi-purpose': '📦',
-    'high-fiber': '🌾',
-    'farm-direct': '🚜',
-    '48hr-delivery': '⚡',
-    'fresh-&-juicy': '🍉',
-    'sun-dried': '☀️',
-    'long-shelf-life': '🥫',
-    'versatile': '🥣',
-    'diabetic-friendly': '🥗',
-    'clean-ingredients': '🍃'
-  };
-  return features.slice(0, 3).map(f => {
-    const key = f.toLowerCase().replace(/\s+/g, '-');
-    const emoji = emojiMap[key] || '🏷️';
-    return `<span class="feature-tag">${emoji} ${escapeHtml(f)}</span>`;
-  }).join('');
-}
-
-/**
- * Build badge HTML
- */
-function buildCardBadge(product) {
-  const badgeMap = {
-    'bestseller': { cls: 'bestseller', label: 'Bestseller' },
-    'new-launch': { cls: 'new', label: 'New Launch' },
-    'seasonal': { cls: 'seasonal', label: 'Seasonal' },
-    'coming-soon': { cls: 'coming-soon', label: 'Coming Soon' },
-  };
-  const tags = product.tags || [];
-  for (let i = 0; i < tags.length; i++) {
-    const tagKey = tags[i].toLowerCase().replace(/\s+/g, '-');
-    if (badgeMap[tagKey]) {
-      return `<div class="product-badge ${badgeMap[tagKey].cls}">${badgeMap[tagKey].label}</div>`;
-    }
-  }
-  return '';
-}
-
-/**
- * Build cards HTML to pre-render inside index.html
- */
-function generateStorefrontCardsHTML(products) {
-  return products.map(product => {
-    const defaultVariant = product.variants.find(v => v.stockQuantity > 0) || product.variants[0];
-    const fallback = LOCAL_IMAGE_FALLBACK[product.handle] || ['assets/images/placeholder.png'];
-    const images = product.images && product.images.length > 0 ? product.images : fallback;
-    const resolvedImages = images.map(img => resolveImageUrl(img));
-    const badge = buildCardBadge(product);
-    const featureTags = buildCardFeatureTags(product);
-    const productUrl = `/products/${product.handle}`;
-
-    const discountHtml = defaultVariant.compareAtPrice && defaultVariant.compareAtPrice > defaultVariant.price
-      ? `<span class="price-original">₹${defaultVariant.compareAtPrice}</span>
-         <span class="price-discount">${Math.round(((defaultVariant.compareAtPrice - defaultVariant.price) / defaultVariant.compareAtPrice) * 100)}% OFF</span>`
-      : '';
-
-    return `
-      <div class="product-card" data-product="${product.handle}">
-        <div class="product-image-wrapper">
-          ${badge}
-          <div class="product-gallery">
-            ${resolvedImages.map((imgUrl, idx) => `
-              <img src="${escapeHtml(imgUrl)}" alt="${escapeHtml(product.name)}" class="product-img ${idx === 0 ? 'active' : ''}" data-index="${idx}">
-            `).join('')}
-          </div>
-          ${resolvedImages.length > 1 ? `
-            <button type="button" class="gallery-nav prev" aria-label="Previous image">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
-            </button>
-            <button type="button" class="gallery-nav next" aria-label="Next image">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
-            </button>
-            <div class="gallery-indicators">
-              ${resolvedImages.map((_, idx) => `<span class="indicator ${idx === 0 ? 'active' : ''}" data-index="${idx}"></span>`).join('')}
-            </div>
-          ` : ''}
-        </div>
-
-        <div class="product-content">
-          <div class="product-header">
-              <h3 class="product-title"><a href="${productUrl}">${escapeHtml(product.name)}</a></h3>
-          </div>
-
-          <p class="product-description">${escapeHtml(product.description || '')}</p>
-
-          <div class="product-features">
-            ${featureTags}
-          </div>
-
-          <div class="variant-selector-container">
-            <div class="variant-selector flex gap-2 flex-wrap">
-              ${product.variants.map((v, i) => `
-                <button type="button" class="variant-btn border rounded-lg px-3 py-1 text-xs font-semibold transition-all ${i === 0 ? 'active font-bold' : 'border-slate-200 text-slate-500'}" data-variant-id="${v.id}" data-price="${v.price}">
-                  ${escapeHtml(v.title)}
-                </button>
-              `).join('')}
-            </div>
-          </div>
-
-          <div class="product-footer">
-              <div class="price-wrapper">
-                  <span class="price-current">₹${defaultVariant.price}</span>
-                  ${discountHtml}
-              </div>
-              <div class="tax-label">Inclusive of all taxes</div>
-          </div>
-
-          <a href="${productUrl}" class="btn-primary" style="text-decoration:none; display:flex; align-items:center; justify-content:center; gap:8px;">
-              <span>View Product</span>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                  <path d="M5 12h14M12 5l7 7-7 7"></path>
-              </svg>
-          </a>
-        </div>
-      </div>`;
-  }).join('\n');
-}
-
-/**
- * Update index.html with pre-rendered product cards and JSON-LD schema
- */
-function updateIndexHtml(products) {
-  const indexPath = path.join(__dirname, '..', 'index.html');
-  if (!fs.existsSync(indexPath)) return;
-
-  let indexHtml = fs.readFileSync(indexPath, 'utf-8');
-
-  // 1. Inject cards into #storefront-products-grid
-  const cardsHtml = generateStorefrontCardsHTML(products);
-  const productsRegex = /<!-- PRODUCTS_START -->[\s\S]*?<!-- PRODUCTS_END -->/;
-  if (productsRegex.test(indexHtml)) {
-    indexHtml = indexHtml.replace(productsRegex, `<!-- PRODUCTS_START -->\n${cardsHtml}\n                <!-- PRODUCTS_END -->`);
-    console.log(`  ✅ Injected ${products.length} pre-rendered product cards into index.html`);
-  }
-
-  // 2. Inject schema into <head>
-  const schemaObj = buildCatalogSchema(products);
-  const schemaScript = `<script id="static-product-schema" type="application/ld+json">\n${JSON.stringify(schemaObj, null, 2)}\n    </script>`;
-  const schemaRegex = /<!-- SCHEMA_PRODUCTS_START -->[\s\S]*?<!-- SCHEMA_PRODUCTS_END -->/;
-  if (schemaRegex.test(indexHtml)) {
-    indexHtml = indexHtml.replace(schemaRegex, `<!-- SCHEMA_PRODUCTS_START -->\n    ${schemaScript}\n    <!-- SCHEMA_PRODUCTS_END -->`);
-    console.log(`  ✅ Injected ItemList + Product JSON-LD schema into index.html`);
-  }
-
-  fs.writeFileSync(indexPath, indexHtml, 'utf-8');
-}
-
-main().catch(err => {
-  console.error('Build script error:', err);
-  process.exit(0); // Don't fail the Vercel build
-});
+module.exports = { generateProductHTML, generateSitemap, generateLlmsTxt, buildProductSchema };

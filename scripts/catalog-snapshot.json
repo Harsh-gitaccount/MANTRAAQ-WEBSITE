@@ -1,0 +1,334 @@
+{
+  "_note": "Last known catalogue, used only when the API is unreachable or with --snapshot. Built from the live site on 2026-10-07: prices, variant ids and images are real; stockQuantity is only 0 (sold out) or 1 (in stock). Refreshed automatically each time scripts/generate-products.js reaches the API.",
+  "products": [
+    {
+      "handle": "glowaq-wellness-drink",
+      "name": "GlowAQ™",
+      "category": "Wellness Drinks",
+      "description": "Reimagining India's Forgotten Superfood.\n\nGlowAQ™ is an Innovation Lab concept from MantraAQ exploring the future of Wetland Nutrition™ through Singhara (Water Chestnut).\n\nInspired by India's wetlands. Designed for modern lifestyles.\n\nComing Soon.",
+      "tags": [
+        "coming-soon",
+        "wetland nutrition",
+        "singhara superfood",
+        "water chestnut"
+      ],
+      "images": [
+        "https://res.cloudinary.com/s2rbtvuy/image/upload/v1784485331/mantraaq/products/o95ydbaoikmejpz565wh.png",
+        "https://res.cloudinary.com/s2rbtvuy/image/upload/v1784485331/mantraaq/products/ocxhs7awupepepnlyrys.png",
+        "https://res.cloudinary.com/s2rbtvuy/image/upload/v1784485331/mantraaq/products/ytxydktfhxhifgujttqk.png",
+        "https://res.cloudinary.com/s2rbtvuy/image/upload/v1784485331/mantraaq/products/la9v60rlidvfcgqs6b1w.png"
+      ],
+      "sortOrder": 0,
+      "isActive": true,
+      "variants": [
+        {
+          "id": "dcd4f81b-cc73-472f-8674-db082e26afd8",
+          "title": "200ml Bottle",
+          "price": 299.0,
+          "compareAtPrice": 399.0,
+          "sku": "glowaq-wellness-drink-200ml Bottle",
+          "stockQuantity": 1
+        }
+      ],
+      "avgRating": null,
+      "reviewCount": 0
+    },
+    {
+      "handle": "singhara-atta",
+      "name": "Singhara Atta",
+      "category": "Flour & Atta",
+      "description": "India's Original Gluten-Free Flour.\n\nStone-ground from premium Singhara (Water Chestnut) sourced directly from India's wetlands. Naturally gluten-free, fasting-friendly, and trusted for generations.\n\nPerfect for rotis, puris, halwa, pancakes, and healthy everyday cooking.\n\nFrom Wetlands to Wellness.",
+      "tags": [
+        "gluten-free",
+        "stone-ground",
+        "farmer sourced"
+      ],
+      "images": [
+        "https://res.cloudinary.com/s2rbtvuy/image/upload/v1784485485/mantraaq/products/crk3t02hftxbj9l5bfg8.png",
+        "https://res.cloudinary.com/s2rbtvuy/image/upload/v1784485485/mantraaq/products/h1slfulx2okcci1opkph.png",
+        "https://res.cloudinary.com/s2rbtvuy/image/upload/v1784485485/mantraaq/products/gzixv1aijgyvc3rlhv0g.png",
+        "https://res.cloudinary.com/s2rbtvuy/image/upload/v1784485485/mantraaq/products/w0nzuzn7b0pq0mxvwney.png"
+      ],
+      "sortOrder": 1,
+      "isActive": true,
+      "variants": [
+        {
+          "id": "37713afd-732f-4aac-a65d-ba6b9e0224eb",
+          "title": "500g",
+          "price": 239.0,
+          "compareAtPrice": 299.0,
+          "sku": "singhara-atta-500g",
+          "stockQuantity": 0
+        },
+        {
+          "id": "aa6a1c31-5127-40c3-b251-ebc18130e2b4",
+          "title": "1kg",
+          "price": 439.0,
+          "compareAtPrice": 550.0,
+          "sku": "singhara-atta-1kg",
+          "stockQuantity": 0
+        },
+        {
+          "id": "637f7ea5-2c1b-4cf1-b5fb-024da1fc58e7",
+          "title": "10kg",
+          "price": 3899.0,
+          "compareAtPrice": 5000.0,
+          "sku": "singhara-atta-10kg",
+          "stockQuantity": 0
+        }
+      ],
+      "avgRating": null,
+      "reviewCount": 0
+    },
+    {
+      "handle": "fresh-singhara",
+      "name": "Fresh Singhara",
+      "category": "Fresh Produce",
+      "description": "Straight From The Wetlands.\n\nFreshly harvested Singhara (Water Chestnut) sourced directly from trusted wetland farmers.\n\nNaturally crisp, mildly sweet, and packed with traditional goodness, Fresh Singhara can be enjoyed raw, boiled, roasted, or added to your favourite recipes.\n\nHarvested with care. Delivered fresh.\n\nFrom Wetlands to Wellness.",
+      "tags": [
+        "seasonal",
+        "fresh harvest",
+        "wetland grown",
+        "farmer sourced"
+      ],
+      "images": [
+        "https://res.cloudinary.com/s2rbtvuy/image/upload/v1784493558/mantraaq/products/vxkiyfdakoefkstsx7rm.png",
+        "https://res.cloudinary.com/s2rbtvuy/image/upload/v1784493558/mantraaq/products/axwymxkihcd1ruvgw4pt.jpg"
+      ],
+      "sortOrder": 2,
+      "isActive": true,
+      "variants": [
+        {
+          "id": "ea6afd43-4140-482a-941a-be7de28039b5",
+          "title": "1kg",
+          "price": 179.0,
+          "compareAtPrice": 210.0,
+          "sku": "fresh-singhara-1kg",
+          "stockQuantity": 1
+        },
+        {
+          "id": "e7c47452-4cff-4798-aa2f-a3d47b2ede95",
+          "title": "10kg",
+          "price": 1599.0,
+          "compareAtPrice": 1800.0,
+          "sku": "fresh-singhara-10kg",
+          "stockQuantity": 1
+        },
+        {
+          "id": "82f205d5-68a2-43d7-b946-7617354f3edf",
+          "title": "100kg",
+          "price": 14999.0,
+          "compareAtPrice": 17000.0,
+          "sku": "fresh-singhara-100kg",
+          "stockQuantity": 1
+        }
+      ],
+      "avgRating": null,
+      "reviewCount": 0
+    },
+    {
+      "handle": "singhara-pasta",
+      "name": "Singhara Pasta",
+      "category": "Pasta & Noodles",
+      "description": "Pasta, Reimagined.\n\nCrafted with Singhara (Water Chestnut) flour, MantraAQ Singhara Pasta brings traditional nutrition into modern lifestyles.\n\nLight, delicious, and easy to cook, it's made for those who want better ingredients without compromising on taste.\n\nPerfect for everyday meals, healthy recipes, and modern kitchens.\n\nFrom Wetlands to Wellness.",
+      "tags": [
+        "new-launch",
+        "modern nutrition",
+        "singhara flour",
+        "pasta alternative"
+      ],
+      "images": [
+        "https://res.cloudinary.com/s2rbtvuy/image/upload/v1784493635/mantraaq/products/vevojp9es7wqfyag9zjv.png",
+        "https://res.cloudinary.com/s2rbtvuy/image/upload/v1784493635/mantraaq/products/rcz734zla9r0xu7vxysp.png",
+        "https://res.cloudinary.com/s2rbtvuy/image/upload/v1784493635/mantraaq/products/unl8pn6dt7spe7ea1up9.png"
+      ],
+      "sortOrder": 3,
+      "isActive": true,
+      "variants": [
+        {
+          "id": "c5cbc752-3440-4798-a6fb-68a2cec1006c",
+          "title": "250g",
+          "price": 149.0,
+          "compareAtPrice": 199.0,
+          "sku": "singhara-pasta-250g",
+          "stockQuantity": 1
+        },
+        {
+          "id": "c1da4471-9372-4440-979b-2bdedf4f5355",
+          "title": "500g",
+          "price": 249.0,
+          "compareAtPrice": 349.0,
+          "sku": "singhara-pasta-500g",
+          "stockQuantity": 1
+        },
+        {
+          "id": "5a46dac6-9819-450c-9bc1-7b8fc0445cd6",
+          "title": "1kg",
+          "price": 499.0,
+          "compareAtPrice": 650.0,
+          "sku": "singhara-pasta-1kg",
+          "stockQuantity": 1
+        },
+        {
+          "id": "be791df1-94d7-45b8-bf64-81d8dabbf3eb",
+          "title": "5kg",
+          "price": 2399.0,
+          "compareAtPrice": 3100.0,
+          "sku": "singhara-pasta-5kg",
+          "stockQuantity": 1
+        }
+      ],
+      "avgRating": null,
+      "reviewCount": 0
+    },
+    {
+      "handle": "singhara-vermicell",
+      "name": "Singhara Vermicelli",
+      "category": "Pasta & Noodles",
+      "description": "Traditional Nutrition. Modern Meals.\n\nCrafted from premium Singhara (Water Chestnut), MantraAQ Singhara Vermicelli is light, delicate, and easy to cook.\n\nPerfect for kheer, upma, pulao, payasam, and everyday recipes, it brings traditional goodness to modern kitchens.\n\nWholesome, versatile, and delicious.\n\nFrom Wetlands to Wellness.",
+      "tags": [
+        "new-launch",
+        "traditional nutrition",
+        "easy to cook",
+        "vermicelli alternative"
+      ],
+      "images": [
+        "https://res.cloudinary.com/s2rbtvuy/image/upload/v1784493714/mantraaq/products/ceqx8eeruf1cqbwqev55.png",
+        "https://res.cloudinary.com/s2rbtvuy/image/upload/v1784493714/mantraaq/products/nxl8chl5f5cvea9r23kk.png",
+        "https://res.cloudinary.com/s2rbtvuy/image/upload/v1784493714/mantraaq/products/okjrobkdyynfdszrfkq1.png"
+      ],
+      "sortOrder": 4,
+      "isActive": true,
+      "variants": [
+        {
+          "id": "f1072ffc-1ee8-423e-8d46-113bf22792d8",
+          "title": "250g",
+          "price": 129.0,
+          "compareAtPrice": 179.0,
+          "sku": "singhara-vermicell-250g",
+          "stockQuantity": 0
+        },
+        {
+          "id": "2bbf060d-2b65-417c-9852-1a0686eafc1a",
+          "title": "500g",
+          "price": 229.0,
+          "compareAtPrice": 299.0,
+          "sku": "singhara-vermicell-500g",
+          "stockQuantity": 0
+        },
+        {
+          "id": "2af1f091-63c4-4e36-9cc8-1c88e7c8a8db",
+          "title": "1kg",
+          "price": 439.0,
+          "compareAtPrice": 550.0,
+          "sku": "singhara-vermicell-1kg",
+          "stockQuantity": 0
+        }
+      ],
+      "avgRating": null,
+      "reviewCount": 0
+    },
+    {
+      "handle": "dry-singhara",
+      "name": "Dry Singhara",
+      "category": "Dry Fruits & Snacks",
+      "description": "Snack It. Grind It. Cook It.\n\nCarefully sun-dried from premium Singhara (Water Chestnut), MantraAQ Dry Singhara offers traditional goodness with modern convenience.\n\nEnjoy it as a wholesome snack, use it for preparing flour at home, or add it to your favourite recipes.\n\nNaturally preserved, easy to store, and crafted for everyday nutrition.\n\nFrom Wetlands to Wellness.",
+      "tags": [
+        "bestseller",
+        "sun-dried",
+        "farmer sourced",
+        "traditional nutrition"
+      ],
+      "images": [
+        "https://res.cloudinary.com/s2rbtvuy/image/upload/v1784493800/mantraaq/products/fmxds7x41nryyz0ez2gt.png",
+        "https://res.cloudinary.com/s2rbtvuy/image/upload/v1784493800/mantraaq/products/s77ezettxuwtvjxzal0p.png",
+        "https://res.cloudinary.com/s2rbtvuy/image/upload/v1784493800/mantraaq/products/l6qzps8u4vydufmkpedp.png",
+        "https://res.cloudinary.com/s2rbtvuy/image/upload/v1784493800/mantraaq/products/fb2gkq4v3itbhffv5bre.png"
+      ],
+      "sortOrder": 5,
+      "isActive": true,
+      "variants": [
+        {
+          "id": "4c51fcbc-fdab-483f-a922-6d23704255d9",
+          "title": "250g",
+          "price": 149.0,
+          "compareAtPrice": 199.0,
+          "sku": "dry-singhara-250g",
+          "stockQuantity": 1
+        },
+        {
+          "id": "64655081-f264-417d-9e15-c9d3c714093d",
+          "title": "500g",
+          "price": 229.0,
+          "compareAtPrice": 280.0,
+          "sku": "dry-singhara-500g",
+          "stockQuantity": 1
+        },
+        {
+          "id": "6cbc7497-0861-4d66-aa31-f21d3bd9dbe4",
+          "title": "1kg",
+          "price": 440.0,
+          "compareAtPrice": 500.0,
+          "sku": "dry-singhara-1kg",
+          "stockQuantity": 1
+        },
+        {
+          "id": "14379495-f355-4860-b9e4-1dbe489010df",
+          "title": "10kg",
+          "price": 4449.0,
+          "compareAtPrice": 4800.0,
+          "sku": "dry-singhara-10kg",
+          "stockQuantity": 1
+        }
+      ],
+      "avgRating": null,
+      "reviewCount": 0
+    },
+    {
+      "handle": "singhara-snacks",
+      "name": "Singhara Snacks",
+      "category": "Dry Snack",
+      "description": "Crunch Better.\n\nCrafted from premium Singhara (Water Chestnut) and traditional spices, MantraAQ Singhara Snacks deliver the perfect balance of taste and tradition.\n\nLight, crispy, and satisfying, they are ideal for tea-time, travel, fasting seasons, and everyday snacking.\n\nMade for mindful munching without compromising on flavour.\n\nFrom Wetlands to Wellness.",
+      "tags": [
+        "coming-soon",
+        "ready-to-eat",
+        "crunchy snack",
+        "singhara flour"
+      ],
+      "images": [
+        "https://res.cloudinary.com/s2rbtvuy/image/upload/v1784493883/mantraaq/products/m4hynifl7qjjuzagtyy4.png",
+        "https://res.cloudinary.com/s2rbtvuy/image/upload/v1784493883/mantraaq/products/dfpic5tpewjy7xypd8ev.png"
+      ],
+      "sortOrder": 6,
+      "isActive": true,
+      "variants": [
+        {
+          "id": "198b5587-a994-4e07-86dc-759b990456b6",
+          "title": "50g",
+          "price": 55.0,
+          "compareAtPrice": 75.0,
+          "sku": "singhara-snacks-50g",
+          "stockQuantity": 1
+        },
+        {
+          "id": "879c879a-b4b9-4640-b4c6-fc22930bd8b1",
+          "title": "200g",
+          "price": 128.0,
+          "compareAtPrice": 169.0,
+          "sku": "singhara-snacks-200g",
+          "stockQuantity": 1
+        },
+        {
+          "id": "53164df3-eebe-4b86-91c0-e5a5af1b9558",
+          "title": "400g",
+          "price": 228.0,
+          "compareAtPrice": 299.0,
+          "sku": "singhara-snacks-400g",
+          "stockQuantity": 1
+        }
+      ],
+      "avgRating": null,
+      "reviewCount": 0
+    }
+  ]
+}
