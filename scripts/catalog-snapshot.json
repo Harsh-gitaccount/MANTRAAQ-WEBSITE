@@ -24,8 +24,8 @@
         {
           "id": "dcd4f81b-cc73-472f-8674-db082e26afd8",
           "title": "200ml Bottle",
-          "price": 299.0,
-          "compareAtPrice": 399.0,
+          "price": 299,
+          "compareAtPrice": 399,
           "sku": "glowaq-wellness-drink-200ml Bottle",
           "stockQuantity": 1
         }
@@ -55,24 +55,24 @@
         {
           "id": "37713afd-732f-4aac-a65d-ba6b9e0224eb",
           "title": "500g",
-          "price": 239.0,
-          "compareAtPrice": 299.0,
+          "price": 239,
+          "compareAtPrice": 299,
           "sku": "singhara-atta-500g",
           "stockQuantity": 0
         },
         {
           "id": "aa6a1c31-5127-40c3-b251-ebc18130e2b4",
           "title": "1kg",
-          "price": 439.0,
-          "compareAtPrice": 550.0,
+          "price": 439,
+          "compareAtPrice": 550,
           "sku": "singhara-atta-1kg",
           "stockQuantity": 0
         },
         {
           "id": "637f7ea5-2c1b-4cf1-b5fb-024da1fc58e7",
           "title": "10kg",
-          "price": 3899.0,
-          "compareAtPrice": 5000.0,
+          "price": 3899,
+          "compareAtPrice": 5000,
           "sku": "singhara-atta-10kg",
           "stockQuantity": 0
         }
@@ -101,24 +101,24 @@
         {
           "id": "ea6afd43-4140-482a-941a-be7de28039b5",
           "title": "1kg",
-          "price": 179.0,
-          "compareAtPrice": 210.0,
+          "price": 179,
+          "compareAtPrice": 210,
           "sku": "fresh-singhara-1kg",
           "stockQuantity": 1
         },
         {
           "id": "e7c47452-4cff-4798-aa2f-a3d47b2ede95",
           "title": "10kg",
-          "price": 1599.0,
-          "compareAtPrice": 1800.0,
+          "price": 1599,
+          "compareAtPrice": 1800,
           "sku": "fresh-singhara-10kg",
           "stockQuantity": 1
         },
         {
           "id": "82f205d5-68a2-43d7-b946-7617354f3edf",
           "title": "100kg",
-          "price": 14999.0,
-          "compareAtPrice": 17000.0,
+          "price": 14999,
+          "compareAtPrice": 17000,
           "sku": "fresh-singhara-100kg",
           "stockQuantity": 1
         }
@@ -148,32 +148,32 @@
         {
           "id": "c5cbc752-3440-4798-a6fb-68a2cec1006c",
           "title": "250g",
-          "price": 149.0,
-          "compareAtPrice": 199.0,
+          "price": 149,
+          "compareAtPrice": 199,
           "sku": "singhara-pasta-250g",
           "stockQuantity": 1
         },
         {
           "id": "c1da4471-9372-4440-979b-2bdedf4f5355",
           "title": "500g",
-          "price": 249.0,
-          "compareAtPrice": 349.0,
+          "price": 249,
+          "compareAtPrice": 349,
           "sku": "singhara-pasta-500g",
           "stockQuantity": 1
         },
         {
           "id": "5a46dac6-9819-450c-9bc1-7b8fc0445cd6",
           "title": "1kg",
-          "price": 499.0,
-          "compareAtPrice": 650.0,
+          "price": 499,
+          "compareAtPrice": 650,
           "sku": "singhara-pasta-1kg",
           "stockQuantity": 1
         },
         {
           "id": "be791df1-94d7-45b8-bf64-81d8dabbf3eb",
           "title": "5kg",
-          "price": 2399.0,
-          "compareAtPrice": 3100.0,
+          "price": 2399,
+          "compareAtPrice": 3100,
           "sku": "singhara-pasta-5kg",
           "stockQuantity": 1
         }
@@ -203,24 +203,24 @@
         {
           "id": "f1072ffc-1ee8-423e-8d46-113bf22792d8",
           "title": "250g",
-          "price": 129.0,
-          "compareAtPrice": 179.0,
+          "price": 129,
+          "compareAtPrice": 179,
           "sku": "singhara-vermicell-250g",
           "stockQuantity": 0
         },
         {
           "id": "2bbf060d-2b65-417c-9852-1a0686eafc1a",
           "title": "500g",
-          "price": 229.0,
-          "compareAtPrice": 299.0,
+          "price": 229,
+          "compareAtPrice": 299,
           "sku": "singhara-vermicell-500g",
           "stockQuantity": 0
         },
         {
           "id": "2af1f091-63c4-4e36-9cc8-1c88e7c8a8db",
           "title": "1kg",
-          "price": 439.0,
-          "compareAtPrice": 550.0,
+          "price": 439,
+          "compareAtPrice": 550,
           "sku": "singhara-vermicell-1kg",
           "stockQuantity": 0
         }
@@ -251,32 +251,32 @@
         {
           "id": "4c51fcbc-fdab-483f-a922-6d23704255d9",
           "title": "250g",
-          "price": 149.0,
-          "compareAtPrice": 199.0,
+          "price": 149,
+          "compareAtPrice": 199,
           "sku": "dry-singhara-250g",
           "stockQuantity": 1
         },
         {
           "id": "64655081-f264-417d-9e15-c9d3c714093d",
           "title": "500g",
-          "price": 229.0,
-          "compareAtPrice": 280.0,
+          "price": 229,
+          "compareAtPrice": 280,
           "sku": "dry-singhara-500g",
           "stockQuantity": 1
         },
         {
           "id": "6cbc7497-0861-4d66-aa31-f21d3bd9dbe4",
           "title": "1kg",
-          "price": 440.0,
-          "compareAtPrice": 500.0,
+          "price": 440,
+          "compareAtPrice": 500,
           "sku": "dry-singhara-1kg",
           "stockQuantity": 1
         },
         {
           "id": "14379495-f355-4860-b9e4-1dbe489010df",
           "title": "10kg",
-          "price": 4449.0,
-          "compareAtPrice": 4800.0,
+          "price": 4449,
+          "compareAtPrice": 4800,
           "sku": "dry-singhara-10kg",
           "stockQuantity": 1
         }
@@ -305,24 +305,24 @@
         {
           "id": "198b5587-a994-4e07-86dc-759b990456b6",
           "title": "50g",
-          "price": 55.0,
-          "compareAtPrice": 75.0,
+          "price": 55,
+          "compareAtPrice": 75,
           "sku": "singhara-snacks-50g",
           "stockQuantity": 1
         },
         {
           "id": "879c879a-b4b9-4640-b4c6-fc22930bd8b1",
           "title": "200g",
-          "price": 128.0,
-          "compareAtPrice": 169.0,
+          "price": 128,
+          "compareAtPrice": 169,
           "sku": "singhara-snacks-200g",
           "stockQuantity": 1
         },
         {
           "id": "53164df3-eebe-4b86-91c0-e5a5af1b9558",
           "title": "400g",
-          "price": 228.0,
-          "compareAtPrice": 299.0,
+          "price": 228,
+          "compareAtPrice": 299,
           "sku": "singhara-snacks-400g",
           "stockQuantity": 1
         }
