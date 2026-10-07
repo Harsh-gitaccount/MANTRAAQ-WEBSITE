@@ -1,1 +1,84 @@
 @import "tailwindcss";
+
+/*
+ * MantraAQ brand theme for the admin panel (colours + typography only).
+ * Palette taken from the product-pack labels / storefront css/site.css:
+ *   maroon #6c1121 (primary) · maroon-2 #830e1e (hover) · maroon-deep #3a0a13
+ *   paper #fbf7ee · ivory #f3ecdb · sand #ebdfc4 · ink #241316 · ink-2 #57474a
+ *   leaf #2f4429 (success states) · gold #c49a4f / #e2c27f (accents)
+ */
+@theme {
+  /* Typography: Manrope for UI text, Fraunces for headings / wordmark.
+     Both are loaded from Google Fonts in index.html; the system fallbacks keep
+     the panel usable if the font request is blocked. */
+  --font-sans: "Manrope", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-display: "Fraunces", Georgia, "Times New Roman", serif;
+
+  /* Brand primary — buttons, links, focus states, active tabs. */
+  --color-maroon-50: #fcf4f4;
+  --color-maroon-100: #f8e5e6;
+  --color-maroon-200: #f0c9cc;
+  --color-maroon-300: #e3a1a7;
+  --color-maroon-400: #cc6b75;
+  --color-maroon-500: #a8303f;
+  --color-maroon-600: #830e1e; /* maroon-2 (hover) */
+  --color-maroon-700: #6c1121; /* maroon (primary) */
+  --color-maroon-800: #561019;
+  --color-maroon-900: #3a0a13; /* maroon-deep */
+  --color-maroon-950: #24060c;
+
+  /* Leaf green — success / paid / active / in-stock states only, so staff can
+     still tell "done" from "primary action" and from errors at a glance. */
+  --color-leaf-50: #f3f6f1;
+  --color-leaf-100: #e3eadf;
+  --color-leaf-200: #c7d5c0;
+  --color-leaf-300: #a1b797;
+  --color-leaf-400: #76926a;
+  --color-leaf-500: #55734a;
+  --color-leaf-600: #415c38;
+  --color-leaf-700: #2f4429; /* leaf */
+  --color-leaf-800: #263722;
+  --color-leaf-900: #1e2b1b;
+  --color-leaf-950: #10180e;
+
+  /* Gold — accents on dark surfaces (sidebar, login). */
+  --color-gold-50: #fbf6ea;
+  --color-gold-100: #f6ebd0;
+  --color-gold-200: #eedaa8;
+  --color-gold-300: #e2c27f; /* gold light */
+  --color-gold-400: #d4ad63;
+  --color-gold-500: #c49a4f; /* gold */
+  --color-gold-600: #a67d3a;
+  --color-gold-700: #84612e;
+  --color-gold-800: #654a25;
+  --color-gold-900: #4a361c;
+  --color-gold-950: #2b1f10;
+
+  /* Neutrals: the existing `slate-*` classes are re-pointed at a warm
+     ink/ivory scale so every grey in the panel picks up the brand paper tones
+     without touching component markup. Lightness steps roughly follow
+     Tailwind's slate so text contrast is preserved or improved.
+     150 / 850 are used in the markup but don't exist in Tailwind's default
+     palette, so they are defined here too. */
+  --color-slate-50: #fbf7ee;  /* paper */
+  --color-slate-100: #f3ecdb; /* ivory */
+  --color-slate-150: #efe5d0;
+  --color-slate-200: #ebdfc4; /* sand */
+  --color-slate-300: #d5c6ad;
+  --color-slate-400: #8e7e80;
+  --color-slate-500: #75656a;
+  --color-slate-600: #57474a; /* ink-2 */
+  --color-slate-700: #45363a;
+  --color-slate-800: #33242a;
+  --color-slate-850: #2b1b20;
+  --color-slate-900: #241316; /* ink */
+  --color-slate-950: #160b0d;
+}
+
+@layer base {
+  h1,
+  h2 {
+    font-family: var(--font-display);
+    letter-spacing: -0.01em;
+  }
+}

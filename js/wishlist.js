@@ -62,7 +62,7 @@
       pointer-events: none;
     }
     .wl-heart-btn .wl-heart-outline {
-      color: #6b7280;
+      color: #7a6a6c;
     }
     .wl-heart-btn:hover .wl-heart-outline {
       color: #ef4444;
@@ -117,7 +117,7 @@
     .wl-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(3,10,5,0.55);
+      background: rgba(36,8,13,0.55);
       backdrop-filter: blur(6px);
       -webkit-backdrop-filter: blur(6px);
       z-index: 1000;
@@ -138,15 +138,15 @@
       bottom: 0;
       width: 100%;
       max-width: 420px;
-      background: linear-gradient(180deg, #030a05 0%, #07170c 100%);
+      background: linear-gradient(180deg, #2a0a10 0%, #3a0a13 100%);
       box-shadow: -10px 0 40px rgba(0,0,0,0.5);
       z-index: 1001;
       transform: translateX(100%);
       transition: transform 0.45s cubic-bezier(0.16,1,0.3,1);
       display: flex;
       flex-direction: column;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      border-left: 1px solid rgba(74,222,128,0.08);
+      font-family: 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      border-left: 1px solid rgba(226,194,127,0.08);
     }
     .wl-overlay.active .wl-drawer {
       transform: translateX(0);
@@ -155,11 +155,11 @@
     /* Header */
     .wl-hdr {
       padding: 24px;
-      border-bottom: 1px solid rgba(74,222,128,0.1);
+      border-bottom: 1px solid rgba(226,194,127,0.1);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      background: rgba(3,10,5,0.5);
+      background: rgba(36,8,13,0.5);
     }
     .wl-hdr-left {
       display: flex;
@@ -173,15 +173,15 @@
     .wl-hdr h2 {
       font-size: 18px;
       font-weight: 700;
-      color: #f0fdf4;
+      color: #f3ecdb;
       margin: 0;
       letter-spacing: -0.01em;
     }
     .wl-hdr-count {
       font-size: 12px;
-      color: #4ade80;
+      color: #e2c27f;
       font-weight: 600;
-      background: rgba(74,222,128,0.1);
+      background: rgba(226,194,127,0.1);
       padding: 2px 8px;
       border-radius: 20px;
     }
@@ -193,7 +193,7 @@
       border-radius: 10px;
       font-size: 18px;
       cursor: pointer;
-      color: #94a3b8;
+      color: #bcaea4;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -214,7 +214,7 @@
       flex-direction: column;
       gap: 16px;
       scrollbar-width: auto;
-      scrollbar-color: #10b981 rgba(255, 255, 255, 0.05);
+      scrollbar-color: #c49a4f rgba(255, 255, 255, 0.05);
     }
     .wl-items-list::-webkit-scrollbar {
       width: 10px;
@@ -225,12 +225,12 @@
       border-radius: 6px;
     }
     .wl-items-list::-webkit-scrollbar-thumb {
-      background: linear-gradient(to bottom, #4ade80, #10b981);
+      background: linear-gradient(to bottom, #e2c27f, #c49a4f);
       border-radius: 6px;
-      border: 2px solid #030a05; /* Matches wishlist drawer background */
+      border: 2px solid #2a0a10; /* Matches wishlist drawer background */
     }
     .wl-items-list::-webkit-scrollbar-thumb:hover {
-      background: linear-gradient(to bottom, #22c55e, #10b981);
+      background: linear-gradient(to bottom, #c49a4f, #c49a4f);
     }
 
     /* Single Wishlist Item */
@@ -244,8 +244,8 @@
       transition: all 0.3s ease;
     }
     .wl-item:hover {
-      background: rgba(74,222,128,0.04);
-      border-color: rgba(74,222,128,0.1);
+      background: rgba(226,194,127,0.04);
+      border-color: rgba(226,194,127,0.1);
     }
     .wl-item-img {
       width: 72px;
@@ -266,7 +266,7 @@
     .wl-item-name {
       font-size: 14px;
       font-weight: 600;
-      color: #f0fdf4;
+      color: #f3ecdb;
       margin: 0 0 4px;
       white-space: nowrap;
       overflow: hidden;
@@ -281,11 +281,11 @@
     .wl-item-price {
       font-size: 16px;
       font-weight: 700;
-      color: #4ade80;
+      color: #e2c27f;
     }
     .wl-item-compare {
       font-size: 12px;
-      color: #64748b;
+      color: #9a8a84;
       text-decoration: line-through;
     }
     .wl-item-actions {
@@ -298,7 +298,7 @@
       align-items: center;
       justify-content: center;
       gap: 5px;
-      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      background: linear-gradient(135deg, #c49a4f 0%, #a8803a 100%);
       border: none;
       color: #fff;
       padding: 7px 12px;
@@ -310,7 +310,7 @@
       white-space: nowrap;
     }
     .wl-btn-cart:hover {
-      box-shadow: 0 4px 14px rgba(16,185,129,0.3);
+      box-shadow: 0 4px 14px rgba(196,154,79,0.3);
       transform: translateY(-1px);
     }
     .wl-btn-cart svg { width: 14px; height: 14px; pointer-events: none; }
@@ -364,12 +364,12 @@
     .wl-empty-title {
       font-size: 16px;
       font-weight: 700;
-      color: #f0fdf4;
+      color: #f3ecdb;
       margin: 0 0 8px;
     }
     .wl-empty-sub {
       font-size: 13px;
-      color: #4b5563;
+      color: #57474a;
       margin: 0 0 24px;
       line-height: 1.6;
     }
@@ -377,7 +377,7 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      background: linear-gradient(135deg, #10b981, #059669);
+      background: linear-gradient(135deg, #c49a4f, #a8803a);
       border: none;
       color: #fff;
       padding: 10px 24px;
@@ -388,7 +388,7 @@
       transition: all 0.3s ease;
     }
     .wl-empty-cta:hover {
-      box-shadow: 0 6px 20px rgba(16,185,129,0.3);
+      box-shadow: 0 6px 20px rgba(196,154,79,0.3);
       transform: translateY(-2px);
     }
 
@@ -457,25 +457,25 @@
 
     /* Promo Banner */
     .wl-promo-banner {
-      background: rgba(74, 222, 128, 0.05);
-      border-bottom: 1px solid rgba(74, 222, 128, 0.12);
+      background: rgba(226,194,127, 0.05);
+      border-bottom: 1px solid rgba(226,194,127, 0.12);
       padding: 14px 20px;
       font-size: 12px;
-      color: #a7f3d0;
+      color: #ecd7a6;
       line-height: 1.5;
       display: none;
       align-items: center;
       justify-content: space-between;
       gap: 12px;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-family: 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
     }
     .wl-promo-text {
       flex: 1;
     }
     .wl-promo-link {
-      background: rgba(74, 222, 128, 0.12);
-      border: 1px solid rgba(74, 222, 128, 0.25);
-      color: #4ade80;
+      background: rgba(226,194,127, 0.12);
+      border: 1px solid rgba(226,194,127, 0.25);
+      color: #e2c27f;
       font-weight: 600;
       padding: 6px 12px;
       border-radius: 8px;
@@ -488,9 +488,9 @@
       justify-content: center;
     }
     .wl-promo-link:hover {
-      background: rgba(74, 222, 128, 0.20);
+      background: rgba(226,194,127, 0.20);
       color: #fff;
-      box-shadow: 0 0 10px rgba(74, 222, 128, 0.2);
+      box-shadow: 0 0 10px rgba(226,194,127, 0.2);
     }
 
     /* Variant dropdown in wishlist drawer */
@@ -498,7 +498,7 @@
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 6px;
-      color: #e2e8f0;
+      color: #ece3d0;
       font-size: 11px;
       font-weight: 600;
       padding: 4px 22px 4px 8px;
@@ -517,11 +517,11 @@
     }
     .wl-item-variant-select:hover {
       background-color: rgba(255, 255, 255, 0.08);
-      border-color: rgba(74, 222, 128, 0.2);
+      border-color: rgba(226,194,127, 0.2);
     }
     .wl-item-variant-select option {
-      background: #07170c;
-      color: #e2e8f0;
+      background: #3a0a13;
+      color: #ece3d0;
     }
   `;
 
@@ -863,7 +863,7 @@
       const isComingSoon = product && (product.tags || []).map(t => t.toLowerCase().replace(/\s+/g, '-')).includes('coming-soon');
       const cartBtnHtml = isComingSoon
         ? `
-          <button class="wl-btn-cart wl-btn-cart-disabled" disabled style="background: rgba(148, 163, 184, 0.08); border-color: rgba(148, 163, 184, 0.15); color: #64748b; cursor: not-allowed;" title="Coming Soon">
+          <button class="wl-btn-cart wl-btn-cart-disabled" disabled style="background: rgba(168,153,154, 0.08); border-color: rgba(168,153,154, 0.15); color: #9a8a84; cursor: not-allowed;" title="Coming Soon">
             <span>Coming Soon</span>
           </button>
         `

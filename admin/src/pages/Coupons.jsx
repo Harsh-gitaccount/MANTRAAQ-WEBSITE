@@ -176,7 +176,7 @@ export default function Coupons() {
         </div>
         <button
           onClick={openCreateModal}
-          className="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold px-4 py-2.5 rounded-lg text-sm transition-colors shadow-sm flex items-center gap-1.5"
+          className="bg-maroon-700 hover:bg-maroon-600 text-white font-semibold px-4 py-2.5 rounded-lg text-sm transition-colors shadow-sm flex items-center gap-1.5"
         >
           <Plus className="w-4 h-4" /> Create Coupon
         </button>
@@ -185,7 +185,7 @@ export default function Coupons() {
       {/* Coupon List */}
       {loading ? (
         <div className="flex items-center justify-center py-24">
-          <div className="w-10 h-10 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+          <div className="w-10 h-10 border-4 border-maroon-700 border-t-transparent rounded-full animate-spin"></div>
         </div>
       ) : coupons.length === 0 ? (
         <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-12 text-center text-slate-400">
@@ -220,7 +220,7 @@ export default function Coupons() {
                     {/* Settings */}
                     <td className="py-5 px-6 text-slate-700">
                       <div>
-                        <span className="font-bold text-emerald-600">
+                        <span className="font-bold text-maroon-700">
                           {coupon.discountType === 'PERCENTAGE' ? `${coupon.discountValue}%` : `₹${coupon.discountValue}`}
                         </span>
                         <span> discount</span>
@@ -263,7 +263,7 @@ export default function Coupons() {
                             ? 'bg-rose-50 border-rose-100 text-rose-700 hover:bg-rose-100'
                             : isExhausted
                             ? 'bg-amber-50 border-amber-100 text-amber-700 hover:bg-amber-100'
-                            : 'bg-emerald-50 border-emerald-100 text-emerald-700 hover:bg-emerald-100'
+                            : 'bg-leaf-50 border-leaf-200 text-leaf-700 hover:bg-leaf-100'
                         }`}
                       >
                         {!coupon.isActive ? (
@@ -280,7 +280,7 @@ export default function Coupons() {
                           </>
                         ) : (
                           <>
-                            <CheckCircle className="w-3.5 h-3.5 text-emerald-500" /> Active
+                            <CheckCircle className="w-3.5 h-3.5 text-leaf-600" /> Active
                           </>
                         )}
                       </button>
@@ -339,7 +339,7 @@ export default function Coupons() {
                   value={code}
                   onChange={(e) => setCode(e.target.value.toUpperCase())}
                   placeholder="WELCOME10"
-                  className="w-full bg-slate-50 border border-slate-200 rounded-lg py-2.5 px-3 text-slate-800 focus:outline-none focus:border-emerald-500 font-mono font-bold"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-lg py-2.5 px-3 text-slate-800 focus:outline-none focus:border-maroon-600 font-mono font-bold"
                   required
                 />
               </div>
@@ -350,7 +350,7 @@ export default function Coupons() {
                   <select
                     value={discountType}
                     onChange={(e) => setDiscountType(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-lg py-2.5 px-3 text-slate-800 focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-lg py-2.5 px-3 text-slate-800 focus:outline-none focus:border-maroon-600"
                   >
                     <option value="PERCENTAGE">Percentage (%)</option>
                     <option value="FIXED">Flat Amount (₹)</option>
@@ -366,7 +366,7 @@ export default function Coupons() {
                     value={discountValue}
                     onChange={(e) => setDiscountValue(e.target.value)}
                     placeholder={discountType === 'PERCENTAGE' ? '10' : '50'}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-lg py-2.5 px-3 text-slate-800 focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-lg py-2.5 px-3 text-slate-800 focus:outline-none focus:border-maroon-600"
                     required
                     min="1"
                   />
@@ -381,7 +381,7 @@ export default function Coupons() {
                     value={minOrderAmount}
                     onChange={(e) => setMinOrderAmount(e.target.value)}
                     placeholder="200"
-                    className="w-full bg-slate-50 border border-slate-200 rounded-lg py-2.5 px-3 text-slate-800 focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-lg py-2.5 px-3 text-slate-800 focus:outline-none focus:border-maroon-600"
                   />
                 </div>
 
@@ -392,7 +392,7 @@ export default function Coupons() {
                     value={maxUses}
                     onChange={(e) => setMaxUses(e.target.value)}
                     placeholder="100"
-                    className="w-full bg-slate-50 border border-slate-200 rounded-lg py-2.5 px-3 text-slate-800 focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-lg py-2.5 px-3 text-slate-800 focus:outline-none focus:border-maroon-600"
                   />
                 </div>
               </div>
@@ -405,7 +405,7 @@ export default function Coupons() {
                   type="date"
                   value={expiresAt}
                   onChange={(e) => setExpiresAt(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-lg py-2.5 px-3 text-slate-800 focus:outline-none focus:border-emerald-500"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-lg py-2.5 px-3 text-slate-800 focus:outline-none focus:border-maroon-600"
                 />
               </div>
 
@@ -415,7 +415,7 @@ export default function Coupons() {
                   id="modalIsActive"
                   checked={isActive}
                   onChange={(e) => setIsActive(e.target.checked)}
-                  className="w-4 h-4 text-emerald-500 border-slate-300 rounded focus:ring-emerald-500"
+                  className="w-4 h-4 text-maroon-700 accent-maroon-700 border-slate-300 rounded focus:ring-maroon-600"
                 />
                 <label htmlFor="modalIsActive" className="text-xs font-semibold text-slate-600 select-none">
                   Enable coupon immediately (Active status)
@@ -433,7 +433,7 @@ export default function Coupons() {
                 </button>
                 <button
                   type="submit"
-                  className="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold px-4 py-2 rounded-lg text-xs flex items-center gap-1.5 shadow-sm"
+                  className="bg-maroon-700 hover:bg-maroon-600 text-white font-semibold px-4 py-2 rounded-lg text-xs flex items-center gap-1.5 shadow-sm"
                 >
                   <Save className="w-4 h-4" /> Save Coupon
                 </button>

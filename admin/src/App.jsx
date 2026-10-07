@@ -17,7 +17,7 @@ const ProtectedRoute = ({ children }) => {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-900">
-        <div className="w-10 h-10 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+        <div className="w-10 h-10 border-4 border-gold-400 border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
   }
@@ -60,7 +60,7 @@ const AdminLayout = ({ children }) => {
               <line x1="3" y1="18" x2="21" y2="18"></line>
             </svg>
           </button>
-          <span className="font-bold text-slate-800">MantraAQ Admin</span>
+          <span className="font-display font-bold text-maroon-700">MantraAQ Admin</span>
           <div className="w-10"></div> {/* Spacer for alignment */}
         </header>
 

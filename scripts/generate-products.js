@@ -162,7 +162,7 @@ const TRUCK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
 
 function railSection({ id, eyebrow, title, exclude, cards }) {
   return `<section class="section" aria-labelledby="${id}" data-rail-section${cards ? '' : ' hidden'}>
-  <div class="wrap" data-rail>
+  <div class="wrap" data-rail data-autoplay="5000">
     <div class="section-head">
       <div data-reveal>
         <span class="eyebrow">${eyebrow}</span>
@@ -363,7 +363,7 @@ ${partials.nav()}
 ${packSection(product, facts)}
 
 <section class="section reviews" aria-labelledby="reviews-h" data-reviews data-reviews-handle="${esc(product.handle)}" hidden>
-  <div class="wrap" data-rail>
+  <div class="wrap" data-rail data-autoplay="5000">
     <div class="section-head">
       <div>
         <span class="eyebrow">Reviews</span>

@@ -243,7 +243,33 @@
       }
     });
     update();
+    initAutoplay(wrap, rail, step);
   }
+
+  /* Rails with data-autoplay="ms" advance one card at a time and loop.
+     They pause while hovered, touched, focused, off screen or in a background tab. */
+  function initAutoplay(wrap, rail, step) {
+    const delay = parseInt(wrap.dataset.autoplay || '0', 10);
+    if (!delay || reduceMotion) return;
+    let visible = false, holdUntil = 0, hovering = false;
+    const hold = ms => { holdUntil = Date.now() + ms; };
+    wrap.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') hovering = true; });
+    wrap.addEventListener('pointerleave', () => { hovering = false; hold(1500); });
+    rail.addEventListener('touchstart', () => hold(8000), { passive: true });
+    wrap.addEventListener('focusin', () => hold(10000));
+    $$('[data-rail-prev], [data-rail-next]', wrap).forEach(b => b.addEventListener('click', () => hold(8000)));
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(([e]) => { visible = e.isIntersecting; }, { threshold: 0.35 }).observe(rail);
+    } else visible = true;
+    setInterval(() => {
+      if (!visible || hovering || document.hidden || Date.now() < holdUntil || rail.classList.contains('is-dragging')) return;
+      const max = rail.scrollWidth - rail.clientWidth;
+      if (max <= 4) return;
+      const atEnd = rail.scrollLeft >= max - 4;
+      rail.scrollTo({ left: atEnd ? 0 : Math.min(max, rail.scrollLeft + step()), behavior: 'smooth' });
+    }, delay);
+  }
+
   function initRails() { $$('[data-rail]').forEach(initRail); }
 
   /* ── 5. Pond-to-plate story: activate steps as they scroll by ── */
@@ -297,7 +323,9 @@
         if (!grid) return;
         e.preventDefault();
         if (window.MantraAQShopFilter) window.MantraAQShopFilter(link.dataset.shopFilter);
-        const top = $('#products').getBoundingClientRect().top + window.scrollY - 70;
+        // Scroll to the filtered grid, not the tiles the visitor just clicked
+        const target = $('#shop-all') || $('#products');
+        const top = target.getBoundingClientRect().top + window.scrollY - 90;
         window.scrollTo({ top, behavior: reduceMotion ? 'auto' : 'smooth' });
       });
     });

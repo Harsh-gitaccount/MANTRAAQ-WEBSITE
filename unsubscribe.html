@@ -8,73 +8,118 @@
     <meta name="robots" content="noindex, nofollow">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Fraunces:opsz,wght@9..144,400..600&family=Manrope:wght@400..800&display=swap" rel="stylesheet">
+    <meta name="theme-color" content="#f3ecdb">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon-32x32.png">
+    <link rel="icon" type="image/x-icon" href="/assets/images/favicon.ico">
     <style>
-        /* ── Reset & Base ── */
-        *, *::before, *::after {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+            :root {
+              --ivory: #f3ecdb;
+              --paper: #fbf7ee;
+              --paper-art: #f4ead2;
+              --sand: #ebdfc4;
+              --ink: #241316;
+              --ink-2: #57474a;
+              --ink-3: #8a7b7d;
+              --maroon: #6c1121;
+              --maroon-2: #830e1e;
+              --maroon-deep: #3a0a13;
+              --leaf: #2f4429;
+              --gold: #c49a4f;
+              --line: rgba(36, 19, 22, 0.13);
+              --line-2: rgba(36, 19, 22, 0.07);
+              --danger: #a3202f;
+              --font-display: 'Fraunces', Georgia, serif;
+              --font-brand: 'Cinzel', Georgia, serif;
+              --font-body: 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
+              --ease: cubic-bezier(0.22, 1, 0.36, 1);
+              --shadow: 0 2px 6px rgba(58, 10, 19, 0.05), 0 30px 70px -30px rgba(58, 10, 19, 0.35);
+            }
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #0f172a;
-            color: #e2e8f0;
-            line-height: 1.6;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
+            *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+            body {
+              font-family: var(--font-body);
+              background: var(--ivory);
+              color: var(--ink);
+              line-height: 1.6;
+              min-height: 100vh;
+              min-height: 100svh;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
+              padding: 88px 16px 40px;
+              -webkit-font-smoothing: antialiased;
+              background-image: radial-gradient(60% 50% at 50% 30%, rgba(255, 255, 255, .6), transparent 70%);
+            }
+
+            /* Mithila flower band across the top, as on the storefront */
+            body::before {
+              content: '';
+              position: fixed;
+              left: 0; right: 0; top: 0;
+              height: 44px;
+              background: var(--paper-art) url(/assets/images/art/band-flower.webp) repeat-x 0 50% / 62px 100%;
+              border-bottom: 3px solid var(--maroon);
+              z-index: 0;
+            }
+
+            ::selection { background: var(--maroon); color: var(--ivory); }
+            :focus-visible { outline: 2px solid var(--leaf); outline-offset: 3px; }
+
+            .brand {
+              display: inline-flex;
+              align-items: center;
+              justify-content: center;
+              gap: 10px;
+              margin-bottom: 28px;
+              color: var(--maroon-2);
+              text-decoration: none;
+            }
+            .brand img { width: 40px; height: 40px; object-fit: contain; }
+            .brand span { font-family: var(--font-brand); font-weight: 700; font-size: 24px; letter-spacing: 0.02em; }
+
+            h1 {
+              font-family: var(--font-display);
+              font-weight: 500;
+              font-size: clamp(28px, 6vw, 34px);
+              line-height: 1.12;
+              letter-spacing: -0.02em;
+              color: var(--ink);
+              margin-bottom: 10px;
+            }
 
         /* ── Main Card ── */
         .unsubscribe-card {
+            position: relative;
+            z-index: 1;
             width: 100%;
             max-width: 480px;
-            background: rgba(30, 41, 59, 0.7);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 16px;
-            padding: 40px 32px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
-            backdrop-filter: blur(16px);
+            padding: 44px 36px 36px;
+            border-radius: 30px;
+            background: var(--paper);
+            border: 1px solid var(--line-2);
+            box-shadow: var(--shadow);
             text-align: center;
         }
 
-        .logo {
-            margin-bottom: 24px;
-        }
-
-        .logo img {
-            height: 38px;
-        }
-
-        h1 {
-            font-size: 1.75rem;
-            color: #ffffff;
-            font-weight: 700;
-            margin-bottom: 12px;
-            letter-spacing: -0.02em;
-        }
-
         .subtitle {
-            font-size: 0.95rem;
-            color: #94a3b8;
+            font-size: 15px;
+            color: var(--ink-2);
             margin-bottom: 30px;
         }
 
         /* ── Loading Spinner ── */
         .spinner {
             display: inline-block;
-            width: 32px;
-            height: 32px;
-            border: 3px solid rgba(16, 185, 129, 0.25);
+            width: 34px;
+            height: 34px;
+            border: 3px solid rgba(108, 17, 33, 0.15);
             border-radius: 50%;
-            border-top-color: #10b981;
+            border-top-color: var(--maroon);
             animation: spin 1s linear infinite;
-            margin-bottom: 16px;
+            margin-bottom: 18px;
         }
 
         @keyframes spin {
@@ -84,111 +129,127 @@
         /* ── Status Messages ── */
         .status-container {
             display: none;
-            margin-bottom: 24px;
+            margin-bottom: 8px;
         }
 
         .status-icon {
-            font-size: 40px;
-            margin-bottom: 16px;
+            display: grid;
+            place-items: center;
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 18px;
+            border-radius: 50%;
+            background: var(--sand);
+            color: var(--maroon);
         }
+
+        .status-icon svg { width: 28px; height: 28px; }
 
         .status-text {
-            font-size: 1rem;
+            font-size: 15.5px;
             font-weight: 500;
-            line-height: 1.5;
+            line-height: 1.6;
+            color: var(--ink-2);
+            margin-bottom: 20px;
         }
 
-        .status-success {
-            color: #34d399;
-        }
-
-        .status-error {
-            color: #f87171;
-        }
+        .status-success { color: var(--leaf); }
+        .status-error { color: var(--danger); }
+        #status-error .status-icon { background: rgba(163, 32, 47, 0.1); color: var(--danger); }
 
         /* ── Form Controls ── */
         .form-group {
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            margin-bottom: 24px;
+            gap: 8px;
+            margin-bottom: 20px;
             text-align: left;
         }
 
         .form-label {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: #cbd5e1;
+            font-size: 12px;
+            font-weight: 800;
+            color: var(--ink-2);
             text-transform: uppercase;
-            letter-spacing: 0.05em;
+            letter-spacing: 0.1em;
         }
 
         .form-input {
             width: 100%;
-            background: rgba(15, 23, 42, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            color: #ffffff;
+            min-height: 52px;
+            padding: 14px 16px;
+            border-radius: 14px;
+            border: 1px solid var(--line);
+            background: var(--ivory);
             font-family: inherit;
-            font-size: 0.95rem;
-            padding: 12px 16px;
-            border-radius: 8px;
+            font-size: 16px;
+            color: var(--ink);
             outline: none;
-            transition: border-color 0.2s, box-shadow 0.2s;
+            transition: border-color .25s, background .25s, box-shadow .25s;
         }
 
         .form-input:focus {
-            border-color: #10b981;
-            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+            border-color: var(--maroon);
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(108, 17, 33, 0.08);
         }
 
         .btn {
-            display: inline-block;
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             width: 100%;
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: #ffffff;
-            font-size: 0.95rem;
-            font-weight: 600;
-            padding: 12px 24px;
-            border: none;
-            border-radius: 8px;
+            min-height: 52px;
+            padding: 0 26px;
+            border: 1px solid transparent;
+            border-radius: 999px;
+            background: var(--maroon);
+            color: var(--ivory);
+            font-family: inherit;
+            font-size: 15px;
+            font-weight: 700;
+            letter-spacing: 0.01em;
+            text-decoration: none;
             cursor: pointer;
-            transition: opacity 0.2s, transform 0.1s;
+            transition: background .3s, transform .3s var(--ease), box-shadow .3s var(--ease);
         }
 
-        .btn:hover {
-            opacity: 0.95;
-        }
-
-        .btn:active {
-            transform: scale(0.98);
-        }
+        .btn:hover { background: var(--leaf); box-shadow: 0 14px 30px -12px rgba(47, 68, 41, .55); }
+        .btn:active { transform: scale(0.98); }
+        .btn:disabled { opacity: .6; cursor: not-allowed; }
 
         .btn-secondary {
             background: transparent;
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            color: #94a3b8;
-            margin-top: 12px;
+            border-color: var(--line);
+            color: var(--ink);
+            margin: 4px 0 12px;
         }
 
         .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.03);
-            color: #ffffff;
+            background: var(--ink);
+            border-color: var(--ink);
+            color: var(--ivory);
+            box-shadow: none;
         }
 
         /* ── Footer ── */
         .footer-link {
-            display: inline-block;
-            margin-top: 30px;
-            color: #10b981;
+            display: inline-flex;
+            margin-top: 26px;
+            color: var(--maroon);
             text-decoration: none;
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: color 0.2s;
+            font-size: 14px;
+            font-weight: 700;
+            border-bottom: 1px solid rgba(108, 17, 33, .3);
+            padding-bottom: 2px;
+            transition: color .2s, border-color .2s;
         }
 
-        .footer-link:hover {
-            color: #34d399;
-            text-decoration: underline;
+        .footer-link:hover { color: var(--leaf); border-color: currentColor; }
+
+        @media (max-width: 420px) {
+            .unsubscribe-card { padding: 36px 22px 28px; border-radius: 24px; }
         }
     </style>
 </head>
@@ -196,11 +257,10 @@
 
     <div class="unsubscribe-card">
         <!-- Logo -->
-        <div class="logo">
-            <a href="index.html">
-                <img src="assets/images/logo.png" alt="MantraAQ logo">
-            </a>
-        </div>
+        <a class="brand" href="index.html" aria-label="MantraAQ home">
+            <img src="/assets/images/brand/logo-maroon-128.webp" alt="" width="40" height="40">
+            <span>MantraAQ</span>
+        </a>
 
         <!-- Initial Screen / Loading -->
         <div id="loading-view" style="display: none;">
@@ -226,17 +286,17 @@
         <!-- Result View -->
         <div id="result-view" style="display: none;">
             <div class="status-container" id="status-success">
-                <div class="status-icon">👋</div>
+                <div class="status-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>
                 <h1 class="status-success">Unsubscribed</h1>
-                <p class="status-text" style="color: #cbd5e1; margin-bottom: 20px;">
+                <p class="status-text">
                     You have been successfully unsubscribed. We're sorry to see you go!
                 </p>
             </div>
             
             <div class="status-container" id="status-error">
-                <div class="status-icon">⚠️</div>
+                <div class="status-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9L1.8 18a2 2 0 001.7 3h17a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z"/></svg></div>
                 <h1 class="status-error">Unsubscribe Failed</h1>
-                <p class="status-text" id="error-message-text" style="color: #cbd5e1; margin-bottom: 20px;">
+                <p class="status-text" id="error-message-text">
                     We couldn't process your request. Please try again.
                 </p>
                 <button class="btn btn-secondary" onclick="resetForm()">Try Again</button>

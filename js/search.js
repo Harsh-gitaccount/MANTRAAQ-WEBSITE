@@ -17,7 +17,7 @@
       align-items: flex-start;
       justify-content: center;
       padding-top: min(18vh, 160px);
-      background: rgba(3, 10, 5, 0.82);
+      background: rgba(36,8,13, 0.82);
       backdrop-filter: blur(24px) saturate(140%);
       -webkit-backdrop-filter: blur(24px) saturate(140%);
       opacity: 0;
@@ -51,7 +51,7 @@
     }
     .search-close-btn:hover {
       background: rgba(255, 255, 255, 0.12);
-      color: #4ade80;
+      color: #e2c27f;
       transform: rotate(90deg);
     }
 
@@ -74,16 +74,16 @@
       position: relative;
       display: flex;
       align-items: center;
-      background: rgba(7, 23, 12, 0.65);
-      border: 1px solid rgba(74, 222, 128, 0.18);
+      background: rgba(58,10,19, 0.65);
+      border: 1px solid rgba(226,194,127, 0.18);
       border-radius: 16px;
-      box-shadow: 0 0 0 0 rgba(74, 222, 128, 0),
+      box-shadow: 0 0 0 0 rgba(226,194,127, 0),
                   0 8px 32px rgba(0, 0, 0, 0.35);
       transition: border-color 0.3s ease, box-shadow 0.3s ease;
     }
     .search-input-wrap:focus-within {
-      border-color: rgba(74, 222, 128, 0.45);
-      box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.08),
+      border-color: rgba(226,194,127, 0.45);
+      box-shadow: 0 0 0 3px rgba(226,194,127, 0.08),
                   0 8px 40px rgba(0, 0, 0, 0.4);
     }
 
@@ -91,11 +91,11 @@
     .search-icon {
       flex-shrink: 0;
       margin-left: 20px;
-      color: rgba(74, 222, 128, 0.55);
+      color: rgba(226,194,127, 0.55);
       transition: color 0.25s ease;
     }
     .search-input-wrap:focus-within .search-icon {
-      color: #4ade80;
+      color: #e2c27f;
     }
 
     /* Input field */
@@ -107,7 +107,7 @@
       padding: 20px 20px 20px 14px;
       font-size: 18px;
       font-weight: 500;
-      color: #f0fdf4;
+      color: #f3ecdb;
       font-family: inherit;
       letter-spacing: 0.01em;
     }
@@ -134,21 +134,21 @@
     }
     .search-hint:hover {
       background: rgba(255, 255, 255, 0.12);
-      color: #4ade80;
+      color: #e2c27f;
     }
 
     /* ── Results Dropdown ── */
     .search-results {
       margin-top: 8px;
-      background: rgba(7, 23, 12, 0.75);
-      border: 1px solid rgba(74, 222, 128, 0.12);
+      background: rgba(58,10,19, 0.75);
+      border: 1px solid rgba(226,194,127, 0.12);
       border-radius: 14px;
       max-height: 360px;
       overflow-y: auto;
       overflow-x: hidden;
       box-shadow: 0 12px 48px rgba(0, 0, 0, 0.4);
       scrollbar-width: auto;
-      scrollbar-color: #10b981 rgba(255, 255, 255, 0.05);
+      scrollbar-color: #c49a4f rgba(255, 255, 255, 0.05);
       opacity: 0;
       transform: translateY(6px);
       transition: opacity 0.25s ease, transform 0.25s ease;
@@ -166,12 +166,12 @@
       border-radius: 6px;
     }
     .search-results::-webkit-scrollbar-thumb {
-      background: linear-gradient(to bottom, #4ade80, #10b981);
+      background: linear-gradient(to bottom, #e2c27f, #c49a4f);
       border-radius: 6px;
-      border: 2px solid #030d06; /* Matches search dropdown background */
+      border: 2px solid #2a0a10; /* Matches search dropdown background */
     }
     .search-results::-webkit-scrollbar-thumb:hover {
-      background: linear-gradient(to bottom, #22c55e, #10b981);
+      background: linear-gradient(to bottom, #c49a4f, #c49a4f);
     }
 
     /* Result item */
@@ -189,10 +189,10 @@
     }
     .search-result-item:hover,
     .search-result-item.focused {
-      background: rgba(74, 222, 128, 0.08);
+      background: rgba(226,194,127, 0.08);
     }
     .search-result-item:active {
-      background: rgba(74, 222, 128, 0.14);
+      background: rgba(226,194,127, 0.14);
     }
 
     .search-result-icon {
@@ -200,12 +200,12 @@
       width: 36px;
       height: 36px;
       border-radius: 10px;
-      background: rgba(74, 222, 128, 0.08);
-      border: 1px solid rgba(74, 222, 128, 0.12);
+      background: rgba(226,194,127, 0.08);
+      border: 1px solid rgba(226,194,127, 0.12);
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #4ade80;
+      color: #e2c27f;
     }
 
     .search-result-info {
@@ -215,7 +215,7 @@
     .search-result-title {
       font-size: 14px;
       font-weight: 600;
-      color: #e2e8f0;
+      color: #ece3d0;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -236,7 +236,7 @@
       transition: color 0.2s ease, transform 0.2s ease;
     }
     .search-result-item:hover .search-result-arrow {
-      color: #4ade80;
+      color: #e2c27f;
       transform: translateX(3px);
     }
 
@@ -256,13 +256,13 @@
 
     /* ── Product Card Highlight Animation ── */
     @keyframes searchHighlightPulse {
-      0%   { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.45); }
-      40%  { box-shadow: 0 0 20px 6px rgba(74, 222, 128, 0.25); }
-      100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
+      0%   { box-shadow: 0 0 0 0 rgba(226,194,127, 0.45); }
+      40%  { box-shadow: 0 0 20px 6px rgba(226,194,127, 0.25); }
+      100% { box-shadow: 0 0 0 0 rgba(226,194,127, 0); }
     }
     .product-card.search-highlight {
       animation: searchHighlightPulse 2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-      outline: 2px solid rgba(74, 222, 128, 0.35);
+      outline: 2px solid rgba(226,194,127, 0.35);
       outline-offset: 4px;
       border-radius: inherit;
       transition: outline-color 2s ease;
@@ -556,7 +556,7 @@
         results.innerHTML = `
           <div class="search-empty">
             <div class="search-empty-icon">🔍</div>
-            No products found for "<strong style="color:#4ade80">${Search._escapeHTML(query.trim())}</strong>"
+            No products found for "<strong style="color:#e2c27f">${Search._escapeHTML(query.trim())}</strong>"
           </div>
         `;
         results.classList.add('visible');
@@ -577,7 +577,7 @@
             <div class="search-result-info">
               <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
                 <p class="search-result-title">${Search._highlightMatch(m.title, query.trim())}</p>
-                ${m.price ? `<span style="font-size:12px;font-weight:600;color:#4ade80;">${m.price}</span>` : ''}
+                ${m.price ? `<span style="font-size:12px;font-weight:600;color:#e2c27f;">${m.price}</span>` : ''}
               </div>
               <p class="search-result-desc">${m.description ? Search._escapeHTML(m.description) + '...' : ''}</p>
             </div>
@@ -648,7 +648,7 @@
       const escaped = Search._escapeHTML(text);
       const queryEscaped = Search._escapeHTML(query);
       const regex = new RegExp(`(${queryEscaped.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
-      return escaped.replace(regex, '<span style="color:#4ade80;font-weight:700">$1</span>');
+      return escaped.replace(regex, '<span style="color:#e2c27f;font-weight:700">$1</span>');
     },
   };
 

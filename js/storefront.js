@@ -141,22 +141,27 @@ function renderCards(products, opts) {
   })).join('');
 }
 
-/** Category filter chips above the main grid, built from product categories. */
-function buildFilters(products) {
+/**
+ * Category filter chips above the main grid, built from the cards already in it,
+ * so filtering works on the pre-rendered page even before (or without) the API.
+ */
+function buildFilters() {
   const bar = document.getElementById('shop-filters');
   const grid = document.getElementById('storefront-products-grid');
   if (!bar || !grid) return;
 
+  const cards = Array.from(grid.querySelectorAll('.product-card'));
   const seen = new Map();
-  products.forEach(p => {
-    if (Card.isComingSoon(p) || !p.category) return;
-    const slug = Card.categorySlug(p.category);
-    if (!seen.has(slug)) seen.set(slug, p.category);
+  cards.forEach(card => {
+    if (card.dataset.soon === 'true' || !card.dataset.category) return;
+    const label = (card.querySelector('.pc-cat') || {}).textContent || card.dataset.category;
+    if (!seen.has(card.dataset.category)) seen.set(card.dataset.category, label.trim());
   });
   if (seen.size < 2) { bar.hidden = true; return; }
+  bar.hidden = false;
 
   const chips = [['all', 'All'], ...seen.entries()];
-  if (products.some(Card.isComingSoon)) chips.push(['soon', 'Coming soon']);
+  if (cards.some(c => c.dataset.soon === 'true')) chips.push(['soon', 'Coming soon']);
 
   bar.innerHTML = chips.map(([slug, label], i) =>
     `<button type="button" class="filter${i === 0 ? ' is-active' : ''}" data-filter="${Card.escapeHtml(slug)}" aria-pressed="${i === 0}">${Card.escapeHtml(label)}</button>`
@@ -166,11 +171,13 @@ function buildFilters(products) {
     chip.addEventListener('click', () => applyFilter(chip.dataset.filter));
   });
 
-  const wanted = new URLSearchParams(window.location.search).get('category');
-  if (wanted) applyFilter(wanted);
+  applyFilter(currentFilter || new URLSearchParams(window.location.search).get('category') || 'all');
 }
 
+let currentFilter = null;
+
 function applyFilter(slug) {
+  currentFilter = slug;
   const bar = document.getElementById('shop-filters');
   const grid = document.getElementById('storefront-products-grid');
   if (!grid) return;
@@ -193,6 +200,15 @@ function applyFilter(slug) {
     c.classList.toggle('is-active', on);
     c.setAttribute('aria-pressed', String(on));
   });
+  // Mark the matching category tile and name the grid after it
+  let label = 'All products';
+  document.querySelectorAll('[data-shop-filter]').forEach(tile => {
+    const on = slugs.join(',') === tile.dataset.shopFilter;
+    tile.classList.toggle('is-active', on);
+    if (on) label = (tile.querySelector('h3') || {}).textContent || label;
+  });
+  const title = document.getElementById('shop-all-title');
+  if (title) title.textContent = label;
 }
 window.MantraAQShopFilter = applyFilter;
 
@@ -221,6 +237,7 @@ async function syncProductCards() {
 
   // Bind pre-rendered cards right away so pills and galleries work before the API answers
   document.querySelectorAll('.product-card').forEach(bindCard);
+  buildFilters();
 
   let products;
   try {
@@ -255,7 +272,7 @@ async function syncProductCards() {
 
   if (gridContainer) {
     gridContainer.innerHTML = renderCards(activeProducts, { eager: true });
-    buildFilters(activeProducts);
+    buildFilters();
   }
   if (hasRails) renderRails(activeProducts);
 

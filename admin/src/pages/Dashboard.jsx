@@ -53,7 +53,7 @@ export default function Dashboard() {
   if (loading) {
     return (
       <div className="flex-1 flex items-center justify-center bg-slate-50 min-h-screen">
-        <div className="w-12 h-12 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+        <div className="w-12 h-12 border-4 border-maroon-700 border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
   }
@@ -127,7 +127,7 @@ export default function Dashboard() {
             <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Sales</p>
             <p className="text-2xl font-bold text-slate-900">₹{(kpis?.totalRevenue || 0).toLocaleString('en-IN')}</p>
           </div>
-          <div className="bg-emerald-500/10 p-3 rounded-xl text-emerald-600">
+          <div className="bg-maroon-700/10 p-3 rounded-xl text-maroon-700">
             <IndianRupee className="w-6 h-6" />
           </div>
         </div>
@@ -198,17 +198,17 @@ export default function Dashboard() {
         <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm lg:col-span-2">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-lg font-bold text-slate-950 flex items-center gap-2">
-              <TrendingUp className="w-5 h-5 text-emerald-500" /> Sales Trend (₹)
+              <TrendingUp className="w-5 h-5 text-maroon-700" /> Sales Trend (₹)
             </h2>
           </div>
           <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%" minWidth={0}>
               <BarChart data={chartData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-                <XAxis dataKey="name" stroke="#94a3b8" fontSize={12} tickLine={false} />
-                <YAxis stroke="#94a3b8" fontSize={12} tickLine={false} />
-                <Tooltip cursor={{ fill: '#f8fafc' }} />
-                <Bar dataKey="Sales" fill="#10b981" radius={[4, 4, 0, 0]} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#f3ecdb" />
+                <XAxis dataKey="name" stroke="#8e7e80" fontSize={12} tickLine={false} />
+                <YAxis stroke="#8e7e80" fontSize={12} tickLine={false} />
+                <Tooltip cursor={{ fill: '#fbf7ee' }} />
+                <Bar dataKey="Sales" fill="#6c1121" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -246,7 +246,7 @@ export default function Dashboard() {
       <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-lg font-bold text-slate-950">Recent Customer Orders</h2>
-          <Link to="/orders" className="text-emerald-500 hover:text-emerald-600 text-sm font-medium flex items-center gap-1 transition-colors">
+          <Link to="/orders" className="text-maroon-700 hover:text-maroon-600 text-sm font-medium flex items-center gap-1 transition-colors">
             View All Orders <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
@@ -272,7 +272,7 @@ export default function Dashboard() {
                     <td className="py-4 px-4 font-semibold text-slate-900">₹{order.totalAmount.toFixed(0)}</td>
                     <td className="py-4 px-4">
                       <span className={`inline-block px-2.5 py-1 rounded-full text-xs font-bold capitalize ${
-                        order.status === 'PAID' ? 'bg-emerald-100 text-emerald-800' :
+                        order.status === 'PAID' ? 'bg-leaf-100 text-leaf-800' :
                         order.status === 'DISPATCHED' ? 'bg-blue-100 text-blue-800' :
                         order.status === 'DELIVERED' ? 'bg-purple-100 text-purple-800' :
                         'bg-slate-100 text-slate-600'
