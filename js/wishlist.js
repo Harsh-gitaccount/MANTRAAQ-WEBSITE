@@ -548,8 +548,8 @@
   function getProductIdFromCard(card) {
     const key = card.getAttribute('data-product');
     if (!key) return null;
-    const handle = PRODUCT_MAP[key];
-    if (!handle) return null;
+    // New cards use the product handle directly; older markup used short keys
+    const handle = PRODUCT_MAP[key] || key;
     const productsMap = getProductsMap();
     const product = productsMap[handle];
     return product ? product.id : null;

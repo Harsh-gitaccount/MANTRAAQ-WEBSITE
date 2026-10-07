@@ -327,7 +327,7 @@
     {
       key: 'singhara-atta',
       title: 'Singhara Atta (Water Chestnut Flour)',
-      description: '100% stone-ground gluten-free flour from Bihar wetlands. Fasting and vrat friendly.',
+      description: '100% water chestnut flour from Bihar wetlands. Gluten free, fasting and vrat friendly.',
       category: 'Flour & Atta',
       price: 'From ₹239',
       url: '/products/singhara-atta',
@@ -605,7 +605,8 @@
     _navigateToProduct(productKey, url) {
       Search.close();
 
-      const card = document.querySelector(`.product-card[data-product="${productKey}"]`);
+      // Only the homepage shop grid counts; rails on product pages should navigate instead
+      const card = document.querySelector(`#storefront-products-grid .product-card[data-product="${productKey}"]`);
       if (card) {
         // We are on the homepage: scroll to the card
         setTimeout(() => {

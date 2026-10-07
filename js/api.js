@@ -6,9 +6,10 @@
 
 // ── Dynamically load toast.js (since it has no <script> tag in HTML) ──
 (function loadToastScript() {
-  if (!document.querySelector('script[src="js/toast.js"]')) {
+  // Pages now include toast.js themselves; only load it when missing (root-relative so /products/* works)
+  if (!window.Toast && !document.querySelector('script[src$="js/toast.js"]')) {
     const script = document.createElement('script');
-    script.src = 'js/toast.js';
+    script.src = '/js/toast.js';
     script.async = false; // Ensure it loads before other scripts use Toast
     document.head.appendChild(script);
   }

@@ -1246,7 +1246,8 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function initProductGalleries() {
-    const productCards = document.querySelectorAll('.product-card');
+    // Cards rendered by js/product-card.js (data-category) get their gallery from storefront.js
+    const productCards = document.querySelectorAll('.product-card:not([data-category])');
     
     productCards.forEach(card => {
         const gallery = card.querySelector('.product-gallery');
