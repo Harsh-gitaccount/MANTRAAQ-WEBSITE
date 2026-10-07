@@ -572,6 +572,8 @@ async function main() {
       products = await fetchProducts();
       console.log(`\n✅ Fetched ${products.length} products from the API\n`);
       writeSnapshot(products);
+      // Pages only need in/out of stock (browsers load live counts), so a sale doesn't change every page
+      products = products.map(p => ({ ...p, variants: (p.variants || []).map(v => ({ ...v, stockQuantity: v.stockQuantity > 0 ? 1 : 0 })) }));
     } catch (err) {
       console.error(`\n❌ Could not fetch products from the API: ${err.message}`);
       console.error('   Keeping the committed product pages. Run with --snapshot to rebuild from the last known catalogue.\n');
