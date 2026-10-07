@@ -272,33 +272,60 @@
 
   function initRails() { $$('[data-rail]').forEach(initRail); }
 
-  /* ── 5. Pond-to-plate story: activate steps as they scroll by ── */
+  /* ── 5. Pond-to-plate story: vertical scroll unrolls the painted scroll sideways ── */
   function initStory() {
     const story = $('.story');
-    if (!story) return;
-    const steps = $$('.story-step', story);
-    const imgs = $$('.story-frame img', story);
-    const dots = $$('.story-dots i', story);
-    const tag = $('.story-tag', story);
-    if (!steps.length) return;
+    const pin = story && $('.story-pin', story);
+    const track = story && $('.story-track', story);
+    const paper = story && $('.story-scroll', story);
+    if (!pin || !track || !paper) return;
+    const leaves = $$('.story-leaf', story);
+    const bar = $('.story-progress-bar', story);
+    const labels = $$('.story-progress-steps li', story);
+    const wide = window.matchMedia('(min-width: 1000px) and (min-height: 600px)');
+    let pinned = false, dist = 0, ticking = false;
 
-    function activate(i) {
-      steps.forEach((s, k) => s.classList.toggle('is-active', k === i));
-      imgs.forEach((img, k) => {
-        img.classList.toggle('is-active', k === i);
-        img.classList.toggle('is-past', k < i);
+    function update() {
+      ticking = false;
+      if (!pinned) return;
+      const p = dist ? Math.min(1, Math.max(0, -story.getBoundingClientRect().top / dist)) : 0;
+      const x = p * dist;
+      track.style.transform = `translate3d(${-x}px,0,0)`;
+      if (bar) bar.style.setProperty('--p', p.toFixed(4));
+      const vw = window.innerWidth;
+      let active = 0;
+      leaves.forEach((leaf, i) => {
+        const left = paper.offsetLeft + leaf.offsetLeft - x; // both relative to the sticky pin
+        // 0 while the leaf is off to the right, 1 once it is well inside the screen
+        const t = Math.min(1, Math.max(0, (vw - left) / (vw * 0.55)));
+        leaf.style.setProperty('--t', t.toFixed(3));
+        if (left < vw * 0.5) active = i;
       });
-      dots.forEach((d, k) => d.classList.toggle('is-active', k === i));
-      if (tag && steps[i]) tag.textContent = steps[i].dataset.tag || '';
+      labels.forEach((li, i) => li.classList.toggle('is-active', i === active));
     }
-    activate(0);
-    if (!('IntersectionObserver' in window)) return;
-    const io = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) activate(steps.indexOf(entry.target));
-      });
-    }, { rootMargin: '-45% 0px -45% 0px' });
-    steps.forEach(s => io.observe(s));
+    function onScroll() {
+      if (!ticking) { ticking = true; requestAnimationFrame(update); }
+    }
+    function measure() {
+      pinned = wide.matches && !reduceMotion;
+      story.classList.toggle('is-pinned', pinned);
+      if (!pinned) {
+        story.style.height = '';
+        track.style.transform = '';
+        leaves.forEach(leaf => leaf.style.removeProperty('--t'));
+        return;
+      }
+      dist = Math.max(0, track.scrollWidth - window.innerWidth);
+      story.style.height = `${pin.offsetHeight + dist}px`;
+      update();
+    }
+
+    measure();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', measure);
+    if ('ResizeObserver' in window) new ResizeObserver(() => { if (pinned) measure(); }).observe(track);
+    // Images can change the track width once they load
+    $$('img', track).forEach(img => { if (!img.complete) img.addEventListener('load', measure, { once: true }); });
   }
 
   /* ── 6. Parallax images and footer word ──────────────────────── */

@@ -416,8 +416,8 @@ body.site {
 .cat--soon { background: var(--maroon); color: var(--ivory); }
 .cat--soon h3 { color: var(--ivory); }
 .cat--soon p, .cat--soon .cat-num { color: rgba(243, 236, 219, .7); }
-.cat--soon .cat-img { mix-blend-mode: normal; opacity: .8; width: auto; height: 60%; top: 30px; right: 18%; aspect-ratio: auto; object-fit: contain; -webkit-mask-image: none; mask-image: none; }
-.cat--soon:hover .cat-img { transform: scale(1.04) rotate(-3deg); opacity: 1; }
+.cat--soon .cat-img { mix-blend-mode: normal; width: 54%; height: auto; top: 78px; right: 50%; margin-right: -27%; filter: sepia(.12) brightness(.98); aspect-ratio: 1; object-fit: cover; border-radius: 50%; -webkit-mask-image: none; mask-image: none; box-shadow: 0 0 0 1px rgba(226, 194, 127, .55), 0 0 0 10px rgba(243, 236, 219, .06), 0 24px 50px rgba(30, 4, 10, .35); }
+.cat--soon:hover .cat-img { transform: scale(1.04) rotate(-3deg); }
 .cat--soon .cat-go { background: var(--ivory); color: var(--maroon); }
 @media (max-width: 1000px) { .cats { grid-template-columns: repeat(2, minmax(0, 1fr)); } .cat { min-height: 420px; } .cat-img { width: 62%; } }
 @media (max-width: 560px) {
@@ -580,63 +580,132 @@ body.site {
   .rail-controls .rail-btn { display: none; }
 }
 
-/* ══ STORY (pinned scroll) ════════════════════════════════════════ */
-.story { background: var(--maroon); color: var(--ivory); overflow: hidden; }
-.story .eyebrow { color: var(--gold-2); }
+/* ══ STORY: a Madhubani scroll that unrolls sideways ═════════════ */
+/* Base layout (phones, short screens, reduced motion): the painted
+   scroll is a swipeable strip. On large screens site.js adds
+   .is-pinned and turns vertical scrolling into the sideways unroll. */
+.story { background: var(--maroon); color: var(--ivory); position: relative; padding: clamp(72px, 10vw, 140px) 0; }
 .story .eyebrow { color: var(--gold); }
-.story .lead { color: rgba(243, 236, 219, .72); }
-.story-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(32px, 5vw, 80px); align-items: start; }
-.story-steps { display: flex; flex-direction: column; }
-.story-step { min-height: 62vh; display: flex; flex-direction: column; justify-content: center; padding: 20px 0; opacity: .3; transition: opacity .6s var(--ease); }
-.story-step.is-active { opacity: 1; }
-.story-step:first-child { min-height: 46vh; justify-content: flex-start; padding-top: 0; }
-.story-step:last-child { min-height: 70vh; }
-.story-num { font-family: var(--font-display); font-style: italic; font-size: 18px; color: var(--gold); margin-bottom: 14px; }
-.story-step h3 { font-size: clamp(34px, 4vw, 58px); color: var(--ivory); max-width: 13ch; }
-.story-step p { margin-top: 18px; color: rgba(243, 236, 219, .75); font-size: 17px; max-width: 42ch; }
-.story-visual { position: sticky; top: calc(var(--nav-h) + 40px); height: calc(100vh - var(--nav-h) - 80px); max-height: 760px; }
-.story-frame { position: relative; height: 100%; border-radius: var(--radius-l); overflow: hidden; background: var(--maroon-2); box-shadow: var(--shadow-l); }
-.story-frame img {
-  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
-  clip-path: inset(100% 0 0 0); transform: scale(1.15); transition: clip-path 1.1s var(--ease), transform 1.6s var(--ease);
-}
-.story-frame img.is-active { clip-path: inset(0 0 0 0); transform: scale(1); }
-.story-frame img.is-past { clip-path: inset(0 0 0 0); transform: scale(1); }
-.story-tag {
-  position: absolute; left: 18px; bottom: 18px; z-index: 3; padding: 10px 16px; border-radius: 999px;
-  background: rgba(36, 19, 22, .55); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-  font-size: 13px; font-weight: 700; color: var(--ivory);
-}
-.story-dots { position: absolute; right: 18px; top: 50%; z-index: 3; transform: translateY(-50%); display: flex; flex-direction: column; gap: 8px; }
-.story-dots i { width: 6px; height: 6px; border-radius: 6px; background: rgba(243, 236, 219, .4); transition: height .5s var(--ease), background .3s; }
-.story-dots i.is-active { height: 26px; background: var(--ivory); }
-.story-intro { margin-bottom: clamp(20px, 4vw, 40px); }
-/* Madhubani artwork frames: painted paper inside a Mithila border */
-.story-frame.is-art { background: var(--paper-art); border: 1px solid rgba(226, 194, 127, .35); }
-.story-frame.is-art::before, .story-frame.is-art::after {
-  content: ''; position: absolute; left: 0; right: 0; height: 40px; z-index: 2; pointer-events: none;
-  background: url(/assets/images/art/band-flower.webp) 0 0 / auto 100% repeat-x;
-}
-.story-frame.is-art::before { top: 0; }
-.story-frame.is-art::after { bottom: 0; transform: scaleY(-1); }
-.story-frame.is-art img { object-fit: contain; padding: 64px 22px; background: var(--paper-art); }
-.story-frame.is-art img.is-pack { padding: 70px 16%; filter: drop-shadow(0 24px 30px rgba(58, 10, 19, .35)); }
-.story-frame.is-art .story-tag { bottom: 54px; background: var(--maroon); }
-.story-frame.is-art .story-dots i { background: rgba(108, 17, 33, .25); }
-.story-frame.is-art .story-dots i.is-active { background: var(--maroon); }
-.story-credit { margin-top: 18px; font-family: var(--font-display); font-style: italic; font-size: 16px; color: var(--gold-2); max-width: 40ch; }
-.story-step-img.is-art { background: var(--paper-art); }
-.story-step-img.is-art img { object-fit: contain !important; padding: 10px; }
-
+.story-intro { max-width: var(--max); margin: 0 auto; padding: 0 var(--gutter) clamp(32px, 5vw, 48px); }
 .story-intro h2 { color: var(--ivory); max-width: 14ch; margin-top: 14px; }
-@media (max-width: 900px) {
-  .story-grid { grid-template-columns: 1fr; }
-  .story-visual { display: none; }
-  .story-step, .story-step:first-child, .story-step:last-child { min-height: 0; opacity: 1; padding: 0 0 36px; }
-  .story-step-img { display: block !important; margin-bottom: 18px; border-radius: var(--radius); overflow: hidden; aspect-ratio: 4 / 3; }
-  .story-step-img img { width: 100%; height: 100%; object-fit: cover; }
+.story-intro .lead { color: rgba(243, 236, 219, .72); margin-top: 20px; max-width: 44ch; }
+.story-credit { margin-top: 22px; font-family: var(--font-display); font-style: italic; font-size: 16px; color: var(--gold-2); max-width: 40ch; }
+.story-hint {
+  display: inline-flex; align-items: center; gap: 10px; margin-top: 30px;
+  font-family: var(--font-brand); font-size: 11px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: var(--gold-2);
 }
-.story-step-img { display: none; }
+.story-hint-d, .story.is-pinned .story-hint-m { display: none; }
+.story.is-pinned .story-hint-d { display: inline; }
+.story-hint svg { width: 16px; height: 16px; animation: story-nudge 1.8s var(--ease) infinite; }
+@keyframes story-nudge { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(6px); } }
+
+/* The paper: Mithila flower border along both edges */
+.story-scroll {
+  --band: 34px;
+  position: relative; display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: var(--gutter);
+  padding: calc(var(--band) + 26px) var(--gutter); scrollbar-width: none;
+  background:
+    url(/assets/images/art/band-flower.webp) 0 0 / auto var(--band) repeat-x local,
+    url(/assets/images/art/band-flower.webp) 0 100% / auto var(--band) repeat-x local,
+    var(--paper-art);
+  box-shadow: 0 30px 70px rgba(30, 4, 10, .35);
+}
+.story-scroll::-webkit-scrollbar { display: none; }
+.story-leaf { position: relative; flex: 0 0 min(82%, 520px); display: flex; flex-direction: column; gap: 20px; padding-right: 28px; scroll-snap-align: start; }
+.story-leaf + .story-leaf { padding-left: 28px; }
+/* Dotted dividers, like the water texture in the paintings */
+.story-leaf + .story-leaf::before {
+  content: ''; position: absolute; left: 0; top: 4%; bottom: 4%; width: 4px;
+  background: radial-gradient(circle, rgba(108, 17, 33, .38) 1.3px, transparent 1.8px) 0 0 / 4px 11px repeat-y;
+}
+.story-leaf-art { order: -1; margin: 0; height: 250px; display: flex; align-items: center; }
+.story-leaf-art img { height: 100%; width: auto; max-width: 100%; object-fit: contain; display: block; }
+.story-leaf-art--pair { display: none; }
+.story-leaf--pack .story-leaf-art img { filter: drop-shadow(0 18px 22px rgba(58, 10, 19, .3)); }
+.story-leaf-tag { display: block; font-family: var(--font-brand); font-size: 11px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: #9a7334; }
+.story-leaf-num { display: block; margin-top: 10px; font-family: var(--font-display); font-style: italic; font-size: 40px; line-height: 1; color: var(--maroon-2); opacity: .55; }
+.story-leaf h3 { margin-top: 10px; font-size: clamp(26px, 2.5vw, 40px); line-height: 1.08; color: var(--maroon); max-width: 13ch; }
+.story-leaf p { margin-top: 14px; font-size: 15.5px; line-height: 1.6; color: #5a3238; max-width: 38ch; }
+.story-leaf-cta { margin-top: 18px; color: var(--maroon); white-space: nowrap; }
+.story-leaf-cta svg { width: 16px; height: 16px; flex: none; }
+.story-roll, .story-progress { display: none; }
+
+/* ── Pinned sideways unroll (large screens) ── */
+.story.is-pinned { padding: 0; }
+.story.is-pinned .story-pin {
+  position: sticky; top: 0; height: 100vh; overflow: hidden;
+  display: flex; flex-direction: column; justify-content: center;
+  padding: calc(var(--nav-h) + 10px) 0 24px;
+}
+.story.is-pinned .story-track {
+  display: flex; align-items: center; width: max-content; will-change: transform;
+  padding: 0 max(var(--gutter), calc((100vw - var(--max)) / 2 + var(--gutter)));
+}
+.story.is-pinned .story-intro { flex: 0 0 auto; width: clamp(340px, 32vw, 500px); margin: 0 clamp(56px, 7vw, 120px) 0 0; padding: 0; }
+.story.is-pinned .story-scroll {
+  --band: 40px;
+  height: min(calc(100vh - var(--nav-h) - 150px), 660px); min-height: 420px;
+  overflow: visible; scroll-snap-type: none; padding: 0; border-radius: 2px;
+  background-attachment: scroll;
+}
+.story.is-pinned .story-leaf {
+  --t: 1;
+  flex: none; flex-direction: row; align-items: center; gap: clamp(32px, 3.4vw, 56px);
+  padding: calc(var(--band) + 34px) clamp(44px, 4.4vw, 76px);
+}
+.story.is-pinned .story-leaf + .story-leaf::before { top: 18%; bottom: 18%; }
+.story.is-pinned .story-leaf-text {
+  flex: 0 0 clamp(250px, 21vw, 320px);
+  opacity: calc(.12 + .88 * var(--t)); transform: translateX(calc((1 - var(--t)) * 70px));
+}
+.story.is-pinned .story-leaf-art {
+  order: 0; height: 100%; flex: none;
+  clip-path: inset(0 calc((1 - var(--t)) * 100%) 0 0);
+}
+.story.is-pinned .story-leaf-art img { max-width: none; transform: scale(calc(1.06 - .06 * var(--t))); transform-origin: left center; }
+.story.is-pinned .story-leaf-art--pair { display: flex; margin-left: calc(clamp(32px, 3.4vw, 56px) * -.4); }
+.story.is-pinned .story-leaf--pack .story-leaf-art { height: 94%; }
+.story.is-pinned .story-leaf--pack .story-leaf-art img { transform: translateY(calc((1 - var(--t)) * 40px)); }
+.story.is-pinned .story-leaf--pack { padding-right: clamp(56px, 6vw, 110px); }
+
+/* Rolled paper ends with gold rod tips */
+.story.is-pinned .story-roll {
+  display: block; position: relative; flex: 0 0 26px; margin: -12px 0; border-radius: 13px;
+  background: linear-gradient(90deg, #b39a68 0%, #efe2c3 30%, #f8f0dc 45%, #dcc79c 72%, #a88c5a 100%);
+  box-shadow: 0 18px 40px rgba(30, 4, 10, .35);
+}
+.story.is-pinned .story-roll--start { margin-left: -13px; }
+.story.is-pinned .story-roll--end { margin-right: -13px; }
+.story-roll::before, .story-roll::after {
+  content: ''; position: absolute; left: 7px; width: 12px; height: 18px; border-radius: 4px;
+  background: linear-gradient(90deg, #8f6a2c, var(--gold-2) 45%, #8f6a2c);
+}
+.story-roll::before { top: -16px; }
+.story-roll::after { bottom: -16px; }
+
+/* Progress: four steps along a gold thread */
+.story.is-pinned .story-progress {
+  display: flex; align-items: center; gap: 26px; width: 100%; max-width: var(--max); margin: 26px auto 0; padding: 0 var(--gutter);
+}
+.story-progress-bar { flex: 0 0 180px; height: 2px; background: rgba(243, 236, 219, .18); overflow: hidden; }
+.story-progress-bar i { display: block; height: 100%; background: var(--gold-2); transform-origin: 0 50%; transform: scaleX(var(--p, 0)); }
+.story-progress-steps { display: flex; gap: 26px; list-style: none; margin: 0; padding: 0; }
+.story-progress-steps li { font-family: var(--font-brand); font-size: 11px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: rgba(243, 236, 219, .42); transition: color .4s; }
+.story-progress-steps li.is-active { color: var(--gold-2); }
+
+/* Mouse users without the pinned unroll still need a way to scroll sideways */
+@media (min-width: 700px) {
+  .story-scroll { scrollbar-width: thin; scrollbar-color: rgba(108, 17, 33, .45) transparent; }
+  .story-scroll::-webkit-scrollbar { display: block; height: 6px; }
+  .story-scroll::-webkit-scrollbar-thumb { background: rgba(108, 17, 33, .45); border-radius: 6px; }
+}
+@media (max-width: 600px) {
+  .story-scroll { --band: 26px; padding-block: calc(var(--band) + 22px); }
+  .story-leaf-art { height: 210px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .story-hint svg { animation: none; }
+}
 
 /* ══ WHY SINGHARA (bento) ═════════════════════════════════════════ */
 .bento { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 16px; }
