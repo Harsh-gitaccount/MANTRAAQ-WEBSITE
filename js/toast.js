@@ -157,10 +157,12 @@
     }
 
     /* ── Mobile Responsive ── */
+    /* Phones: show toasts at the top so they never cover the cart's
+       Proceed to Pay / Place order button at the bottom of the screen */
     @media (max-width: 480px) {
       .toast-container {
-        bottom: 16px;
-        top: auto;
+        top: 12px;
+        bottom: auto;
         right: 16px;
         left: 16px;
         max-width: none;
@@ -244,8 +246,9 @@
     toast._timer = setTimeout(() => dismissToast(toast), duration);
     toast._dismissed = false;
 
-    // Pause timer on hover
-    toast.addEventListener('mouseenter', () => {
+    // Pause timer on hover (real pointers only: on touch screens a tap fires
+    // mouseenter with no mouseleave, which would leave the toast stuck)
+    if (window.matchMedia && window.matchMedia('(hover: hover)').matches) toast.addEventListener('mouseenter', () => {
       clearTimeout(toast._timer);
       const progress = toast.querySelector('.toast-progress');
       if (progress) progress.style.animationPlayState = 'paused';
