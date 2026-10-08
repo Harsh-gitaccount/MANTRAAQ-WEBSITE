@@ -215,7 +215,7 @@ export default function Coupons() {
                     {/* Code */}
                     <td className="py-5 px-6 font-bold text-slate-900 font-mono">
                       {coupon.code}
-                      {coupon.code.startsWith('PVT-') && (
+                      {(coupon.code.startsWith('MAQ-') || coupon.code.startsWith('PVT-')) && (
                         <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold tracking-wider font-sans bg-slate-100 text-slate-600 border border-slate-200">
                           PRIVATE
                         </span>
@@ -348,7 +348,7 @@ export default function Coupons() {
                   required
                 />
                 <p className="text-xs text-slate-400">
-                  Start the code with <span className="font-mono font-bold">PVT-</span> (e.g. PVT-RAHUL20) to keep it private: it works when typed at checkout but is not shown in the cart's coupon list.
+                  Start the code with <span className="font-mono font-bold">MAQ-</span> (e.g. MAQ-SORRY-RAHUL) to keep it private: it works when typed at checkout but is not shown in the cart's coupon list.
                 </p>
               </div>
 
