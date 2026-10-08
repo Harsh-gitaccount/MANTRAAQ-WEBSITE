@@ -199,6 +199,22 @@ const sendAdminOrderAlertEmail = async (order) => {
 
   const isCod = (order.paymentId?.toLowerCase().startsWith('cod') || order.shippingAddress?.paymentMethod === 'COD');
 
+  // Show how the items price became the amount paid (coupon, delivery, COD fee)
+  const pricing = order.shippingAddress || {};
+  const itemsSubtotal = (order.orderLineItems || []).reduce((sum, item) => sum + item.priceAtPurchase * item.quantity, 0);
+  const subtotal = Number(pricing.subtotal ?? itemsSubtotal);
+  const shippingCharge = Number(pricing.shippingCharge || 0);
+  const codFee = Number(pricing.codFee || 0);
+  const summaryRow = (label, value, color = '#5a4a45') => `
+      <tr><td colspan="2" style="text-align:right;padding:4px 0;color:${color};font-size:14px;">${label}</td>
+      <td style="text-align:right;padding:4px 0;color:${color};font-size:14px;">${value}</td></tr>`;
+  const breakdownHtml = [
+    summaryRow('Subtotal:', `₹${subtotal.toFixed(2)}`),
+    order.discountAmount > 0 ? summaryRow(`Coupon (${order.couponCode || 'PROMO'}):`, `-₹${order.discountAmount.toFixed(2)}`, '#2f4429') : '',
+    summaryRow('Delivery:', shippingCharge > 0 ? `₹${shippingCharge.toFixed(2)}` : 'Free'),
+    codFee > 0 ? summaryRow('COD fee:', `₹${codFee.toFixed(2)}`) : '',
+  ].join('');
+
   const template = wrapTemplate('New Order Received! 🚨', `
     <p style="color:#5a4a45;line-height:1.6;">Hi Admin,</p>
     <p style="color:#5a4a45;line-height:1.6;">You have received a new order on MantraAQ! Here are the details:</p>
@@ -211,7 +227,8 @@ const sendAdminOrderAlertEmail = async (order) => {
         <th style="padding:10px 0;text-align:right;color:#7a6a63;font-size:13px;font-weight:600;">Price</th>
       </tr>
       ${itemsHtml}
-      <tr><td colspan="2" style="text-align:right;padding:12px 0;font-weight:700;color:#2b1a1c;">Total Amount:</td>
+      ${breakdownHtml}
+      <tr><td colspan="2" style="text-align:right;padding:12px 0;font-weight:700;color:#2b1a1c;">Total Paid:</td>
       <td style="text-align:right;padding:12px 0;font-weight:700;color:#6c1121;font-size:18px;">₹${order.totalAmount.toFixed(2)}</td></tr>
     </table>
     <div style="background:#fbf7ee;padding:16px;border-radius:8px;margin-top:16px;border:1px solid #eadfc8;">
@@ -226,7 +243,7 @@ const sendAdminOrderAlertEmail = async (order) => {
   `);
 
   return sendMail(adminRecipients, `🚨 [MantraAQ] New Order Alert #${order.id.slice(0, 8).toUpperCase()} (${isCod ? 'COD' : 'ONLINE'})`, template.html,
-    `New order received! Order ID: ${order.id.slice(0, 8).toUpperCase()}. Total: ₹${order.totalAmount.toFixed(2)}. Method: ${isCod ? 'COD' : 'ONLINE'}.`
+    `New order received! Order ID: ${order.id.slice(0, 8).toUpperCase()}. Total: ₹${order.totalAmount.toFixed(2)}${order.discountAmount > 0 ? ` (coupon ${order.couponCode || 'PROMO'} -₹${order.discountAmount.toFixed(2)})` : ''}. Method: ${isCod ? 'COD' : 'ONLINE'}.`
   );
 };
 

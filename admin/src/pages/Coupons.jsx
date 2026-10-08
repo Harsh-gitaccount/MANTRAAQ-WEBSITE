@@ -215,6 +215,11 @@ export default function Coupons() {
                     {/* Code */}
                     <td className="py-5 px-6 font-bold text-slate-900 font-mono">
                       {coupon.code}
+                      {coupon.code.startsWith('PVT-') && (
+                        <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold tracking-wider font-sans bg-slate-100 text-slate-600 border border-slate-200">
+                          PRIVATE
+                        </span>
+                      )}
                     </td>
 
                     {/* Settings */}
@@ -342,6 +347,9 @@ export default function Coupons() {
                   className="w-full bg-slate-50 border border-slate-200 rounded-lg py-2.5 px-3 text-slate-800 focus:outline-none focus:border-maroon-600 font-mono font-bold"
                   required
                 />
+                <p className="text-xs text-slate-400">
+                  Start the code with <span className="font-mono font-bold">PVT-</span> (e.g. PVT-RAHUL20) to keep it private: it works when typed at checkout but is not shown in the cart's coupon list.
+                </p>
               </div>
 
               <div className="grid grid-cols-2 gap-4">

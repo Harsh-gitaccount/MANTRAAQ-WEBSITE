@@ -373,6 +373,32 @@ export default function Orders() {
                               </div>
                             </div>
                           ))}
+                          <div className="pt-3 mt-1 border-t border-slate-100 space-y-1 text-sm">
+                            <div className="flex justify-between text-slate-500">
+                              <span>Subtotal</span>
+                              <span>₹{Number(order.shippingAddress?.subtotal ?? order.orderLineItems.reduce((sum, item) => sum + item.priceAtPurchase * item.quantity, 0)).toFixed(0)}</span>
+                            </div>
+                            {order.discountAmount > 0 && (
+                              <div className="flex justify-between text-leaf-800">
+                                <span>Coupon ({order.couponCode || 'PROMO'})</span>
+                                <span>-₹{order.discountAmount.toFixed(0)}</span>
+                              </div>
+                            )}
+                            <div className="flex justify-between text-slate-500">
+                              <span>Delivery</span>
+                              <span>{Number(order.shippingAddress?.shippingCharge || 0) > 0 ? `₹${Number(order.shippingAddress.shippingCharge).toFixed(0)}` : 'Free'}</span>
+                            </div>
+                            {Number(order.shippingAddress?.codFee || 0) > 0 && (
+                              <div className="flex justify-between text-slate-500">
+                                <span>COD fee</span>
+                                <span>₹{Number(order.shippingAddress.codFee).toFixed(0)}</span>
+                              </div>
+                            )}
+                            <div className="flex justify-between font-bold text-slate-950 pt-1">
+                              <span>Total paid</span>
+                              <span>₹{order.totalAmount.toFixed(0)}</span>
+                            </div>
+                          </div>
                         </div>
                       ) : (
                         <div className="animate-pulse space-y-2 py-4">
