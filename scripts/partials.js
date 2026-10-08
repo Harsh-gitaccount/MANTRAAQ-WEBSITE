@@ -19,10 +19,10 @@ function headAssets() {
     <link href="${FONTS_HREF}" rel="stylesheet">
     <link rel="stylesheet" href="/css/site.css">
     <meta name="theme-color" content="#f3ecdb">
-    <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon-32x32.png">
-    <link rel="icon" type="image/x-icon" href="/assets/images/favicon.ico">
-    <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png">
-    <link rel="manifest" href="/assets/images/site.webmanifest">`;
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon-32x32.png?v=2">
+    <link rel="icon" type="image/x-icon" href="/assets/images/favicon.ico?v=2">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png?v=2">
+    <link rel="manifest" href="/assets/images/site.webmanifest?v=2">`;
 }
 
 function gtag() {
