@@ -17,6 +17,9 @@ if (!PAYU_MERCHANT_SALT || PAYU_MERCHANT_SALT === 'YOUR_LIVE_MERCHANT_SALT_V1') 
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
+// Coupons whose code starts with this are hidden from the public coupon list
+const PRIVATE_COUPON_PREFIX = 'PVT-';
+
 /**
  * Validate a coupon record against the given order amount.
  * Returns { valid, reason?, coupon?, discountAmount? }
@@ -789,7 +792,10 @@ exports.getActiveCoupons = async (req, res) => {
       }
     });
 
+    // Codes starting with PVT- are private: they still work when typed at
+    // checkout, but are never listed to shoppers.
     const activeCoupons = coupons.filter(c => {
+      if (c.code.toUpperCase().startsWith(PRIVATE_COUPON_PREFIX)) return false;
       return c.maxUses === null || c.usedCount < c.maxUses;
     });
 
