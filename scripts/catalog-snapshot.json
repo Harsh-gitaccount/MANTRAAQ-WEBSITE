@@ -5,7 +5,7 @@
       "handle": "singhara-pasta",
       "name": "Singhara Pasta",
       "category": "Pasta & Noodles",
-      "description": "Pasta, Reimagined.\n\nCrafted with Singhara (Water Chestnut) flour, MantraAQ Singhara Pasta brings traditional nutrition into modern lifestyles.\n\nLight, delicious, and easy to cook, it's made for those who want better ingredients without compromising on taste.\n\nPerfect for everyday meals, healthy recipes, and modern kitchens.\n\nFrom Wetlands to Wellness.",
+      "description": "Pasta, Reimagined.\n\nCrafted with Singhara (Water Chestnut) & Makhana flour, MantraAQ Singhara Pasta brings traditional nutrition into modern lifestyles.\n\nLight, delicious, and easy to cook, it's made for those who want better ingredients without compromising on taste.\n\nPerfect for everyday meals, healthy recipes, and modern kitchens.\n\nFrom Wetlands to Wellness.",
       "tags": [
         "new-launch",
         "bestseller",
@@ -31,7 +31,7 @@
           "id": "c5cbc752-3440-4798-a6fb-68a2cec1006c",
           "title": "200g",
           "price": 159,
-          "compareAtPrice": 199,
+          "compareAtPrice": 210,
           "sku": "SPM-200",
           "stockQuantity": 1
         },
@@ -39,7 +39,7 @@
           "id": "46919c3c-a1c4-4815-a109-d9f2908c2370",
           "title": "300 gm",
           "price": 219,
-          "compareAtPrice": 285,
+          "compareAtPrice": 305,
           "sku": "SPM-350",
           "stockQuantity": 1
         },
@@ -62,7 +62,7 @@
         {
           "id": "be791df1-94d7-45b8-bf64-81d8dabbf3eb",
           "title": "5 Kg",
-          "price": 3081,
+          "price": 2999,
           "compareAtPrice": 3900,
           "sku": "SPM-5KG",
           "stockQuantity": 1
@@ -75,7 +75,7 @@
       "handle": "singhara-vermicell",
       "name": "Singhara Vermicelli",
       "category": "Pasta & Noodles",
-      "description": "Traditional Nutrition. Modern Meals.\n\nCrafted from premium Singhara (Water Chestnut), MantraAQ Singhara Vermicelli is light, delicate, and easy to cook.\n\nPerfect for kheer, upma, pulao, payasam, and everyday recipes, it brings traditional goodness to modern kitchens.\n\nWholesome, versatile, and delicious.\n\nFrom Wetlands to Wellness.",
+      "description": "Traditional Nutrition. Modern Meals.\n\nCrafted from premium Singhara (Water Chestnut) & Makhana flour, MantraAQ Singhara Vermicelli is light, delicate, and easy to cook.\n\nPerfect for kheer, upma, pulao, payasam, and everyday recipes, it brings traditional goodness to modern kitchens.\n\nWholesome, versatile, and delicious.\n\nFrom Wetlands to Wellness.",
       "tags": [
         "new-launch",
         "traditional nutrition",
@@ -100,7 +100,7 @@
           "id": "f1072ffc-1ee8-423e-8d46-113bf22792d8",
           "title": "200g",
           "price": 149,
-          "compareAtPrice": 199,
+          "compareAtPrice": 200,
           "sku": "SV-200",
           "stockQuantity": 1
         },
@@ -151,33 +151,34 @@
         {
           "id": "f873a920-627a-4697-ac71-d5965c866d32",
           "title": "200 gm",
-          "price": 149,
-          "compareAtPrice": 185,
+          "price": 159,
+          "compareAtPrice": 205,
+          "sku": "SA-200 gm",
           "stockQuantity": 1
         },
         {
           "id": "37713afd-732f-4aac-a65d-ba6b9e0224eb",
           "title": "500g",
           "price": 239,
-          "compareAtPrice": 299,
-          "sku": "SA-500",
-          "stockQuantity": 1
+          "compareAtPrice": 290,
+          "sku": "SA-500 gm",
+          "stockQuantity": 0
         },
         {
           "id": "aa6a1c31-5127-40c3-b251-ebc18130e2b4",
           "title": "1kg",
           "price": 439,
-          "compareAtPrice": 550,
+          "compareAtPrice": 510,
           "sku": "SA-1KG",
           "stockQuantity": 1
         },
         {
           "id": "637f7ea5-2c1b-4cf1-b5fb-024da1fc58e7",
           "title": "10kg",
-          "price": 3899,
-          "compareAtPrice": 5000,
+          "price": 4700,
+          "compareAtPrice": 5100,
           "sku": "SA-10KG",
-          "stockQuantity": 1
+          "stockQuantity": 0
         }
       ],
       "avgRating": null,
