@@ -270,6 +270,7 @@ body.site {
 .hero-trust svg { width: 16px; height: 16px; color: var(--leaf); }
 
 .hero-stage { position: relative; aspect-ratio: 1 / 1; max-height: 74vh; width: 100%; margin-left: auto; }
+.hero-slides { cursor: pointer; }
 .hero-word {
   position: absolute; left: 50%; top: 46%; transform: translate(-50%, -50%);
   font-family: var(--font-brand); font-weight: 700;
@@ -329,19 +330,6 @@ body.site {
 .hero-badge .core { width: 46%; height: 46%; display: grid; place-items: center; }
 .hero-badge .core img { width: 100%; height: 100%; object-fit: contain; }
 
-.hero-card {
-  position: absolute; left: 0; bottom: 4%; z-index: 3; width: min(320px, 70%);
-  padding: 18px 18px 18px 20px; border-radius: var(--radius);
-  background: rgba(251, 248, 241, .82); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(255, 255, 255, .7); box-shadow: var(--shadow);
-}
-.hero-card-k { font-size: 11px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
-.hero-card-name { font-family: var(--font-display); font-size: 26px; font-weight: 500; margin: 4px 0 2px; line-height: 1.1; }
-.hero-card-line { font-size: 14px; color: var(--ink-2); line-height: 1.45; }
-.hero-card-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 14px; }
-.hero-card-price { font-weight: 800; font-size: 18px; }
-.hero-card-price small { font-weight: 600; font-size: 12.5px; color: var(--ink-3); margin-right: 4px; }
-
 .hero-nav { display: flex; align-items: center; gap: 18px; margin-top: clamp(28px, 4vw, 48px); }
 .hero-thumbs { display: flex; gap: 10px; }
 .hero-thumb {
@@ -370,14 +358,13 @@ body.site {
   .hero-copy { text-align: left; }
   .hero-title { font-size: clamp(42px, 11.5vw, 64px); margin: 16px 0; }
   .hero-stage { max-height: none; width: 100%; max-width: 520px; margin: 4px auto 0; }
-  /* The stage is a square for the photo (::before) plus the product card below it, overlapping its foot.
-     Offsets use margins because a margin % is measured on the width, so they stay inside the square. */
+  /* The stage is a square for the photo (::before). Offsets use margins because a margin %
+     is measured on the width, so they stay inside the square. */
   .hero-stage { aspect-ratio: auto; }
   .hero-stage::before { content: ''; display: block; padding-top: 100%; }
   .hero-slides { bottom: auto; aspect-ratio: 1 / 1; }
   .hero-disc { inset: 0 9% auto; margin-top: 9%; aspect-ratio: 1 / 1; }
   .hero-word { top: 0; margin-top: 46%; }
-  .hero-card { left: 0; bottom: auto; width: 100%; position: relative; margin-top: -10%; }
   .hero-trust { margin-top: 22px; gap: 6px 16px; font-size: 12.5px; }
   .hero-nav { justify-content: space-between; margin-top: 18px; }
   .hero-thumb { width: 50px; height: 50px; border-radius: 14px; }

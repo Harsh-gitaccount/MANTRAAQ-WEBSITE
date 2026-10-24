@@ -41,7 +41,6 @@
     const slides = $$('.hero-slide', hero);
     const thumbs = $$('.hero-thumb', hero);
     const word = $('.hero-word', hero);
-    const card = $('.hero-card', hero);
     const countEl = $('.hero-count b', hero);
     if (!slides.length) return;
 
@@ -50,34 +49,6 @@
     let index = 0;
     let timer = null;
     let paused = false;
-
-    function fillCard(slide) {
-      if (!card) return;
-      $('.hero-card-k', card).textContent = slide.dataset.kicker || '';
-      $('.hero-card-name', card).textContent = slide.dataset.name || '';
-      $('.hero-card-line', card).textContent = slide.dataset.line || '';
-      const price = slide.dataset.price ? `<small>${slide.dataset.soldout === 'true' ? 'sold out' : 'from'}</small>${slide.dataset.price}` : '';
-      $('.hero-card-price', card).innerHTML = price;
-      const link = $('.hero-card a', card);
-      if (link) {
-        link.href = slide.dataset.href || '#products';
-        link.setAttribute('aria-label', 'Shop ' + (slide.dataset.name || 'now'));
-      }
-    }
-
-    // Live prices and stock replace the build-time values on each slide
-    window.addEventListener('storefront:synced', e => {
-      const list = (e.detail && e.detail.products) || [];
-      slides.forEach(slide => {
-        const p = list.find(x => x.handle === slide.dataset.handle);
-        if (!p || !p.variants || !p.variants.length) return;
-        const inStock = p.variants.filter(v => v.stockQuantity > 0);
-        const pool = inStock.length ? inStock : p.variants;
-        slide.dataset.price = window.MantraAQCard.rupees(Math.min(...pool.map(v => Number(v.price))));
-        slide.dataset.soldout = String(!inStock.length);
-      });
-      fillCard(slides[index]);
-    });
 
     function show(next, instant) {
       if (next === index && !instant) return;
@@ -107,16 +78,9 @@
             .add(() => { word.textContent = curr.dataset.word || ''; })
             .fromTo(word, { xPercent: 8, opacity: 0 }, { xPercent: 0, opacity: 1, duration: .8, ease: 'expo.out' });
         }
-        if (card) {
-          gsap.timeline()
-            .to(card, { y: 14, opacity: 0, duration: .3, ease: 'power2.in' })
-            .add(() => fillCard(curr))
-            .to(card, { y: 0, opacity: 1, duration: .6, ease: 'expo.out' });
-        }
       } else {
         slides.forEach(s => s.classList.toggle('is-active', s === curr));
         if (word) word.textContent = curr.dataset.word || '';
-        fillCard(curr);
       }
     }
 
@@ -132,6 +96,12 @@
     }
 
     thumbs.forEach((t, i) => t.addEventListener('click', () => { show(i); schedule(); }));
+    // Tapping the photo opens the product it shows
+    const slidesWrap = $('.hero-slides', hero);
+    if (slidesWrap) slidesWrap.addEventListener('click', () => {
+      if (slides[index].dataset.href) window.location.href = slides[index].dataset.href;
+    });
+
     const stage = $('.hero-stage', hero);
     if (stage) {
       stage.addEventListener('mouseenter', () => setPaused(true));
@@ -160,7 +130,7 @@
       gsap.from(['.hero-copy .eyebrow', '.hero-copy .lead', '.hero-ctas', '.hero-trust'], { y: 24, opacity: 0, duration: 1, ease: 'expo.out', stagger: .08, delay: .45 });
       // clearProps: a leftover transform on an ancestor would stop the food photo's multiply blend
       gsap.from('.hero-stage', { scale: .9, opacity: 0, duration: 1.4, ease: 'expo.out', delay: .2, clearProps: 'transform,opacity' });
-      gsap.from(['.hero-badge', '.hero-card', '.hero-nav'], { y: 30, opacity: 0, duration: 1, ease: 'expo.out', stagger: .1, delay: .7 });
+      gsap.from(['.hero-badge', '.hero-nav'], { y: 30, opacity: 0, duration: 1, ease: 'expo.out', stagger: .1, delay: .7 });
 
       // Scroll: word slides sideways, copy fades. The product stage stays put because
       // transforming it would break the food photo's multiply blend.
