@@ -15,6 +15,8 @@ const checkoutRoutes = require('./routes/checkoutRoutes');
 const orderRoutes = require('./routes/orderRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const wishlistRoutes = require('./routes/wishlistRoutes');
+const trackRoutes = require('./routes/trackRoutes');
+const { ensureTrackingTables } = require('./utils/trackingTables');
 
 const app = express();
 
@@ -124,6 +126,15 @@ app.use('/api/auth/reset-password', authLimiter);
 // Apply general limiter to checkout
 app.use('/api/checkout', generalLimiter);
 
+// Sales tracking calls are small and frequent; cap them per IP
+app.use('/api/track', rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 300,
+  message: { success: false, message: 'Too many requests.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+}));
+
 // Disable caching for all API endpoints
 app.use('/api', (req, res, next) => {
   res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
@@ -138,6 +149,7 @@ app.use('/api/storefront', storefrontRoutes);
 app.use('/api/checkout', checkoutRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/track', trackRoutes);
 app.use('/api/wishlist', wishlistRoutes);
 
 
@@ -179,6 +191,11 @@ app.use((err, req, res, next) => {
 const PORT = process.env.PORT || 5000;
 const server = app.listen(PORT, () => {
   console.log(`Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
+
+  // Sales-tracking tables are created here if missing (adds only, never alters)
+  ensureTrackingTables()
+    .then(() => console.log('Sales tracking tables ready.'))
+    .catch(err => console.error('Sales tracking tables could not be created:', err.message));
 
   // Start abandoned order cleanup (every 10 minutes)
   const checkoutController = require('./controllers/checkoutController');

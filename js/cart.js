@@ -288,6 +288,9 @@
     .checkout-account-bar .checkout-google-slot { display: none; }
     .checkout-account-bar .checkout-google-slot.ready { display: flex; }
 
+    .checkout-save-note { margin: 2px 0 0; font-size: 11.5px; line-height: 1.45; color: #7a6a6c; }
+    .checkout-save-note a { color: #6c1121; }
+
     .form-grp {
       display: flex;
       flex-direction: column;
@@ -800,6 +803,7 @@ const Cart = {
     this.save();
     this.render();
     window.Toast.success(`Added to Cart: ${product.name} (${variant.title}).`);
+    window.MantraaqAPI?.trackEvent('add_to_cart', product.handle || '');
     
     // Recalculate active coupon validity based on new total
     if (this.appliedCoupon) {
@@ -1060,6 +1064,8 @@ const Cart = {
                     <span id="checkoutPinMsg" style="font-size: 11px; margin-top: 4px; display: none; font-weight: 600;"></span>
                   </div>
                   
+                  <p class="checkout-save-note">We save these details so we can help if your order doesn't go through. <a href="/privacy-policy" target="_blank" rel="noopener">Privacy policy</a></p>
+
                   <!-- Payment Method Selection -->
                   <div class="form-grp" style="margin-top:8px;">
                     <label style="font-weight: 700; font-size: 13px; color: #45363a; margin-bottom: 6px; display:block;">Select Payment Method</label>
@@ -1182,6 +1188,9 @@ const Cart = {
         }
       });
     }
+
+    // Save checkout details for follow-up once a real email or phone is typed
+    this.bindCheckoutCapture();
 
     // Listen to authentication login event to re-validate coupon and prefill shipping details
     window.addEventListener('auth:login', () => {
@@ -1476,6 +1485,7 @@ const Cart = {
     // No login needed: guests check out with their shipping details
     this.renderAccountBar();
     this.prefillForm();
+    window.MantraaqAPI?.trackEvent('checkout_start');
 
     document.getElementById('cartItemsPanel').style.display = 'none';
     document.getElementById('checkoutFormPanel').classList.add('active');
@@ -1521,6 +1531,46 @@ const Cart = {
       if (shipEmail && u.email && (force || !shipEmail.value)) shipEmail.value = u.email;
       if (shipPhone && u.phone && (force || !shipPhone.value)) shipPhone.value = u.phone;
     }
+  },
+
+  // Sends what the shopper has typed (debounced) so an unfinished checkout can be
+  // followed up from admin. Nothing is sent until the email or phone is valid.
+  bindCheckoutCapture() {
+    const form = document.getElementById('shippingForm');
+    if (!form || !window.MantraaqAPI || !window.MantraaqAPI.trackCheckoutDetails) return;
+    let timer = null;
+    let lastSent = '';
+
+    const send = () => {
+      const val = (id) => (document.getElementById(id)?.value || '').trim();
+      const email = val('shipEmail');
+      const phone = val('shipPhone').replace(/\D/g, '');
+      const validEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+      const validPhone = phone.length === 10;
+      if (!validEmail && !validPhone) return;
+
+      const details = {
+        name: val('shipName'),
+        email: validEmail ? email : '',
+        phone: validPhone ? phone : '',
+        city: val('shipCity'),
+        postalCode: val('shipPostal'),
+        items: this.items.map(i => ({ name: i.name, title: i.title, price: i.price, quantity: i.quantity, handle: i.handle })),
+      };
+      const signature = JSON.stringify(details);
+      if (signature === lastSent) return;
+      lastSent = signature;
+      window.MantraaqAPI.trackCheckoutDetails(details);
+      window.MantraaqAPI.trackEvent('checkout_details');
+    };
+
+    const schedule = () => {
+      clearTimeout(timer);
+      timer = setTimeout(send, 1200);
+    };
+    form.addEventListener('input', schedule);
+    form.addEventListener('change', send);
+    form.addEventListener('focusout', send);
   },
 
   // Line above the shipping form: who is checking out, plus an optional Google shortcut

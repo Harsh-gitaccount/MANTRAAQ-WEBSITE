@@ -15,6 +15,7 @@
   const $$ = (s, el) => Array.from((el || document).querySelectorAll(s));
   const handle = root.dataset.pdp;
   const staticData = JSON.parse(dataEl.textContent);
+  if (window.MantraaqAPI) window.MantraaqAPI.trackEvent('product_view', handle);
 
   let selectedId = ($('.pdp-size.is-active', root) || {}).dataset?.variantId || (staticData.variants[0] || {}).id;
   let liveProduct = null;

@@ -347,6 +347,67 @@ function resolveImageUrl(url) {
   return url.startsWith('/') ? url : `/${url}`;
 }
 
+// ─ Sales tracking ─
+// Anonymous funnel counts for the admin dashboard: each step is reported at most
+// once per browser per day, so the numbers mean "how many shoppers did this".
+const TRACK_VISITOR_KEY = 'maq_vid';
+const TRACK_SENT_KEY = 'maq_track_sent';
+
+function istToday() {
+  return new Date(Date.now() + 5.5 * 3600 * 1000).toISOString().slice(0, 10);
+}
+
+function getVisitorId() {
+  try {
+    let id = localStorage.getItem(TRACK_VISITOR_KEY);
+    if (!id) {
+      id = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : `v-${Date.now()}-${Math.random().toString(36).slice(2, 12)}`;
+      localStorage.setItem(TRACK_VISITOR_KEY, id);
+    }
+    return id;
+  } catch (e) {
+    return null; // storage blocked: skip tracking
+  }
+}
+
+function postTracking(path, payload) {
+  try {
+    fetch(`${API_BASE}${path}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+      keepalive: true,
+    }).catch(() => {});
+  } catch (e) {
+    // Tracking must never get in the way of shopping
+  }
+}
+
+function trackEvent(event, key = '') {
+  if (navigator.webdriver || !getVisitorId()) return;
+  try {
+    const today = istToday();
+    const sent = JSON.parse(localStorage.getItem(TRACK_SENT_KEY) || '{}');
+    const marks = sent.date === today ? sent.marks : [];
+    const mark = `${event}:${key}`;
+    if (marks.includes(mark)) return;
+    marks.push(mark);
+    localStorage.setItem(TRACK_SENT_KEY, JSON.stringify({ date: today, marks: marks.slice(-200) }));
+  } catch (e) {
+    return;
+  }
+  postTracking('/track/event', { event, key });
+}
+
+// Details typed at checkout (sent once a valid email or phone is entered)
+function trackCheckoutDetails(details) {
+  const visitorId = getVisitorId();
+  if (!visitorId || navigator.webdriver) return;
+  postTracking('/track/checkout', { visitorId, ...details });
+}
+
+trackEvent('visit');
+
 // ── Expose Global API ───────────────────────────────────────────
 window.MantraaqAPI = {
   API_BASE,
@@ -384,4 +445,6 @@ window.MantraaqAPI = {
   fetchActiveCoupons,
   subscribeNewsletter,
   submitContact,
+  trackEvent,
+  trackCheckoutDetails,
 };

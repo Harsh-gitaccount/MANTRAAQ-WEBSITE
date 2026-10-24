@@ -222,3 +222,35 @@ model NewsletterSubscriber {
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
 }
+
+// ─── Sales tracking ─────────────────────────────────────────
+// Created by utils/trackingTables.js at startup (CREATE TABLE IF NOT EXISTS),
+// so deploys need no migration. Keep both in step.
+
+// Someone who typed their phone or email at checkout (one row per browser)
+model CheckoutSession {
+  id          String    @id @default(uuid())
+  visitorId   String    @unique
+  name        String?
+  email       String?
+  phone       String?
+  city        String?
+  postalCode  String?
+  items       Json      @default("[]")
+  cartValue   Float     @default(0)
+  contactedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @default(now())
+
+  @@index([updatedAt])
+}
+
+// Daily count of browsers that did each funnel step (key = product handle or "")
+model DailyStat {
+  date  String
+  event String
+  key   String @default("")
+  count Int    @default(0)
+
+  @@id([date, event, key])
+}
