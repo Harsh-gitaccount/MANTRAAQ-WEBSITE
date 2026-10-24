@@ -847,8 +847,7 @@ body.site {
   aspect-ratio: 1.5; border-radius: var(--radius); background: var(--paper); border: 1px solid var(--line-2);
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 14px; text-align: center;
 }
-.trust-logo img { max-height: 46px; width: auto; object-fit: contain; filter: grayscale(1) contrast(1.1); opacity: .85; transition: filter .4s, opacity .4s; }
-.trust-logo:hover img { filter: none; opacity: 1; }
+.trust-logo img { max-height: 46px; width: auto; object-fit: contain; mix-blend-mode: multiply; }
 .trust-logo span { font-size: 11.5px; font-weight: 700; color: var(--ink-3); }
 .perks { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-top: clamp(40px, 6vw, 72px); padding-top: clamp(28px, 4vw, 44px); border-top: 1px solid var(--line); }
 .perk { display: flex; gap: 14px; align-items: flex-start; }
