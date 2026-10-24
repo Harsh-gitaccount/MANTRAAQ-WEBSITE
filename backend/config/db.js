@@ -24,9 +24,23 @@ const pool = new Pool({
 
 const adapter = new PrismaPg(pool);
 
+const { rewriteImages } = require('../utils/legacyImages');
+
 const prisma = new PrismaClient({ 
   adapter,
   log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
+}).$extends({
+  // Serve moved product images from the site instead of their old Cloudinary URLs
+  result: {
+    product: {
+      images: {
+        needs: { images: true },
+        compute(product) {
+          return rewriteImages(product.images);
+        },
+      },
+    },
+  },
 });
 
 module.exports = prisma;

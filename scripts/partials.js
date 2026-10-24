@@ -14,7 +14,6 @@ const FONTS_HREF = 'https://fonts.googleapis.com/css2?family=Cinzel:wght@500..70
 function headAssets() {
   return `    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://res.cloudinary.com" crossorigin>
     <link rel="preconnect" href="https://mantraaq-backend.onrender.com" crossorigin>
     <link href="${FONTS_HREF}" rel="stylesheet">
     <link rel="stylesheet" href="/css/site.css">

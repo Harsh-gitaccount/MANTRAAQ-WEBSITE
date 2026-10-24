@@ -1,6 +1,6 @@
 const { validationResult } = require('express-validator');
 const prisma = require('../config/db');
-const cloudinary = require('../config/cloudinary');
+const { storeProductImage } = require('../utils/imageStorage');
 const fs = require('fs');
 
 // ─── Storefront (Public) ────────────────────────────────────
@@ -381,11 +381,12 @@ exports.uploadProductImages = async (req, res) => {
       return res.status(400).json({ success: false, message: 'No files uploaded.' });
     }
 
-    const uploadPromises = req.files.map(async (file) => {
-      // Upload to Cloudinary under folder 'mantraaq/products'
-      const result = await cloudinary.uploader.upload(file.path, {
-        folder: 'mantraaq/products',
-      });
+    // One at a time: each image is a commit to the website repo, and parallel
+    // commits to the same branch conflict.
+    const urls = [];
+    for (const file of req.files) {
+      // Shrink to WebP and store (website repo when configured, else Cloudinary)
+      urls.push(await storeProductImage(file.path));
       // Delete the file from the local temp disk storage
       try {
         if (fs.existsSync(file.path)) {
@@ -394,10 +395,8 @@ exports.uploadProductImages = async (req, res) => {
       } catch (err) {
         console.error('Failed to delete temp file:', file.path, err);
       }
-      return result.secure_url;
-    });
+    }
 
-    const urls = await Promise.all(uploadPromises);
     res.status(200).json({ success: true, urls });
   } catch (error) {
     console.error('Upload product images error:', error);
@@ -413,6 +412,6 @@ exports.uploadProductImages = async (req, res) => {
         }
       });
     }
-    res.status(500).json({ success: false, message: 'Failed to upload images to Cloudinary.' });
+    res.status(500).json({ success: false, message: 'Failed to upload images.' });
   }
 };
