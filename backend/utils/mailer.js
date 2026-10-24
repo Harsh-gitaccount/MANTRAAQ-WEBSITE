@@ -459,61 +459,7 @@ const sendOrderConfirmationEmail = async (order) => {
 
 // ─── Carrier Tracking Helpers ───────────────────────────────
 
-const getCarrierTrackingUrl = (carrier, trackingNumber, customUrl) => {
-  if (customUrl && typeof customUrl === 'string') {
-    let trimmed = customUrl.trim();
-    if (trimmed.length > 0) {
-      if (!trimmed.startsWith('http://') && !trimmed.startsWith('https://')) {
-        trimmed = 'https://' + trimmed;
-      }
-      return trimmed;
-    }
-  }
-  const cleanAwb = encodeURIComponent((trackingNumber || '').trim());
-  const c = (carrier || '').toLowerCase();
-
-  if (c.includes('bluedart') || c.includes('blue dart')) {
-    return `https://www.bluedart.com/web/guest/trackdartresult?trackFor=0&trackNo=${cleanAwb}`;
-  }
-  if (c.includes('delhivery')) {
-    return `https://www.delhivery.com/track/package/${cleanAwb}`;
-  }
-  if (c.includes('dtdc')) {
-    return `https://www.dtdc.in/tracking.asp`;
-  }
-  if (c.includes('post') || c.includes('speed post')) {
-    return `https://www.indiapost.gov.in/_layouts/15/dpt.cept.tracking/trackconsignment.aspx`;
-  }
-  if (c.includes('shiprocket')) {
-    return `https://shiprocket.co/tracking/${cleanAwb}`;
-  }
-  if (c.includes('shadowfax')) {
-    return `https://tracker.shadowfax.in/#/track/${cleanAwb}`;
-  }
-  return `https://www.bluedart.com/web/guest/trackdartresult?trackFor=0&trackNo=${cleanAwb}`;
-};
-
-const getCarrierPortalUrl = (carrier) => {
-  const c = (carrier || '').toLowerCase();
-  if (c.includes('bluedart') || c.includes('blue dart')) return 'https://www.bluedart.com/tracking';
-  if (c.includes('delhivery')) return 'https://www.delhivery.com';
-  if (c.includes('dtdc')) return 'https://www.dtdc.in';
-  if (c.includes('post') || c.includes('speed post')) return 'https://www.indiapost.gov.in';
-  if (c.includes('shiprocket')) return 'https://shiprocket.co';
-  if (c.includes('shadowfax')) return 'https://shadowfax.in';
-  return 'https://www.bluedart.com/tracking';
-};
-
-const getTrackingLabel = (carrier) => {
-  const c = (carrier || '').toLowerCase();
-  if (c.includes('bluedart') || c.includes('blue dart')) {
-    return 'Waybill Number';
-  }
-  if (c.includes('dtdc') || c.includes('post') || c.includes('speed post')) {
-    return 'Consignment Number';
-  }
-  return 'Waybill / Tracking Number';
-};
+const { getAutoTrackingUrl, getCarrierPortalUrl, getTrackingLabel, cleanTrackingUrl } = require('./carriers');
 
 // ─── Order Dispatched Email ─────────────────────────────────
 
@@ -523,11 +469,16 @@ const sendOrderDispatchedEmail = async (order, customTrackingUrl) => {
 
   const orderNumber = order.id.slice(0, 8).toUpperCase();
   const customerName = order.shippingAddress?.name || 'Customer';
-  const carrier = order.trackingCarrier || 'Blue Dart Express';
+  const carrier = order.trackingCarrier || 'our courier partner';
   const trackingNumber = order.trackingNumber || 'Available on request';
   const trackingLabel = getTrackingLabel(carrier);
-  const trackingUrl = getCarrierTrackingUrl(carrier, trackingNumber, customTrackingUrl);
+  const trackingUrl = cleanTrackingUrl(customTrackingUrl)
+    || cleanTrackingUrl(order.shippingAddress?.trackingUrl)
+    || getAutoTrackingUrl(carrier, order.trackingNumber);
   const portalUrl = getCarrierPortalUrl(carrier);
+  const carrierHtml = portalUrl
+    ? `<a href="${portalUrl}" target="_blank" rel="noopener noreferrer" style="color:#2f4429;text-decoration:underline;font-weight:600;">${carrier}</a>`
+    : carrier;
 
   const itemsRows = (order.orderLineItems || []).map(item => {
     const pName = item.productName || item.variant?.product?.name || 'Singhara Superfood';
@@ -615,17 +566,17 @@ const sendOrderDispatchedEmail = async (order, customTrackingUrl) => {
                     </div>
                   </td>
                 </tr>
-                <tr>
+${trackingUrl ? `                <tr>
                   <td style="padding-top:20px;">
                     <a href="${trackingUrl}" target="_blank" rel="noopener noreferrer" style="display:block;text-align:center;background-color:#6c1121;color:#fbf7ee;padding:13px 24px;border-radius:8px;text-decoration:none;font-size:14px;font-weight:700;letter-spacing:0.5px;box-shadow:0 3px 8px rgba(108,17,33,0.22);">
                       Track Your Shipment &rarr;
                     </a>
                   </td>
-                </tr>
+                </tr>` : ''}
                 <tr>
                   <td style="padding-top:14px;">
                     <p style="margin:0;font-size:12px;color:#5e4e49;line-height:1.5;">
-                      <strong>How to track:</strong> Click the button above to view live transit updates, or visit <a href="${portalUrl}" target="_blank" rel="noopener noreferrer" style="color:#2f4429;text-decoration:underline;font-weight:600;">${carrier}</a> and enter your ${trackingLabel.toLowerCase()} <strong>${trackingNumber}</strong>.
+                      <strong>How to track:</strong> ${trackingUrl ? 'Click the button above to view live transit updates, or visit' : 'Visit'} ${carrierHtml} and enter your ${trackingLabel.toLowerCase()} <strong>${trackingNumber}</strong>.
                     </p>
                   </td>
                 </tr>
@@ -696,7 +647,7 @@ const sendOrderDispatchedEmail = async (order, customTrackingUrl) => {
     email,
     `MantraAQ - Order Shipped #${orderNumber} via ${carrier}`,
     emailHtml,
-    `Your order #${orderNumber} has been dispatched via ${carrier}. ${trackingLabel}: ${trackingNumber}. Track your shipment: ${trackingUrl}`
+    `Your order #${orderNumber} has been dispatched via ${carrier}. ${trackingLabel}: ${trackingNumber}. ${trackingUrl ? `Track your shipment: ${trackingUrl}` : ''}`
   );
 };
 

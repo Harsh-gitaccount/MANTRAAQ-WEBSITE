@@ -16,6 +16,18 @@ import {
   ExternalLink
 } from 'lucide-react';
 
+// Courier partners for dispatch. The last one used becomes the default.
+const CARRIERS = [
+  'India Post (Speed Post)',
+  'Amazon Shipping',
+  'Delhivery',
+  'DTDC',
+  'Blue Dart Express',
+  'Shiprocket',
+  'Xpressbees',
+  'Other',
+];
+
 export default function Orders() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -25,6 +37,9 @@ export default function Orders() {
   const [carrierInputs, setCarrierInputs] = useState({});
   const [customCarrierInputs, setCustomCarrierInputs] = useState({});
   const [customUrlInputs, setCustomUrlInputs] = useState({});
+  const [defaultCarrier, setDefaultCarrier] = useState(() => {
+    try { return localStorage.getItem('maq_last_carrier') || CARRIERS[0]; } catch { return CARRIERS[0]; }
+  });
   const [actionLoading, setActionLoading] = useState({});
 
   // Edit Address Modal State
@@ -134,40 +149,35 @@ export default function Orders() {
   const getCarrierFieldLabel = (carrier) => {
     const c = (carrier || '').toLowerCase();
     if (c.includes('bluedart') || c.includes('blue dart')) return 'Waybill Number';
-    if (c.includes('dtdc') || c.includes('post') || c.includes('speed post')) return 'Consignment Number';
-    return 'Waybill / Tracking Number';
+    if (c.includes('dtdc') || c.includes('india post') || c.includes('speed post')) return 'Consignment Number';
+    if (c.includes('amazon')) return 'Tracking ID';
+    return 'Tracking Number';
   };
 
-  const getAdminTrackingLink = (carrier, awb) => {
-    if (!awb) return '#';
-    const clean = encodeURIComponent(awb.trim());
+  // Same rules as backend/utils/carriers.js. Null when the courier has no link that takes the number.
+  const getAutoTrackingLink = (carrier, awb) => {
+    const clean = encodeURIComponent((awb || '').trim());
+    if (!clean) return null;
     const c = (carrier || '').toLowerCase();
-    if (c.includes('bluedart') || c.includes('blue dart')) {
-      return `https://www.bluedart.com/web/guest/trackdartresult?trackFor=0&trackNo=${clean}`;
-    }
-    if (c.includes('delhivery')) {
-      return `https://www.delhivery.com/track/package/${clean}`;
-    }
-    if (c.includes('dtdc')) {
-      return `https://www.dtdc.in/tracking.asp`;
-    }
-    if (c.includes('post') || c.includes('speed post')) {
-      return `https://www.indiapost.gov.in/_layouts/15/dpt.cept.tracking/trackconsignment.aspx`;
-    }
-    if (c.includes('shiprocket')) {
-      return `https://shiprocket.co/tracking/${clean}`;
-    }
-    if (c.includes('shadowfax')) {
-      return `https://tracker.shadowfax.in/#/track/${clean}`;
-    }
-    return `https://www.bluedart.com/web/guest/trackdartresult?trackFor=0&trackNo=${clean}`;
+    if (c.includes('amazon')) return `https://track.amazon.in/tracking/${clean}`;
+    if (c.includes('delhivery')) return `https://www.delhivery.com/track/package/${clean}`;
+    if (c.includes('bluedart') || c.includes('blue dart')) return `https://www.bluedart.com/web/guest/trackdartresult?trackFor=0&trackNo=${clean}`;
+    if (c.includes('shiprocket')) return `https://shiprocket.co/tracking/${clean}`;
+    if (c.includes('xpressbees')) return `https://www.xpressbees.com/shipment/tracking?awbNo=${clean}`;
+    if (c.includes('shadowfax')) return `https://tracker.shadowfax.in/#/track/${clean}`;
+    return null;
   };
+
+  const getOrderTrackingLink = (order) =>
+    order.shippingAddress?.trackingUrl || getAutoTrackingLink(order.trackingCarrier, order.trackingNumber);
+
+  const carrierFor = (id) => carrierInputs[id] || defaultCarrier;
 
   const handleDispatch = async (id) => {
     const trackingNumber = (trackingInputs[id] || '').trim();
     if (!trackingNumber) return alert('Please enter a tracking / waybill number.');
 
-    const selectedCarrier = carrierInputs[id] || 'Blue Dart Express';
+    const selectedCarrier = carrierFor(id);
     const trackingCarrier = selectedCarrier === 'Other' 
       ? (customCarrierInputs[id]?.trim() || 'Courier Delivery')
       : selectedCarrier;
@@ -192,6 +202,8 @@ export default function Orders() {
       });
       const data = await res.json();
       if (data.success) {
+        try { localStorage.setItem('maq_last_carrier', selectedCarrier); } catch { /* storage blocked */ }
+        setDefaultCarrier(selectedCarrier);
         alert(`Order marked as dispatched via ${trackingCarrier}! Customer tracking email sent.`);
         fetchOrders();
       } else {
@@ -469,17 +481,13 @@ export default function Orders() {
                                 Courier Partner
                               </label>
                               <select
-                                value={carrierInputs[order.id] || 'Blue Dart Express'}
+                                value={carrierFor(order.id)}
                                 onChange={(e) => setCarrierInputs({ ...carrierInputs, [order.id]: e.target.value })}
                                 className="w-full bg-slate-50 border border-slate-200 rounded-lg py-2 px-3 text-slate-800 text-sm focus:outline-none focus:border-maroon-600 font-medium"
                               >
-                                <option value="Blue Dart Express">Blue Dart Express</option>
-                                <option value="Delhivery">Delhivery</option>
-                                <option value="DTDC">DTDC</option>
-                                <option value="India Post (Speed Post)">India Post (Speed Post)</option>
-                                <option value="Shiprocket">Shiprocket</option>
-                                <option value="Shadowfax">Shadowfax</option>
-                                <option value="Other">Other Courier</option>
+                                {CARRIERS.map((c) => (
+                                  <option key={c} value={c}>{c === 'Other' ? 'Other Courier' : c}</option>
+                                ))}
                               </select>
                             </div>
 
@@ -500,32 +508,35 @@ export default function Orders() {
 
                             <div>
                               <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider block mb-1">
-                                {getCarrierFieldLabel(carrierInputs[order.id] || 'Blue Dart Express')}
+                                {getCarrierFieldLabel(carrierFor(order.id))}
                               </label>
                               <input
                                 type="text"
                                 value={trackingInputs[order.id] || ''}
                                 onChange={(e) => setTrackingInputs({ ...trackingInputs, [order.id]: e.target.value })}
-                                placeholder={
-                                  (carrierInputs[order.id] || 'Blue Dart Express').toLowerCase().includes('blue dart') 
-                                    ? 'Enter Blue Dart Waybill No. (e.g. 74839201948)' 
-                                    : 'Enter Waybill / Tracking number'
-                                }
+                                placeholder={`Enter ${getCarrierFieldLabel(carrierFor(order.id)).toLowerCase()}`}
                                 className="w-full bg-slate-50 border border-slate-200 rounded-lg py-2 px-3 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-maroon-600 text-sm font-mono font-medium"
                               />
                             </div>
 
                             <div>
                               <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider block mb-1">
-                                Custom Tracking Link <span className="text-slate-400 normal-case font-normal">(Optional)</span>
+                                Tracking Link <span className="text-slate-400 normal-case font-normal">(paste from courier)</span>
                               </label>
                               <input
                                 type="text"
                                 value={customUrlInputs[order.id] || ''}
                                 onChange={(e) => setCustomUrlInputs({ ...customUrlInputs, [order.id]: e.target.value })}
-                                placeholder="Auto-generated if empty, or e.g. bluedart.com"
+                                placeholder="https://..."
                                 className="w-full bg-slate-50 border border-slate-200 rounded-lg py-1.5 px-3 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-maroon-600 text-xs"
                               />
+                              <p className="text-[11px] text-slate-400 mt-1 leading-snug">
+                                {(customUrlInputs[order.id] || '').trim()
+                                  ? 'The customer gets this exact link.'
+                                  : getAutoTrackingLink(carrierFor(order.id), trackingInputs[order.id] || 'x')
+                                    ? `Leave empty to use the ${carrierFor(order.id) === 'Other' ? 'courier' : carrierFor(order.id)} link built from the number, or paste your own.`
+                                    : 'Paste the tracking link so the customer gets a Track button. Without it they get the number only.'}
+                              </p>
                             </div>
 
                             <div className="bg-maroon-50/60 border border-maroon-100/80 rounded-lg p-2.5 text-[11px] text-maroon-800 leading-relaxed">
@@ -550,12 +561,12 @@ export default function Orders() {
                                 <strong>Status:</strong> 
                                 <span className="text-blue-700 bg-blue-50 font-semibold px-2 py-0.5 rounded">Shipped</span>
                               </p>
-                              <p><strong>Carrier:</strong> {order.trackingCarrier || 'Blue Dart Express'}</p>
+                              <p><strong>Carrier:</strong> {order.trackingCarrier || 'Courier'}</p>
                               <p><strong>Tracking / Waybill:</strong> <span className="font-mono font-bold text-slate-800">{order.trackingNumber}</span></p>
-                              {order.trackingNumber && (
+                              {getOrderTrackingLink(order) && (
                                 <p className="pt-1 border-t border-slate-200/60 mt-1.5">
                                   <a
-                                    href={getAdminTrackingLink(order.trackingCarrier, order.trackingNumber)}
+                                    href={getOrderTrackingLink(order)}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="text-maroon-700 hover:text-maroon-600 font-semibold inline-flex items-center gap-1 hover:underline"

@@ -1,6 +1,7 @@
 const crypto = require('crypto');
 const prisma = require('../config/db');
 const { sendOrderDispatchedEmail, sendDeliveryConfirmationEmail, sendOrderCancellationEmail } = require('../utils/mailer');
+const { getAutoTrackingUrl, cleanTrackingUrl } = require('../utils/carriers');
 
 const PAYU_MERCHANT_KEY = process.env.PAYU_MERCHANT_KEY;
 const PAYU_MERCHANT_SALT = process.env.PAYU_MERCHANT_SALT;
@@ -365,7 +366,17 @@ exports.dispatchOrder = async (req, res) => {
       });
     }
 
-    const finalCarrier = (trackingCarrier && trackingCarrier.trim()) ? trackingCarrier.trim() : 'Blue Dart Express';
+    const finalCarrier = (trackingCarrier && trackingCarrier.trim()) ? trackingCarrier.trim().slice(0, 80) : 'Courier';
+
+    // A pasted link from the courier wins; otherwise build one from the number when the courier supports it.
+    // Kept inside shippingAddress so no database change is needed.
+    if (trackingUrl && trackingUrl.trim() && !cleanTrackingUrl(trackingUrl)) {
+      return res.status(400).json({ success: false, message: 'Tracking link must be a web address, e.g. https://track.amazon.in/...' });
+    }
+    const finalTrackingUrl = cleanTrackingUrl(trackingUrl) || getAutoTrackingUrl(finalCarrier, trackingNumber);
+    const shippingAddress = { ...(order.shippingAddress || {}) };
+    if (finalTrackingUrl) shippingAddress.trackingUrl = finalTrackingUrl;
+    else delete shippingAddress.trackingUrl;
 
     const updatedOrder = await prisma.order.update({
       where: { id },
@@ -373,6 +384,7 @@ exports.dispatchOrder = async (req, res) => {
         status: 'DISPATCHED',
         trackingNumber: trackingNumber.trim(),
         trackingCarrier: finalCarrier,
+        shippingAddress,
       },
       include: {
         orderLineItems: {
@@ -387,7 +399,7 @@ exports.dispatchOrder = async (req, res) => {
 
     // Send dispatch email asynchronously
     if (typeof sendOrderDispatchedEmail === 'function') {
-      sendOrderDispatchedEmail(updatedOrder, trackingUrl).catch((err) =>
+      sendOrderDispatchedEmail(updatedOrder, finalTrackingUrl).catch((err) =>
         console.error('Dispatch email notification error:', err)
       );
     }
@@ -843,7 +855,9 @@ exports.updateOrderAddress = async (req, res) => {
     const updatedOrder = await prisma.order.update({
       where: { id },
       data: {
+        // Keep the pricing and payment details stored alongside the address
         shippingAddress: {
+          ...(order.shippingAddress || {}),
           name,
           email,
           phone,
