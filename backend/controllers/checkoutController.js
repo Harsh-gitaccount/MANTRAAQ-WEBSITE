@@ -61,6 +61,25 @@ function applyCoupon(coupon, orderAmount) {
   return { valid: true, coupon, discountAmount };
 }
 
+/**
+ * Key that lets a guest (no account) view or abandon their own order.
+ * It is an HMAC of the order id, so it can't be guessed or reused for
+ * another order, and nothing extra needs storing in the database.
+ */
+function guestOrderKey(orderId) {
+  if (!process.env.JWT_SECRET) throw new Error('JWT_SECRET not configured.');
+  return crypto
+    .createHmac('sha256', process.env.JWT_SECRET)
+    .update(`guest-order:${orderId}`)
+    .digest('hex');
+}
+
+function isValidGuestOrderKey(orderId, key) {
+  if (typeof key !== 'string' || !/^[a-f0-9]{64}$/.test(key)) return false;
+  const expected = Buffer.from(guestOrderKey(orderId), 'hex');
+  return crypto.timingSafeEqual(expected, Buffer.from(key, 'hex'));
+}
+
 // ─── createPaymentOrder ──────────────────────────────────────────────────────
 
 /**
@@ -79,14 +98,10 @@ exports.createPaymentOrder = async (req, res) => {
 
     const { items, shippingAddress, couponCode, paymentMethod = 'ONLINE' } = req.body;
 
-    // Authentication is REQUIRED for checkout
-    if (!req.user || !req.user.id) {
-      return res.status(401).json({
-        success: false,
-        message: 'You must be logged in to place an order.',
-      });
-    }
-    const userId = req.user.id;
+    // Logged-in customers get the order on their account; guests check out
+    // with just the shipping details (userId stays null).
+    const userId = req.user ? req.user.id : null;
+    const orderAccessKey = (orderId) => (userId ? undefined : guestOrderKey(orderId));
 
     // Transactional stock reservation with row-level locks
     const txResult = await prisma.$transaction(async (tx) => {
@@ -292,6 +307,7 @@ exports.createPaymentOrder = async (req, res) => {
         success: true,
         cod: true,
         orderId: confirmedOrder.id,
+        orderAccessKey: orderAccessKey(confirmedOrder.id),
       });
     }
 
@@ -299,11 +315,11 @@ exports.createPaymentOrder = async (req, res) => {
     const amount = Number(txResult.dbOrder.totalAmount).toFixed(2);
     const txnid = txResult.dbOrder.payuTxnId;
     const productinfo = 'MantraAQ Products';
-    const firstname = req.user.name || (shippingAddress && shippingAddress.name) || 'Customer';
-    const email = req.user.email || (shippingAddress && shippingAddress.email) || 'customer@example.com';
+    const firstname = (req.user && req.user.name) || (shippingAddress && shippingAddress.name) || 'Customer';
+    const email = (req.user && req.user.email) || (shippingAddress && shippingAddress.email) || 'customer@example.com';
     
     // Sanitize and resolve phone number (must be digits only, exactly 10 digits)
-    let phone = req.user.phone || (shippingAddress && shippingAddress.phone) || '';
+    let phone = (req.user && req.user.phone) || (shippingAddress && shippingAddress.phone) || '';
     phone = phone.replace(/\D/g, ''); // Remove non-numeric characters
     if (phone.length > 10) {
       phone = phone.slice(-10); // Extract last 10 digits
@@ -347,6 +363,7 @@ exports.createPaymentOrder = async (req, res) => {
         sandbox: PAYU_SANDBOX,
       },
       orderId: txResult.dbOrder.id,
+      orderAccessKey: orderAccessKey(txResult.dbOrder.id),
     });
   } catch (error) {
     console.error('Create Payment Order Error:', error);
@@ -639,6 +656,88 @@ exports.payuFailure = async (req, res) => {
   } catch (error) {
     console.error('PayU Failure Redirect Error:', error);
     res.redirect(`${clientUrl}/index.html?order=failed`);
+  }
+};
+
+// ─── Guest orders ────────────────────────────────────────────────────────────
+
+/**
+ * Order details for a guest, used by the "order placed" screen.
+ * GET /api/checkout/guest-order/:id?key=...
+ */
+exports.getGuestOrder = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!isValidGuestOrderKey(id, req.query.key)) {
+      return res.status(403).json({ success: false, message: 'Access denied.' });
+    }
+
+    const order = await prisma.order.findUnique({
+      where: { id },
+      include: {
+        orderLineItems: {
+          include: { variant: { include: { product: true } } },
+        },
+      },
+    });
+
+    if (!order) {
+      return res.status(404).json({ success: false, message: 'Order not found.' });
+    }
+
+    res.status(200).json({ success: true, data: order });
+  } catch (error) {
+    console.error('Fetch guest order error:', error);
+    res.status(500).json({ success: false, message: 'Failed to fetch order details.' });
+  }
+};
+
+/**
+ * Release a guest's unpaid online order when the payment page never opened,
+ * so the reserved stock comes back straight away instead of after the
+ * 30-minute cleanup. Paid and COD orders are left alone.
+ * POST /api/checkout/guest-order/:id/cancel  { key }
+ */
+exports.cancelGuestOrder = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!isValidGuestOrderKey(id, req.body && req.body.key)) {
+      return res.status(403).json({ success: false, message: 'Access denied.' });
+    }
+
+    const order = await prisma.order.findUnique({
+      where: { id },
+      include: { orderLineItems: true },
+    });
+
+    if (!order) {
+      return res.status(404).json({ success: false, message: 'Order not found.' });
+    }
+
+    if (order.status !== 'PENDING' || order.paymentId) {
+      return res.status(400).json({
+        success: false,
+        message: 'This order can no longer be cancelled here. Please contact support.',
+      });
+    }
+
+    await prisma.$transaction(async (tx) => {
+      for (const item of order.orderLineItems) {
+        await tx.variant.update({
+          where: { id: item.variantId },
+          data: { stockQuantity: { increment: item.quantity } },
+        });
+      }
+      await tx.order.update({
+        where: { id },
+        data: { status: 'CANCELLED', cancelledAt: new Date() },
+      });
+    });
+
+    res.status(200).json({ success: true, message: 'Order cancelled successfully.' });
+  } catch (error) {
+    console.error('Cancel guest order error:', error);
+    res.status(500).json({ success: false, message: 'Failed to cancel order.' });
   }
 };
 

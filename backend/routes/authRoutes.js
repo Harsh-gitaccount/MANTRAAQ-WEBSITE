@@ -9,6 +9,7 @@ router.post('/register', registerRules, authController.register);
 router.post('/login', loginRules, authController.login);
 router.post('/admin-login', loginRules, authController.adminLogin);
 router.post('/google', authController.googleAuth);
+router.get('/google-config', authController.googleConfig);
 router.post('/logout', authController.logout);
 router.get('/me', protect, authController.getMe);
 router.put('/update-profile', protect, updateProfileRules, authController.updateProfile);

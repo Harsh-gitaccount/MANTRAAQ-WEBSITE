@@ -16,7 +16,7 @@ const signToken = (id) => {
   });
 };
 
-const sendTokenResponse = (user, statusCode, res) => {
+const sendTokenResponse = (user, statusCode, res, extra = {}) => {
   const token = signToken(user.id);
 
   const cookieOptions = {
@@ -32,6 +32,7 @@ const sendTokenResponse = (user, statusCode, res) => {
     success: true,
     token,
     user: userData,
+    ...extra,
   });
 };
 
@@ -170,17 +171,29 @@ exports.googleAuth = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Google token is required.' });
     }
 
+    // Without our client ID we can't tell a MantraAQ token from one issued to
+    // any other app, so refuse rather than trust it.
+    if (!process.env.GOOGLE_CLIENT_ID) {
+      return res.status(503).json({ success: false, message: 'Google sign-in is not available right now.' });
+    }
+
     // Verify token with Google
-    const response = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${googleToken}`);
+    const response = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${encodeURIComponent(googleToken)}`);
     if (!response.ok) {
       return res.status(401).json({ success: false, message: 'Invalid Google token.' });
     }
 
     const payload = await response.json();
 
-    // Optionally verify audience
-    if (process.env.GOOGLE_CLIENT_ID && payload.aud !== process.env.GOOGLE_CLIENT_ID) {
+    if (payload.aud !== process.env.GOOGLE_CLIENT_ID) {
       return res.status(401).json({ success: false, message: 'Token not issued for this application.' });
+    }
+    if (!['accounts.google.com', 'https://accounts.google.com'].includes(payload.iss)) {
+      return res.status(401).json({ success: false, message: 'Invalid Google token.' });
+    }
+    // Only trust the email once Google has verified it belongs to this person
+    if (!payload.email || String(payload.email_verified) !== 'true') {
+      return res.status(401).json({ success: false, message: 'Your Google email is not verified.' });
     }
 
     const { email, sub: googleId, name, picture } = payload;
@@ -188,6 +201,7 @@ exports.googleAuth = async (req, res) => {
 
     // Find or create user
     let user = await prisma.user.findUnique({ where: { email: normalizedEmail } });
+    const isNewUser = !user;
 
     if (user) {
       // Link Google ID if not already linked
@@ -206,17 +220,37 @@ exports.googleAuth = async (req, res) => {
           role: 'CUSTOMER',
         },
       });
+
+      sendWelcomeEmail(user).catch(err =>
+        console.error('Failed to send welcome email:', err)
+      );
     }
 
     if (!user.isActive) {
       return res.status(403).json({ success: false, message: 'Account has been deactivated.' });
     }
 
-    sendTokenResponse(user, 200, res);
+    // Google has verified this email, so orders placed as a guest with it are
+    // this person's: move them onto the account so they show in My Orders.
+    try {
+      await prisma.$executeRaw`
+        UPDATE "Order" SET "userId" = ${user.id}
+        WHERE "userId" IS NULL AND lower("shippingAddress"->>'email') = ${normalizedEmail}
+      `;
+    } catch (linkError) {
+      console.error('Linking guest orders failed:', linkError);
+    }
+
+    sendTokenResponse(user, 200, res, { isNewUser });
   } catch (error) {
     console.error('Google auth error:', error);
     res.status(500).json({ success: false, message: 'Google authentication failed.' });
   }
+};
+
+// Public Google client ID for the storefront's sign-in button (empty = hide it)
+exports.googleConfig = (req, res) => {
+  res.status(200).json({ success: true, clientId: process.env.GOOGLE_CLIENT_ID || '' });
 };
 
 // ─── Logout ─────────────────────────────────────────────────
