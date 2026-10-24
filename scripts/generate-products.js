@@ -263,7 +263,7 @@ function generateProductHTML(product, allProducts) {
   accordions.push(['Description', `<div class="acc-body">${esc(paragraphs(product.description).join('\n\n'))}</div>`, true]);
   if (facts && facts.howToUse) accordions.push(['How to use', `<div class="acc-body"><ol>${facts.howToUse.map(s => `<li>${esc(s)}</li>`).join('')}</ol></div>`]);
   if (facts && facts.storage) accordions.push(['Storage', `<div class="acc-body">${esc(facts.storage)}</div>`]);
-  accordions.push(['Shipping & replacements', `<div class="acc-body">Packed and dispatched within 1 to 2 business days. Delivery takes 3 to 7 business days to metro cities and 4 to 10 business days elsewhere. Shipping is free on orders above ₹499, otherwise ₹49.\n\nIf anything arrives damaged, wrong or spoiled, tell us within 48 hours and we will replace or refund it. <a href="/shipping-policy">Shipping policy</a> · <a href="/refund-policy">Refund policy</a></div>`]);
+  accordions.push(['Shipping & replacements', `<div class="acc-body">Packed and dispatched within 1 to 2 business days. Delivery takes 3 to 7 business days to metro cities and 4 to 10 business days elsewhere. Shipping is free on orders above ₹499, otherwise ₹70.\n\nIf anything arrives damaged, wrong or spoiled, tell us within 48 hours and we will replace or refund it. <a href="/shipping-policy">Shipping policy</a> · <a href="/refund-policy">Refund policy</a></div>`]);
   if (facts && facts.maker) {
     const m = facts.maker;
     accordions.push(['Manufacturer & FSSAI', `<div class="acc-body">${esc(m.role)} ${esc(m.name)}, ${esc(m.address)}.\nFSSAI Lic. No. ${esc(m.fssai)}\nCountry of origin: India</div>`]);
@@ -442,7 +442,7 @@ function generateLlmsTxt(products) {
     '',
     'Company: MantraAQ Industries Private Limited, Begusarai, Bihar, India. FSSAI Lic. No. 20426155000003.',
     'Contact: hello@mantraaq.com, +91 82838 16755 (also WhatsApp).',
-    'Shipping: dispatched in 1 to 2 business days; free shipping on orders above ₹499, otherwise ₹49. Damaged, wrong or spoiled items are replaced or refunded if reported within 48 hours.',
+    'Shipping: dispatched in 1 to 2 business days; free shipping on orders above ₹499, otherwise ₹70. Damaged, wrong or spoiled items are replaced or refunded if reported within 48 hours.',
     '',
     '## Products',
     ''

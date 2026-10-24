@@ -228,7 +228,8 @@ exports.createPaymentOrder = async (req, res) => {
       }
 
       // Calculate Shipping Charge & COD Fee
-      const shippingCharge = totalAmount < 499 ? 49 : 0;
+      // Keep in step with getShippingCharge() in js/cart.js
+      const shippingCharge = totalAmount < 499 ? 70 : 0;
       const codFee = (paymentMethod === 'COD' && totalAmount < 299) ? 40 : 0;
       const finalAmount = Math.max(0, totalAmount - discountAmount + shippingCharge + codFee);
 
