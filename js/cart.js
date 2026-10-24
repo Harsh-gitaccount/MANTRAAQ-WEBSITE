@@ -272,6 +272,22 @@
     .checkout-form-panel.active {
       display: flex;
     }
+    /* Cookie notice sat on top of the Pay button on phones; hide it while the cart is open */
+    body:has(.cart-overlay.active) #maq-cookie-banner { display: none !important; }
+
+    /* Guest / signed-in line above the shipping form */
+    .checkout-account-bar {
+      display: flex; flex-direction: column; gap: 10px;
+      padding: 12px 14px; margin-bottom: 14px;
+      background: #f6efdf; border: 1px solid #ebdfc4; border-radius: 10px;
+      font-size: 12.5px; color: #57474a;
+    }
+    .checkout-account-bar strong { color: #241316; }
+    .checkout-account-bar .account-bar-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 12px; }
+    .checkout-account-bar .account-bar-link { background: none; border: none; padding: 0; color: #6c1121; font-weight: 700; font-size: 12.5px; cursor: pointer; text-decoration: underline; text-underline-offset: 2px; }
+    .checkout-account-bar .checkout-google-slot { display: none; }
+    .checkout-account-bar .checkout-google-slot.ready { display: flex; }
+
     .form-grp {
       display: flex;
       flex-direction: column;
@@ -961,6 +977,8 @@ const Cart = {
                   </button>
                 </div>
                 
+                <div id="checkoutAccountBar" class="checkout-account-bar"></div>
+
                 <form id="shippingForm" onsubmit="Cart.handleCheckoutSubmit(event)" style="display:flex; flex-direction:column; gap:12px; padding-bottom: 24px;">
                   <div class="form-grp">
                     <label>Recipient Name</label>
@@ -1410,15 +1428,9 @@ const Cart = {
       return;
     }
 
-    // ── LOGIN GATE: Checkout requires authentication ──────────
-    const userToken = localStorage.getItem('user_token');
-    if (!userToken) {
-      window.Toast.warning('Login Required: Please sign in before proceeding to checkout.');
-      if (window.CustomerAuth) {
-        window.CustomerAuth.open();
-      }
-      return;
-    }
+    // No login needed: guests check out with their shipping details
+    this.renderAccountBar();
+    this.prefillForm();
 
     document.getElementById('cartItemsPanel').style.display = 'none';
     document.getElementById('checkoutFormPanel').classList.add('active');
@@ -1453,16 +1465,42 @@ const Cart = {
   },
 
   prefillForm(force = false) {
-    // Prefill form from CustomerAuth if logged in
+    // Prefill form from CustomerAuth if logged in (never blank out what a guest typed)
     if (window.CustomerAuth && window.CustomerAuth.user) {
       const u = window.CustomerAuth.user;
       const shipName = document.getElementById('shipName');
       const shipEmail = document.getElementById('shipEmail');
       const shipPhone = document.getElementById('shipPhone');
 
-      if (shipName && (force || !shipName.value)) shipName.value = u.name || '';
-      if (shipEmail && (force || !shipEmail.value)) shipEmail.value = u.email || '';
-      if (shipPhone && (force || !shipPhone.value)) shipPhone.value = u.phone || '';
+      if (shipName && u.name && (force || !shipName.value)) shipName.value = u.name;
+      if (shipEmail && u.email && (force || !shipEmail.value)) shipEmail.value = u.email;
+      if (shipPhone && u.phone && (force || !shipPhone.value)) shipPhone.value = u.phone;
+    }
+  },
+
+  // Line above the shipping form: who is checking out, plus an optional Google shortcut
+  renderAccountBar() {
+    const bar = document.getElementById('checkoutAccountBar');
+    if (!bar) return;
+    const user = window.CustomerAuth && window.CustomerAuth.user;
+
+    if (user) {
+      bar.innerHTML = `
+        <div class="account-bar-row">
+          <span>Signed in as <strong>${window.MantraAQSanitize ? window.MantraAQSanitize(user.email) : user.email}</strong></span>
+        </div>`;
+      return;
+    }
+
+    bar.innerHTML = `
+      <div class="account-bar-row">
+        <span><strong>Checking out as a guest.</strong> No account needed.</span>
+        <button type="button" class="account-bar-link" onclick="CustomerAuth.open()">Have an account? Sign in</button>
+      </div>
+      <div class="checkout-google-slot" id="checkoutGoogleSlot"></div>`;
+
+    if (window.GoogleSignIn) {
+      window.GoogleSignIn.renderInto(document.getElementById('checkoutGoogleSlot'), { width: 260 });
     }
   },
 
@@ -1682,16 +1720,6 @@ const Cart = {
     e.preventDefault();
     const paySubmitBtn = document.getElementById('paySubmitBtn');
 
-    // ── LOGIN GATE: Checkout requires authentication ──────────
-    const userToken = localStorage.getItem('user_token');
-    if (!userToken) {
-      window.Toast.warning('Login Required: Please sign in before placing an order.');
-      if (window.CustomerAuth) {
-        window.CustomerAuth.open();
-      }
-      return;
-    }
-
     // Verify pincode format (6 digits)
     const shipPostal = document.getElementById('shipPostal');
     const pin = shipPostal ? shipPostal.value.trim() : '';
@@ -1781,13 +1809,14 @@ const Cart = {
         return;
       }
 
+      // Guests get a key so this browser can show the order afterwards
+      window.MantraaqAPI.saveGuestOrderKey(checkoutOrder.orderId, checkoutOrder.orderAccessKey);
+
       if (checkoutOrder.cod) {
         Cart.clear();
         Cart.close();
-        window.Toast.success('Order Placed: Cash on Delivery order registered successfully.');
-        if (window.CustomerAuth) {
-          window.CustomerAuth.open();
-        }
+        // Same "order placed" screen PayU orders land on
+        window.location.assign(`/index.html?order=success&id=${encodeURIComponent(checkoutOrder.orderId)}`);
         return;
       }
 
@@ -1822,7 +1851,11 @@ const Cart = {
       window.Toast.error(err.message || 'Transaction Failed: Inventory or server connection issue.');
       try {
         if (checkoutOrder && checkoutOrder.orderId) {
-          await window.MantraaqAPI.cancelOrder(checkoutOrder.orderId);
+          if (checkoutOrder.orderAccessKey) {
+            await window.MantraaqAPI.cancelGuestOrder(checkoutOrder.orderId, checkoutOrder.orderAccessKey);
+          } else {
+            await window.MantraaqAPI.cancelOrder(checkoutOrder.orderId);
+          }
         }
       } catch (cErr) {
         console.error('Auto-cancel order error:', cErr);

@@ -177,6 +177,29 @@ async function resetPassword(resetData) {
   return data;
 }
 
+// Sign in with the ID token from Google's button
+async function googleLogin(credential) {
+  const data = await apiFetch('/auth/google', {
+    method: 'POST',
+    body: JSON.stringify({ token: credential }),
+  });
+  return data;
+}
+
+// Google client ID comes from the backend (GOOGLE_CLIENT_ID on Render); '' hides the button
+let googleClientIdPromise = null;
+function getGoogleClientId() {
+  if (!googleClientIdPromise) {
+    googleClientIdPromise = apiFetch('/auth/google-config')
+      .then((data) => data.clientId || '')
+      .catch(() => {
+        googleClientIdPromise = null;
+        return '';
+      });
+  }
+  return googleClientIdPromise;
+}
+
 // ─ Orders ─
 async function getMyOrders() {
   const data = await apiFetch('/orders/my-orders');
@@ -191,6 +214,50 @@ async function getOrderById(id) {
 async function cancelOrder(id) {
   const data = await apiFetch(`/orders/my-orders/${id}/cancel`, {
     method: 'POST',
+  });
+  return data;
+}
+
+// ─ Guest orders ─
+// A guest has no account, so the backend hands back a key per order that lets
+// this browser show the "order placed" screen or release an unpaid order.
+const GUEST_KEYS_STORAGE = 'guest_order_keys';
+
+function readGuestOrderKeys() {
+  try {
+    return JSON.parse(localStorage.getItem(GUEST_KEYS_STORAGE)) || {};
+  } catch (e) {
+    return {};
+  }
+}
+
+function saveGuestOrderKey(orderId, key) {
+  if (!orderId || !key) return;
+  try {
+    const keys = readGuestOrderKeys();
+    keys[orderId] = key;
+    // Keep only the most recent few
+    const ids = Object.keys(keys);
+    ids.slice(0, Math.max(0, ids.length - 10)).forEach((id) => delete keys[id]);
+    localStorage.setItem(GUEST_KEYS_STORAGE, JSON.stringify(keys));
+  } catch (e) {
+    // Storage blocked: the success screen falls back to the short receipt
+  }
+}
+
+function getGuestOrderKey(orderId) {
+  return readGuestOrderKeys()[orderId] || null;
+}
+
+async function getGuestOrder(id, key) {
+  const data = await apiFetch(`/checkout/guest-order/${encodeURIComponent(id)}?key=${encodeURIComponent(key)}`);
+  return data.data;
+}
+
+async function cancelGuestOrder(id, key) {
+  const data = await apiFetch(`/checkout/guest-order/${encodeURIComponent(id)}/cancel`, {
+    method: 'POST',
+    body: JSON.stringify({ key }),
   });
   return data;
 }
@@ -292,6 +359,8 @@ window.MantraaqAPI = {
   submitReview,
   register,
   login,
+  googleLogin,
+  getGoogleClientId,
   logout,
   getMe,
   updateProfile,
@@ -301,6 +370,10 @@ window.MantraaqAPI = {
   getMyOrders,
   getOrderById,
   cancelOrder,
+  saveGuestOrderKey,
+  getGuestOrderKey,
+  getGuestOrder,
+  cancelGuestOrder,
   getWishlist,
   addToWishlist,
   removeFromWishlist,

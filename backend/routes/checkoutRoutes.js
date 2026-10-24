@@ -1,12 +1,14 @@
 const express = require('express');
 const checkoutController = require('../controllers/checkoutController');
-const { protect, optionalProtect } = require('../middleware/auth');
+const { optionalProtect } = require('../middleware/auth');
 const { checkoutRules } = require('../middleware/validate');
 
 const router = express.Router();
 
-// Checkout REQUIRES authentication - no guest orders allowed
-router.post('/create-payment-order', protect, checkoutRules, checkoutController.createPaymentOrder);
+// Guests can check out; a logged-in customer's order is saved to their account
+router.post('/create-payment-order', optionalProtect, checkoutRules, checkoutController.createPaymentOrder);
+router.get('/guest-order/:id', checkoutController.getGuestOrder);
+router.post('/guest-order/:id/cancel', checkoutController.cancelGuestOrder);
 router.post('/verify-payment', checkoutController.verifyPayment);
 router.post('/validate-coupon', optionalProtect, checkoutController.validateCoupon);
 router.get('/active-coupons', checkoutController.getActiveCoupons);

@@ -98,6 +98,13 @@
       background: linear-gradient(to bottom, #c49a4f, #c49a4f);
     }
 
+    /* Google sign-in */
+    .auth-google-slot { display: none; justify-content: center; min-height: 44px; }
+    .auth-google-slot.ready { display: flex; }
+    .auth-google-divider { display: none; align-items: center; gap: 10px; margin: 2px 0; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(243, 236, 219, 0.5); }
+    .auth-google-divider::before, .auth-google-divider::after { content: ''; flex: 1; height: 1px; background: rgba(226,194,127, 0.15); }
+    .auth-google-slot.ready + .auth-google-divider { display: flex; }
+
     /* Tab switcher */
     .auth-tabs {
       display: flex;
@@ -868,6 +875,8 @@ const CustomerAuth = {
 
             <!-- LOGIN FORM -->
             <form id="customerLoginForm" class="auth-form active" onsubmit="CustomerAuth.handleLogin(event)">
+              <div class="auth-google-slot"></div>
+              <div class="auth-google-divider">or use email</div>
               <div class="auth-form-grp">
                 <label>Email Address</label>
                 <input type="email" id="customerLoginEmail" placeholder="you@email.com" autocomplete="username" required />
@@ -890,6 +899,8 @@ const CustomerAuth = {
 
             <!-- REGISTER FORM -->
             <form id="customerRegisterForm" class="auth-form" onsubmit="CustomerAuth.handleRegister(event)">
+              <div class="auth-google-slot"></div>
+              <div class="auth-google-divider">or use email</div>
               <div class="auth-form-grp">
                 <label>Full Name</label>
                 <input type="text" id="customerRegisterName" placeholder="John Doe" autocomplete="name" required />
@@ -1068,6 +1079,7 @@ const CustomerAuth = {
       this.showProfilePanel();
     } else {
       this.switchTab('login');
+      document.querySelectorAll('#authOverlay .auth-google-slot').forEach((el) => GoogleSignIn.renderInto(el));
     }
   },
 
@@ -1540,6 +1552,35 @@ const CustomerAuth = {
     }
   },
 
+  // Called by Google's button with a signed ID token
+  async handleGoogleCredential(credential) {
+    this.clearError();
+    try {
+      const data = await window.MantraaqAPI.googleLogin(credential);
+      localStorage.setItem('user_token', data.token);
+      this.user = data.user;
+      this.updateNavbar(true);
+
+      const overlay = document.getElementById('authOverlay');
+      const modalOpen = overlay && overlay.classList.contains('active');
+      if (modalOpen && data.isNewUser) {
+        this.showWelcomePanel(data.user.name);
+      } else if (modalOpen) {
+        this.close();
+      }
+      window.dispatchEvent(new CustomEvent('auth:login'));
+      window.Toast.success(`Signed in: Welcome${data.isNewUser ? '' : ' back'}, ${data.user.name || 'Customer'}.`);
+    } catch (err) {
+      console.error('Google sign-in error:', err);
+      const message = err.message || 'Google sign-in failed. Please try again.';
+      if (document.getElementById('authOverlay')?.classList.contains('active')) {
+        this.showError(message);
+      } else {
+        window.Toast.error(message);
+      }
+    }
+  },
+
   async handleRegister(e) {
     e.preventDefault();
     this.clearError();
@@ -1655,6 +1696,72 @@ const CustomerAuth = {
 };
 
 window.CustomerAuth = CustomerAuth;
+
+/**
+ * "Continue with Google" button (Google Identity Services).
+ * Stays hidden until the backend has a GOOGLE_CLIENT_ID, so the site works
+ * the same as before when Google isn't set up.
+ */
+const GoogleSignIn = {
+  readyPromise: null,
+
+  load() {
+    if (this.readyPromise) return this.readyPromise;
+    this.readyPromise = (async () => {
+      const clientId = window.MantraaqAPI ? await window.MantraaqAPI.getGoogleClientId() : '';
+      if (!clientId) return false;
+
+      if (!(window.google && window.google.accounts && window.google.accounts.id)) {
+        await new Promise((resolve, reject) => {
+          const script = document.createElement('script');
+          script.src = 'https://accounts.google.com/gsi/client';
+          script.async = true;
+          script.onload = resolve;
+          script.onerror = reject;
+          document.head.appendChild(script);
+        });
+      }
+
+      window.google.accounts.id.initialize({
+        client_id: clientId,
+        callback: (response) => CustomerAuth.handleGoogleCredential(response.credential),
+        ux_mode: 'popup',
+        auto_select: false,
+        cancel_on_tap_outside: true,
+      });
+      return true;
+    })().catch((err) => {
+      console.warn('Google sign-in unavailable:', err);
+      this.readyPromise = null;
+      return false;
+    });
+    return this.readyPromise;
+  },
+
+  // Draws the button into el and adds the "ready" class; leaves el hidden if Google isn't available
+  async renderInto(el, options = {}) {
+    if (!el) return false;
+    const ok = await this.load();
+    if (!ok) {
+      el.classList.remove('ready');
+      return false;
+    }
+    el.innerHTML = '';
+    window.google.accounts.id.renderButton(el, {
+      theme: 'outline',
+      size: 'large',
+      shape: 'pill',
+      text: 'continue_with',
+      logo_alignment: 'left',
+      width: 280,
+      ...options,
+    });
+    el.classList.add('ready');
+    return true;
+  },
+};
+
+window.GoogleSignIn = GoogleSignIn;
 
 document.addEventListener('DOMContentLoaded', () => {
   CustomerAuth.init();

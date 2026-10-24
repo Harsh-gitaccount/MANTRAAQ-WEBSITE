@@ -1500,8 +1500,13 @@ window.addEventListener('load', function() {
 
         // Fetch actual order details using window.MantraaqAPI.getOrderById
         let orderFetched = null;
-        if (window.MantraaqAPI && typeof window.MantraaqAPI.getOrderById === 'function') {
-            window.MantraaqAPI.getOrderById(orderId)
+        if (window.MantraaqAPI && orderId) {
+            // Guest orders carry a key saved at checkout; account orders use the login
+            const guestKey = window.MantraaqAPI.getGuestOrderKey(orderId);
+            const fetchOrder = guestKey
+                ? window.MantraaqAPI.getGuestOrder(orderId, guestKey)
+                : window.MantraaqAPI.getOrderById(orderId);
+            fetchOrder
                 .then((data) => {
                     orderFetched = data;
                     renderReceiptDetails(overlay, data);
@@ -1518,7 +1523,7 @@ window.addEventListener('load', function() {
         overlay.addEventListener('click', function(e) {
             if (e.target.id === 'btnContinueShopping') {
                 closeOverlay(overlay);
-            } else if (e.target.id === 'btnViewProfile' || e.target.id === 'btnProfileRedirect') {
+            } else if (e.target.id === 'btnViewProfile' || e.target.id === 'btnProfileRedirect' || e.target.id === 'btnSaveDetails') {
                 closeOverlay(overlay);
                 if (window.CustomerAuth) {
                     setTimeout(() => window.CustomerAuth.open(), 300);
@@ -1664,7 +1669,9 @@ function renderReceiptDetails(overlay, order) {
 
     // Determine shipping address name
     let name = order.shippingAddress?.name || 'Customer';
-    let payMethodText = (order.paymentId?.toLowerCase().startsWith('cod') || order.shippingAddress?.paymentMethod === 'COD') ? 'Cash on Delivery (COD)' : 'Paid Online (PayU)';
+    const isCod = order.paymentId?.toLowerCase().startsWith('cod') || order.shippingAddress?.paymentMethod === 'COD';
+    let payMethodText = isCod ? 'Cash on Delivery (COD)' : 'Paid Online (PayU)';
+    const isGuest = !localStorage.getItem('user_token');
 
     const receiptBox = document.createElement('div');
     receiptBox.className = 'order-receipt-box';
@@ -1684,7 +1691,7 @@ function renderReceiptDetails(overlay, order) {
         <div class="receipt-divider"></div>
         ${itemsHtml}
         <div class="receipt-row total">
-            <span>Paid Amount</span>
+            <span>${isCod ? 'Pay on Delivery' : 'Paid Amount'}</span>
             <span style="color: #c49a4f;">₹${order.totalAmount.toFixed(0)}</span>
         </div>
     `;
@@ -1695,11 +1702,14 @@ function renderReceiptDetails(overlay, order) {
     // Update title/desc to feel personal
     const title = card.querySelector('.order-status-title');
     const desc = card.querySelector('.order-status-desc');
-    title.textContent = "Payment Successful!";
+    title.textContent = isCod ? "Order Placed!" : "Payment Successful!";
     desc.innerHTML = `Thank you for your order, <strong>${MantraAQSanitize(name)}</strong>!<br>A confirmation email has been dispatched to <strong>${MantraAQSanitize(order.shippingAddress?.email || order.user?.email || 'your email')}</strong>.`;
 
-    // Update buttons to show view profile
-    buttonsGroup.innerHTML = `
+    // Guests are offered an account (optional); signed-in customers go to their orders
+    buttonsGroup.innerHTML = isGuest ? `
+        <button class="status-btn status-btn-primary" id="btnContinueShopping">Continue Shopping</button>
+        <button class="status-btn status-btn-secondary" id="btnSaveDetails">Save my details for next time</button>
+    ` : `
         <button class="status-btn status-btn-primary" id="btnViewProfile">View Order History</button>
         <button class="status-btn status-btn-secondary" id="btnContinueShopping">Continue Shopping</button>
     `;
@@ -1721,7 +1731,7 @@ function renderReceiptFallback(overlay, orderId) {
         </div>
         <div class="receipt-divider"></div>
         <div class="receipt-row" style="margin-bottom: 0; justify-content: center; text-align: center;">
-            <span>Please log in to your account to view your order details, download invoices, and track shipment progress.</span>
+            <span>Your order is placed. The confirmation email has your order details, and you can sign in any time to track it.</span>
         </div>
     `;
 
@@ -1729,8 +1739,8 @@ function renderReceiptFallback(overlay, orderId) {
 
     // Update buttons group to show profile redirection (which will open login panel if not logged in)
     buttonsGroup.innerHTML = `
-        <button class="status-btn status-btn-primary" id="btnProfileRedirect">Log In to Track Order</button>
-        <button class="status-btn status-btn-secondary" id="btnContinueShopping">Continue Shopping</button>
+        <button class="status-btn status-btn-primary" id="btnContinueShopping">Continue Shopping</button>
+        <button class="status-btn status-btn-secondary" id="btnProfileRedirect">Sign In to Track Order</button>
     `;
 }
 
