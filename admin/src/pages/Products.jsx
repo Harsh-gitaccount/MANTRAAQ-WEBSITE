@@ -44,6 +44,8 @@ export default function Products() {
   const [draggedIndex, setDraggedIndex] = useState(null);
   const [draggedImageIndex, setDraggedImageIndex] = useState(null);
   const [inputUrl, setInputUrl] = useState('');
+  // Uploaded photos take about a minute to go live on the site, so preview them from the local file meanwhile
+  const [localPreviews, setLocalPreviews] = useState({});
 
   useEffect(() => {
     fetchProducts();
@@ -183,6 +185,11 @@ export default function Products() {
       });
       const data = await res.json();
       if (data.success && data.urls) {
+        setLocalPreviews(prev => {
+          const next = { ...prev };
+          data.urls.forEach((url, i) => { if (files[i]) next[url] = URL.createObjectURL(files[i]); });
+          return next;
+        });
         setImagesList(prev => [...prev, ...data.urls]);
       } else {
         alert(data.message || 'Failed to upload images.');
@@ -604,6 +611,7 @@ export default function Products() {
                     <span className="font-semibold text-slate-700 group-hover:text-maroon-700 transition-colors">Click to upload</span> or drag and drop
                   </div>
                   <p className="text-xs text-slate-400">PNG, JPG, JPEG, WEBP or GIF. Select multiple files at once.</p>
+                  <p className="text-xs text-slate-400">Photos are shrunk automatically and show on the live site about a minute after upload.</p>
                   <input
                     id="product-file-input"
                     type="file"
@@ -658,7 +666,7 @@ export default function Products() {
                           className={`relative aspect-square bg-white border rounded-lg overflow-hidden group cursor-grab active:cursor-grabbing shadow-sm hover:shadow-md transition-all duration-200 ${draggedImageIndex === idx ? 'opacity-35 border-maroon-600 scale-[0.96]' : 'border-slate-200'}`}
                         >
                           <img
-                            src={getImageUrl(imgUrl)}
+                            src={localPreviews[imgUrl] || getImageUrl(imgUrl)}
                             alt={`Preview ${idx + 1}`}
                             className="w-full h-full object-cover select-none pointer-events-none"
                             onError={(e) => { e.target.src = 'https://placehold.co/100?text=Error' }}

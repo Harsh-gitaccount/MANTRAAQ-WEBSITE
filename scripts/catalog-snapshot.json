@@ -20,9 +20,9 @@
         "innovation kitchen"
       ],
       "images": [
-        "https://res.cloudinary.com/s2rbtvuy/image/upload/v1784493635/mantraaq/products/vevojp9es7wqfyag9zjv.png",
-        "https://res.cloudinary.com/s2rbtvuy/image/upload/v1784493635/mantraaq/products/rcz734zla9r0xu7vxysp.png",
-        "https://res.cloudinary.com/s2rbtvuy/image/upload/v1784493635/mantraaq/products/unl8pn6dt7spe7ea1up9.png"
+        "/assets/uploads/products/vevojp9es7wqfyag9zjv.webp",
+        "/assets/uploads/products/rcz734zla9r0xu7vxysp.webp",
+        "/assets/uploads/products/unl8pn6dt7spe7ea1up9.webp"
       ],
       "sortOrder": 0,
       "isActive": true,
@@ -89,9 +89,9 @@
         "everyday meals"
       ],
       "images": [
-        "https://res.cloudinary.com/s2rbtvuy/image/upload/v1784493714/mantraaq/products/ceqx8eeruf1cqbwqev55.png",
-        "https://res.cloudinary.com/s2rbtvuy/image/upload/v1784493714/mantraaq/products/nxl8chl5f5cvea9r23kk.png",
-        "https://res.cloudinary.com/s2rbtvuy/image/upload/v1784493714/mantraaq/products/okjrobkdyynfdszrfkq1.png"
+        "/assets/uploads/products/ceqx8eeruf1cqbwqev55.webp",
+        "/assets/uploads/products/nxl8chl5f5cvea9r23kk.webp",
+        "/assets/uploads/products/okjrobkdyynfdszrfkq1.webp"
       ],
       "sortOrder": 1,
       "isActive": true,
@@ -140,10 +140,10 @@
         "premium quality"
       ],
       "images": [
-        "https://res.cloudinary.com/s2rbtvuy/image/upload/v1784485485/mantraaq/products/crk3t02hftxbj9l5bfg8.png",
-        "https://res.cloudinary.com/s2rbtvuy/image/upload/v1784485485/mantraaq/products/h1slfulx2okcci1opkph.png",
-        "https://res.cloudinary.com/s2rbtvuy/image/upload/v1784485485/mantraaq/products/gzixv1aijgyvc3rlhv0g.png",
-        "https://res.cloudinary.com/s2rbtvuy/image/upload/v1784485485/mantraaq/products/w0nzuzn7b0pq0mxvwney.png"
+        "/assets/uploads/products/crk3t02hftxbj9l5bfg8.webp",
+        "/assets/uploads/products/h1slfulx2okcci1opkph.webp",
+        "/assets/uploads/products/gzixv1aijgyvc3rlhv0g.webp",
+        "/assets/uploads/products/w0nzuzn7b0pq0mxvwney.webp"
       ],
       "sortOrder": 2,
       "isActive": true,
@@ -202,10 +202,10 @@
         "premium quality"
       ],
       "images": [
-        "https://res.cloudinary.com/s2rbtvuy/image/upload/v1784493800/mantraaq/products/fmxds7x41nryyz0ez2gt.png",
-        "https://res.cloudinary.com/s2rbtvuy/image/upload/v1784493800/mantraaq/products/s77ezettxuwtvjxzal0p.png",
-        "https://res.cloudinary.com/s2rbtvuy/image/upload/v1784493800/mantraaq/products/l6qzps8u4vydufmkpedp.png",
-        "https://res.cloudinary.com/s2rbtvuy/image/upload/v1784493800/mantraaq/products/fb2gkq4v3itbhffv5bre.png"
+        "/assets/uploads/products/fmxds7x41nryyz0ez2gt.webp",
+        "/assets/uploads/products/s77ezettxuwtvjxzal0p.webp",
+        "/assets/uploads/products/l6qzps8u4vydufmkpedp.webp",
+        "/assets/uploads/products/fb2gkq4v3itbhffv5bre.webp"
       ],
       "sortOrder": 3,
       "isActive": true,
@@ -264,8 +264,8 @@
         "wetland nutrition"
       ],
       "images": [
-        "https://res.cloudinary.com/s2rbtvuy/image/upload/v1784493558/mantraaq/products/vxkiyfdakoefkstsx7rm.png",
-        "https://res.cloudinary.com/s2rbtvuy/image/upload/v1784493558/mantraaq/products/axwymxkihcd1ruvgw4pt.jpg"
+        "/assets/uploads/products/vxkiyfdakoefkstsx7rm.webp",
+        "/assets/uploads/products/axwymxkihcd1ruvgw4pt.webp"
       ],
       "sortOrder": 4,
       "isActive": true,
@@ -319,10 +319,10 @@
         "farmer sourced"
       ],
       "images": [
-        "https://res.cloudinary.com/s2rbtvuy/image/upload/v1784485331/mantraaq/products/o95ydbaoikmejpz565wh.png",
-        "https://res.cloudinary.com/s2rbtvuy/image/upload/v1784485331/mantraaq/products/ocxhs7awupepepnlyrys.png",
-        "https://res.cloudinary.com/s2rbtvuy/image/upload/v1784485331/mantraaq/products/ytxydktfhxhifgujttqk.png",
-        "https://res.cloudinary.com/s2rbtvuy/image/upload/v1784485331/mantraaq/products/la9v60rlidvfcgqs6b1w.png"
+        "/assets/uploads/products/o95ydbaoikmejpz565wh.webp",
+        "/assets/uploads/products/ocxhs7awupepepnlyrys.webp",
+        "/assets/uploads/products/ytxydktfhxhifgujttqk.webp",
+        "/assets/uploads/products/la9v60rlidvfcgqs6b1w.webp"
       ],
       "sortOrder": 5,
       "isActive": true,
@@ -356,8 +356,8 @@
         "premium quality"
       ],
       "images": [
-        "https://res.cloudinary.com/s2rbtvuy/image/upload/v1784493883/mantraaq/products/m4hynifl7qjjuzagtyy4.png",
-        "https://res.cloudinary.com/s2rbtvuy/image/upload/v1784493883/mantraaq/products/dfpic5tpewjy7xypd8ev.png"
+        "/assets/uploads/products/m4hynifl7qjjuzagtyy4.webp",
+        "/assets/uploads/products/dfpic5tpewjy7xypd8ev.webp"
       ],
       "sortOrder": 6,
       "isActive": true,
