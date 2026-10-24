@@ -896,10 +896,11 @@ const Cart = {
     }
   },
 
+  // Keep in step with the backend (createPaymentOrder in checkoutController.js)
   getShippingCharge() {
     const subtotal = this.getTotal();
     if (subtotal < 499) {
-      return 49;
+      return 70;
     }
     return 0;
   },
