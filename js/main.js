@@ -1623,8 +1623,9 @@ window.addEventListener('load', function() {
                 if (window.Cart) {
                     setTimeout(() => {
                         window.Cart.open();
-                        // Automatically select COD in cart checkout
-                        const codRadio = document.getElementById('payCod');
+                        // Go straight to the checkout form, where the COD option lives
+                        if (window.Cart.items && window.Cart.items.length) window.Cart.showCheckoutForm();
+                        const codRadio = document.querySelector('input[name="paymentMethod"][value="COD"]');
                         if (codRadio) {
                             codRadio.checked = true;
                             // Trigger payment method change listener

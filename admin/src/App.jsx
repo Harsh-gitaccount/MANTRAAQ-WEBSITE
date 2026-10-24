@@ -9,6 +9,8 @@ import Products from './pages/Products';
 import Coupons from './pages/Coupons';
 import Customers from './pages/Customers';
 import Subscribers from './pages/Subscribers';
+import SalesFunnel from './pages/SalesFunnel';
+import AbandonedCarts from './pages/AbandonedCarts';
 
 // Guard for protected admin paths
 const ProtectedRoute = ({ children }) => {
@@ -127,6 +129,26 @@ export default function App() {
               <ProtectedRoute>
                 <AdminLayout>
                   <Customers />
+                </AdminLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/funnel"
+            element={
+              <ProtectedRoute>
+                <AdminLayout>
+                  <SalesFunnel />
+                </AdminLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/abandoned"
+            element={
+              <ProtectedRoute>
+                <AdminLayout>
+                  <AbandonedCarts />
                 </AdminLayout>
               </ProtectedRoute>
             }

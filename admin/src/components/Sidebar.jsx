@@ -10,6 +10,8 @@ import {
   LogOut, 
   User,
   Mail,
+  Filter,
+  ShoppingCart,
   X
 } from 'lucide-react';
 
@@ -20,6 +22,8 @@ export default function Sidebar({ isOpen, onClose }) {
   const menuItems = [
     { name: 'Dashboard', path: '/', icon: LayoutDashboard },
     { name: 'Orders', path: '/orders', icon: ShoppingBag },
+    { name: 'Sales Funnel', path: '/funnel', icon: Filter },
+    { name: 'Abandoned Carts', path: '/abandoned', icon: ShoppingCart },
     { name: 'Products', path: '/products', icon: Package },
     { name: 'Coupons', path: '/coupons', icon: Ticket },
     { name: 'Customers', path: '/customers', icon: Users },

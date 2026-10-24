@@ -8,6 +8,7 @@ const productController = require('../controllers/productController');
 const orderController = require('../controllers/orderController');
 const couponController = require('../controllers/couponController');
 const newsletterController = require('../controllers/newsletterController');
+const trackingController = require('../controllers/trackingController');
 
 // Configure multer storage
 const uploadDir = path.join(__dirname, '../uploads/products');
@@ -79,5 +80,10 @@ router.delete('/coupons/:id', couponController.deleteCoupon);
 
 // ─── Newsletter Subscribers ─────────────────────────────────
 router.get('/newsletter-subscribers', newsletterController.adminGetSubscribers);
+
+// ─── Sales Tracking ─────────────────────────────────────────
+router.get('/funnel', trackingController.getFunnel);
+router.get('/abandoned-checkouts', trackingController.getAbandonedCheckouts);
+router.patch('/abandoned-checkouts/:id/contacted', trackingController.markCheckoutContacted);
 
 module.exports = router;

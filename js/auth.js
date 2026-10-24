@@ -1381,7 +1381,12 @@ const CustomerAuth = {
               : 'Shipped';
             dispatchedSubtitle = dispDateText;
             if (order.trackingNumber) {
-              dispatchedSubtitle += `<br><span style="font-size: 11px; color: #bcaea4;">${order.trackingCarrier || 'Courier'}: ${order.trackingNumber}</span>`;
+              const esc = (v) => String(v).replace(/[&<>"']/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+              dispatchedSubtitle += `<br><span style="font-size: 11px; color: #bcaea4;">${esc(order.trackingCarrier || 'Courier')}: ${esc(order.trackingNumber)}</span>`;
+              const trackUrl = order.shippingAddress && order.shippingAddress.trackingUrl;
+              if (trackUrl && /^https?:\/\//i.test(trackUrl)) {
+                dispatchedSubtitle += `<br><a href="${esc(trackUrl)}" target="_blank" rel="noopener noreferrer" style="font-size: 12px; font-weight: 600; color: #e2c27f; text-decoration: underline;">Track shipment &rarr;</a>`;
+              }
             }
           }
           
