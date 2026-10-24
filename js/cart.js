@@ -292,6 +292,7 @@
       display: flex;
       flex-direction: column;
       gap: 4px;
+      min-width: 0; /* lets City/State shrink instead of pushing past the screen edge */
     }
     .form-grp label {
       font-size: 11px;
@@ -299,6 +300,11 @@
       color: #7a6a6c;
       text-transform: uppercase;
       letter-spacing: 0.5px;
+    }
+    .form-grp input:not([type="radio"]):not([type="checkbox"]) {
+      width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
     }
     .form-grp input {
       border: 1px solid #d9cdb8;
@@ -639,6 +645,44 @@
     @media (max-width: 767px) {
       .checkout-desktop-badges {
         display: none !important;
+      }
+      /* Phones: one scroll for the whole checkout (form, then summary and Pay)
+         instead of a squeezed form box above a fixed summary */
+      .checkout-form-panel {
+        padding: 0;
+        overflow: hidden;
+      }
+      .checkout-grid-container {
+        flex: 1;
+        min-height: 0;
+        height: auto;
+        overflow-y: auto;
+        overflow-x: hidden;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
+      }
+      .checkout-left-col,
+      .checkout-right-col {
+        flex: none;
+        overflow: visible;
+      }
+      .checkout-left-col {
+        padding: 20px 16px 8px;
+      }
+      .checkout-right-col {
+        padding: 20px 16px calc(20px + env(safe-area-inset-bottom));
+      }
+    }
+    /* iPhone zooms into any field under 16px when tapped, which then lets the
+       page slide left and right; 16px keeps it still */
+    @media (max-width: 767px) {
+      .cart-drawer input,
+      .cart-drawer select,
+      .cart-drawer textarea,
+      .auth-overlay input,
+      .auth-overlay select,
+      .auth-overlay textarea {
+        font-size: 16px !important;
       }
     }
     .order-summary-card h3 {
@@ -996,7 +1040,7 @@ const Cart = {
                     <label>Street Address</label>
                     <input type="text" id="shipStreet" placeholder="House/Flat No, Apartment, Area" required />
                   </div>
-                  <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+                  <div style="display:grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap:8px;">
                     <div class="form-grp">
                       <label>City</label>
                       <input type="text" id="shipCity" placeholder="City" required />
@@ -1018,7 +1062,7 @@ const Cart = {
                   <!-- Payment Method Selection -->
                   <div class="form-grp" style="margin-top:8px;">
                     <label style="font-weight: 700; font-size: 13px; color: #45363a; margin-bottom: 6px; display:block;">Select Payment Method</label>
-                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+                    <div style="display:grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap:8px;">
                       <label class="payment-method-card active" id="payMethodOnlineLabel">
                         <input type="radio" name="paymentMethod" value="ONLINE" checked onchange="Cart.handlePaymentMethodChange()" />
                         <span class="method-title">Pay Online</span>
