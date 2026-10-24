@@ -480,12 +480,15 @@ exports.verifyPayment = async (req, res) => {
       });
     }
 
+    await reReserveStockIfCancelled(order);
+
     // Update order to PAID
     const updatedOrder = await prisma.order.update({
       where: { id: order.id },
       data: {
         status: 'PAID',
         paymentId: mihpayid || 'payu_online',
+        cancelledAt: null,
       },
       include: {
         orderLineItems: {
@@ -581,11 +584,14 @@ exports.payuSuccess = async (req, res) => {
     }
 
     if (order.status !== 'PAID') {
+      await reReserveStockIfCancelled(order);
+
       const updatedOrder = await prisma.order.update({
         where: { id: order.id },
         data: {
           status: 'PAID',
           paymentId: mihpayid || 'payu_online',
+          cancelledAt: null,
         },
         include: {
           orderLineItems: {
@@ -742,6 +748,18 @@ exports.cancelGuestOrder = async (req, res) => {
   }
 };
 
+// A payment can land after the 30-minute cleanup already cancelled the order and
+// put its stock back. Take that stock again so paid orders always hold their items.
+const reReserveStockIfCancelled = async (order) => {
+  if (order.status !== 'CANCELLED') return;
+  for (const item of order.orderLineItems) {
+    await prisma.variant.update({
+      where: { id: item.variantId },
+      data: { stockQuantity: { decrement: item.quantity } },
+    });
+  }
+};
+
 // ─── cleanupAbandonedOrders ──────────────────────────────────────────────────
 
 /**
@@ -756,7 +774,8 @@ exports.cleanupAbandonedOrders = async () => {
     const abandonedOrders = await prisma.order.findMany({
       where: {
         status: 'PENDING',
-        NOT: { paymentId: { startsWith: 'cod' } },
+        // Unpaid online orders have no paymentId yet; a bare NOT would skip those NULL rows
+        OR: [{ paymentId: null }, { NOT: { paymentId: { startsWith: 'cod' } } }],
         createdAt: { lt: cutoff },
       },
       include: { orderLineItems: true },
